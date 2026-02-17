@@ -5,12 +5,16 @@ import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
 import rehypeRaw from 'rehype-raw';
 import rehypeShiki from '@shikijs/rehype';
-import { getPost, getAllPosts, getAdjacentPosts, extractHeadings } from '@/lib/content';
+import { shikiConfig } from '@/lib/shiki-config';
+import { getPost, getAllPosts, getAdjacentPosts, extractHeadings, getRelatedPosts, getSeriesPosts } from '@/lib/content';
 import { getMDXComponents } from '@/lib/mdx-components';
 import { CopyButton } from '@/components/CopyButton';
+import { HeadingAnchors } from '@/components/HeadingAnchors';
+import { Lightbox } from '@/components/Lightbox';
 import { ShareButtons } from '@/components/ShareButtons';
 import { ReadingProgress } from '@/components/ReadingProgress';
 import { TableOfContents } from '@/components/TableOfContents';
+import { SeriesNav } from '@/components/SeriesNav';
 import { Giscus } from '@/components/Giscus';
 import type { Metadata } from 'next';
 
@@ -45,6 +49,9 @@ export default async function BlogPost({ params }: Props) {
 
   const { prev, next } = getAdjacentPosts('blog', slug);
   const headings = extractHeadings(post.rawContent);
+  const relatedPosts = getRelatedPosts(slug, post.tags);
+  const seriesPosts = post.series ? getSeriesPosts(post.series) : [];
+  const showUpdated = post.lastModified && post.lastModified !== post.date;
 
   return (
     <>
@@ -52,6 +59,7 @@ export default async function BlogPost({ params }: Props) {
       <Link href="/blog" className="back-link">&larr; Back to Blog</Link>
       <article>
         {post.date && <time className="post-date" dateTime={post.date}>{post.date}</time>}
+        {showUpdated && <time className="post-updated" dateTime={post.lastModified}>Updated {post.lastModified}</time>}
         {post.readTime > 0 && <span className="read-time">{post.readTime} min read</span>}
         {post.tags.length > 0 && (
           <div className="post-tags">
@@ -61,6 +69,9 @@ export default async function BlogPost({ params }: Props) {
           </div>
         )}
         <ShareButtons title={post.title} />
+        {seriesPosts.length > 1 && (
+          <SeriesNav currentSlug={slug} seriesPosts={seriesPosts} seriesName={post.series!} />
+        )}
         {headings.length > 2 && <TableOfContents headings={headings} />}
         <MDXRemote
           source={post.rawContent}
@@ -71,7 +82,7 @@ export default async function BlogPost({ params }: Props) {
               rehypePlugins: [
                 rehypeRaw,
                 rehypeSlug,
-                [rehypeShiki, { theme: 'gruvbox-dark-medium' }],
+                [rehypeShiki, shikiConfig],
               ],
             },
           }}
@@ -94,7 +105,24 @@ export default async function BlogPost({ params }: Props) {
         </nav>
       )}
       <Giscus />
+      {relatedPosts.length > 0 && (
+        <nav className="related-posts" aria-label="Related posts">
+          <h3>Related Posts</h3>
+          <ul>
+            {relatedPosts.map((rp) => (
+              <li key={rp.slug}>
+                <Link href={`/blog/${rp.slug}`}>
+                  <span className="related-title">{rp.title}</span>
+                  <time>{rp.date}</time>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
       <CopyButton />
+      <HeadingAnchors />
+      <Lightbox />
     </>
   );
 }

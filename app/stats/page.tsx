@@ -114,6 +114,13 @@ export default function StatsPage() {
           <p>First post: {oldest.date} &mdash; Latest post: {newest.date}</p>
         </>
       )}
+
+      {process.env.NEXT_PUBLIC_UMAMI_URL && (
+        <>
+          <h2>Analytics</h2>
+          <p>View the <a href={`${process.env.NEXT_PUBLIC_UMAMI_URL.replace('/script.js', '')}/share`} target="_blank" rel="noopener">public analytics dashboard</a>.</p>
+        </>
+      )}
     </>
   );
 }

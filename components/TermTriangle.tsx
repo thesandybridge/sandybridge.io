@@ -27,7 +27,6 @@ export function TermTriangle() {
       id="term-tri"
       camera={{ fov: 50, near: 0.1, far: 10, position: [0, 0, 2.5] }}
       gl={{ alpha: true }}
-      style={{ position: 'absolute', top: '0.4rem', right: '0.4rem', width: 40, height: 40, pointerEvents: 'none' }}
     >
       <SpinningTetra />
     </Canvas>

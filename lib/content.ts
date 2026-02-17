@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
 import matter from 'gray-matter';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
@@ -21,6 +22,9 @@ export interface PostMeta {
   blog?: string;
   slug: string;
   readTime: number;
+  lastModified?: string;
+  series?: string;
+  seriesOrder?: number;
 }
 
 export interface Post extends PostMeta {
@@ -47,6 +51,19 @@ function getHighlighter() {
   return highlighterPromise;
 }
 
+function getLastModified(filePath: string): string | undefined {
+  try {
+    const result = execSync(`git log -1 --format=%cI -- "${filePath}"`, {
+      encoding: 'utf-8',
+      cwd: process.cwd(),
+    }).trim();
+    if (!result) return undefined;
+    return result.split('T')[0];
+  } catch {
+    return undefined;
+  }
+}
+
 function getDir(dir: 'blog' | 'portfolio'): string {
   return dir === 'blog'
     ? contentDir
@@ -69,6 +86,8 @@ function parseFrontmatter(filePath: string): PostMeta | null {
   const ext = getExtension(filePath);
   const slug = path.basename(filePath, ext);
 
+  const lastModified = getLastModified(filePath);
+
   return {
     title: data.title,
     date: data.date instanceof Date ? data.date.toISOString().split('T')[0] : (data.date ? String(data.date).split('T')[0] : ''),
@@ -80,6 +99,9 @@ function parseFrontmatter(filePath: string): PostMeta | null {
     blog: data.blog,
     slug,
     readTime,
+    lastModified,
+    series: data.series,
+    seriesOrder: data.seriesOrder,
   };
 }
 
@@ -157,6 +179,7 @@ export async function getPost(dir: 'blog' | 'portfolio', slug: string): Promise<
   const wordCount = content.split(/\s+/).filter(Boolean).length;
   const readTime = Math.max(1, Math.ceil(wordCount / 200));
   const html = await renderMarkdown(content);
+  const lastModified = getLastModified(filePath);
 
   return {
     title: data.title || slug,
@@ -169,6 +192,9 @@ export async function getPost(dir: 'blog' | 'portfolio', slug: string): Promise<
     blog: data.blog,
     slug,
     readTime,
+    lastModified,
+    series: data.series,
+    seriesOrder: data.seriesOrder,
     content: html,
     rawContent: content,
   };
@@ -198,6 +224,22 @@ export function getAdjacentPosts(dir: 'blog' | 'portfolio', slug: string): { pre
     prev: idx < posts.length - 1 ? posts[idx + 1] : null,
     next: idx > 0 ? posts[idx - 1] : null,
   };
+}
+
+export function getRelatedPosts(slug: string, tags: string[], limit = 3): PostMeta[] {
+  const allPosts = getAllPosts('blog').filter((p) => p.slug !== slug);
+  const scored = allPosts.map((post) => {
+    const overlap = post.tags.filter((t) => tags.includes(t)).length;
+    return { post, score: overlap };
+  });
+  scored.sort((a, b) => b.score - a.score || (b.post.date > a.post.date ? 1 : -1));
+  return scored.filter((s) => s.score > 0).slice(0, limit).map((s) => s.post);
+}
+
+export function getSeriesPosts(seriesName: string): PostMeta[] {
+  return getAllPosts('blog')
+    .filter((p) => p.series === seriesName)
+    .sort((a, b) => (a.seriesOrder ?? 0) - (b.seriesOrder ?? 0));
 }
 
 export interface Heading {

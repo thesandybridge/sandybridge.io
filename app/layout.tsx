@@ -2,10 +2,9 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import Script from 'next/script';
 import { Nav } from '@/components/Nav';
-import { Terminal } from '@/components/Terminal';
+import { CommandPalette } from '@/components/CommandPalette';
 import { Background } from '@/components/Background';
 import { CursorGlow } from '@/components/CursorGlow';
-import { Search } from '@/components/Search';
 import './globals.css';
 
 const kodeMono = localFont({
@@ -52,6 +51,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const year = new Date().getFullYear();
+  const umamiUrl = process.env.NEXT_PUBLIC_UMAMI_URL;
+  const umamiId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
 
   return (
     <html lang="en" className={kodeMono.variable}>
@@ -63,6 +64,14 @@ export default function RootLayout({
             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
           })(window,document,'script','dataLayer','GTM-NFSBFRPK');`}
         </Script>
+        {umamiUrl && umamiId && (
+          <Script
+            async
+            src={umamiUrl}
+            data-website-id={umamiId}
+            strategy="afterInteractive"
+          />
+        )}
       </head>
       <body style={{ fontFamily: 'var(--font-kode-mono), monospace' }}>
         <svg width="0" height="0" aria-hidden="true" style={{ position: 'absolute' }}>
@@ -86,7 +95,6 @@ export default function RootLayout({
           </header>
           <main id="content">
             {children}
-            <Terminal />
           </main>
           <footer>
             <span>&copy; {year} sandybridge</span>
@@ -99,7 +107,7 @@ export default function RootLayout({
         </div>
         <Background />
         <CursorGlow />
-        <Search />
+        <CommandPalette />
       </body>
     </html>
   );

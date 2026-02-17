@@ -6,9 +6,12 @@ import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
 import rehypeRaw from 'rehype-raw';
 import rehypeShiki from '@shikijs/rehype';
+import { shikiConfig } from '@/lib/shiki-config';
 import { getPost, getAllPosts } from '@/lib/content';
 import { getMDXComponents } from '@/lib/mdx-components';
 import { CopyButton } from '@/components/CopyButton';
+import { HeadingAnchors } from '@/components/HeadingAnchors';
+import { Lightbox } from '@/components/Lightbox';
 import type { Metadata } from 'next';
 
 interface Props {
@@ -89,13 +92,15 @@ export default async function PortfolioItem({ params }: Props) {
               rehypePlugins: [
                 rehypeRaw,
                 rehypeSlug,
-                [rehypeShiki, { theme: 'gruvbox-dark-medium' }],
+                [rehypeShiki, shikiConfig],
               ],
             },
           }}
         />
       </article>
       <CopyButton />
+      <HeadingAnchors />
+      <Lightbox />
     </>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import type { Heading } from '@/lib/content';
 
 interface Props {
@@ -8,14 +8,22 @@ interface Props {
 }
 
 export function TableOfContents({ headings }: Props) {
-  const [activeId, setActiveId] = useState<string>('');
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+
+    let activeLink: HTMLAnchorElement | null = null;
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
+            if (activeLink) activeLink.classList.remove('toc-active');
+            activeLink = nav.querySelector(`a[href="#${entry.target.id}"]`);
+            if (activeLink) activeLink.classList.add('toc-active');
+            break;
           }
         }
       },
@@ -31,16 +39,13 @@ export function TableOfContents({ headings }: Props) {
   }, [headings]);
 
   return (
-    <nav className="toc" aria-label="Table of contents">
+    <nav className="toc" ref={navRef} aria-label="Table of contents">
       <details open>
         <summary>Table of Contents</summary>
         <ul>
           {headings.map((h) => (
             <li key={h.id} style={{ paddingLeft: (h.level - 2) * 1 + 'rem' }}>
-              <a
-                href={`#${h.id}`}
-                className={activeId === h.id ? 'toc-active' : ''}
-              >
+              <a href={`#${h.id}`}>
                 {h.text}
               </a>
             </li>
