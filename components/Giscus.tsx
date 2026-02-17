@@ -15,10 +15,10 @@ export function Giscus() {
 
     const script = document.createElement('script');
     script.src = 'https://giscus.app/client.js';
-    script.setAttribute('data-repo', 'thesandybridge/sandybridge.io');
-    script.setAttribute('data-repo-id', '');
-    script.setAttribute('data-category', 'Comments');
-    script.setAttribute('data-category-id', '');
+    script.setAttribute('data-repo', process.env.NEXT_PUBLIC_GISCUS_REPO || '');
+    script.setAttribute('data-repo-id', process.env.NEXT_PUBLIC_GISCUS_REPO_ID || '');
+    script.setAttribute('data-category', process.env.NEXT_PUBLIC_GISCUS_CATEGORY || '');
+    script.setAttribute('data-category-id', process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID || '');
     script.setAttribute('data-mapping', 'pathname');
     script.setAttribute('data-strict', '0');
     script.setAttribute('data-reactions-enabled', '1');
