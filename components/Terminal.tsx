@@ -4,8 +4,12 @@ import { useEffect, useRef, useState, useCallback, type FormEvent, type Keyboard
 import { usePathname, useRouter } from 'next/navigation';
 import { TermTriangle } from './TermTriangle';
 
-const COMMANDS = ['help', 'cd', 'ls', 'clear', 'github', 'echo', 'contact', 'cat', 'pwd'];
+const COMMANDS = ['help', 'cd', 'ls', 'clear', 'github', 'echo', 'contact', 'cat', 'pwd', 'grep', 'man', 'tree', 'history', 'ascii'];
 const CD_TARGETS = ['home', 'blog', 'portfolio'];
+
+function escapeHtmlClient(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
 
 interface Message {
   id: number;
@@ -24,6 +28,7 @@ export function Terminal() {
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const terminalRef = useRef<HTMLElement>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const pathname = usePathname();
   const router = useRouter();
@@ -31,8 +36,8 @@ export function Terminal() {
   const promptDir = pathname === '/' ? '~' : '~' + pathname.replace(/\/$/, '');
 
   const scrollToBottom = useCallback(() => {
-    if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+    if (messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
     }
   }, []);
 
@@ -43,10 +48,41 @@ export function Terminal() {
   const showMotd = useCallback(() => {
     if (motdShown) return;
     setMotdShown(true);
+
+    const text = 'sandybridge.io — type help to get started';
+    const id = ++msgId;
+    let i = 0;
+
     setMessages((prev) => [
       ...prev,
-      { id: ++msgId, html: '<pre class="ignore"><span class="term-info">sandybridge.io — type help to get started</span></pre>' },
+      { id, html: '<pre class="ignore"><span class="term-info"></span></pre>' },
     ]);
+
+    const interval = setInterval(() => {
+      i++;
+      if (i > text.length) {
+        clearInterval(interval);
+        return;
+      }
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === id
+            ? { ...m, html: `<pre class="ignore"><span class="term-info">${text.slice(0, i)}<span class="term-cursor">_</span></span></pre>` }
+            : m
+        )
+      );
+    }, 30);
+
+    // Remove cursor after typing finishes
+    setTimeout(() => {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === id
+            ? { ...m, html: `<pre class="ignore"><span class="term-info">${text}</span></pre>` }
+            : m
+        )
+      );
+    }, 30 * (text.length + 2));
   }, [motdShown]);
 
   const open = useCallback(() => {
@@ -113,12 +149,8 @@ export function Terminal() {
   }, [messages, scrollToBottom]);
 
   // Click outside to close
-  const handleWrapperClick = useCallback((e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).tagName.toLowerCase() === 'input') {
-      e.stopPropagation();
-    } else {
-      close();
-    }
+  const handleWrapperClick = useCallback(() => {
+    close();
   }, [close]);
 
   // rm -rf easter egg
@@ -219,6 +251,16 @@ export function Terminal() {
           case 'rm-rf':
             rmRf();
             break;
+          case 'history': {
+            const historyHtml = cmdHistory.length === 0
+              ? '<span class="term-info">No history</span>'
+              : cmdHistory.map((c, i) => `  ${i + 1}  ${escapeHtmlClient(c)}`).join('\n');
+            setMessages((prev) => [
+              ...prev,
+              { id: ++msgId, html: `<pre class='ignore'>&gt; history\n${historyHtml}</pre>` },
+            ]);
+            break;
+          }
         }
       } else {
         const html = await res.text();
@@ -302,12 +344,14 @@ export function Terminal() {
       className={`terminal-wrapper${isVisible ? ' visible' : ''}`}
       onClick={handleWrapperClick}
     >
-      <code id="terminal" ref={terminalRef}>
+      <code id="terminal" ref={terminalRef} onClick={(e) => e.stopPropagation()}>
         <TermTriangle />
-        <div className="msg">
-          {messages.map((msg) => (
-            <div key={msg.id} dangerouslySetInnerHTML={{ __html: msg.html }} />
-          ))}
+        <div className="term-messages" ref={messagesRef}>
+          <div className="msg">
+            {messages.map((msg) => (
+              <div key={msg.id} dangerouslySetInnerHTML={{ __html: msg.html }} />
+            ))}
+          </div>
         </div>
         <form className="cmd-wrapper" onSubmit={handleSubmit}>
           <label htmlFor="cmd">[you@sandybridge <span className="prompt-dir">{promptDir}</span>]$ </label>
@@ -318,12 +362,18 @@ export function Terminal() {
             type="text"
             spellCheck={false}
             autoComplete="off"
-            placeholder="Try typing a command like: help"
+            placeholder="help"
             value={inputValue}
             onChange={(e) => handleInput(e.target.value)}
             onKeyDown={handleKeyDown}
           />
         </form>
+        <div className="term-hint">
+          <span><kbd>Ctrl+K</kbd> toggle</span>
+          <span><kbd>↑↓</kbd> history</span>
+          <span><kbd>Tab</kbd> complete</span>
+          <span><kbd>Esc</kbd> close</span>
+        </div>
       </code>
     </div>
   );

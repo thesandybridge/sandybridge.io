@@ -4,6 +4,8 @@ import Script from 'next/script';
 import { Nav } from '@/components/Nav';
 import { Terminal } from '@/components/Terminal';
 import { Background } from '@/components/Background';
+import { CursorGlow } from '@/components/CursorGlow';
+import { Search } from '@/components/Search';
 import './globals.css';
 
 const kodeMono = localFont({
@@ -96,6 +98,8 @@ export default function RootLayout({
           </footer>
         </div>
         <Background />
+        <CursorGlow />
+        <Search />
       </body>
     </html>
   );

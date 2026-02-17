@@ -25,6 +25,7 @@ export interface PostMeta {
 
 export interface Post extends PostMeta {
   content: string;
+  rawContent: string;
 }
 
 const contentDir = path.join(process.cwd(), 'content');
@@ -52,6 +53,11 @@ function getDir(dir: 'blog' | 'portfolio'): string {
     : path.join(contentDir, 'portfolio');
 }
 
+function getExtension(filePath: string): string {
+  if (filePath.endsWith('.mdx')) return '.mdx';
+  return '.md';
+}
+
 function parseFrontmatter(filePath: string): PostMeta | null {
   const raw = fs.readFileSync(filePath, 'utf-8');
   const { data, content } = matter(raw);
@@ -60,7 +66,8 @@ function parseFrontmatter(filePath: string): PostMeta | null {
 
   const wordCount = content.split(/\s+/).filter(Boolean).length;
   const readTime = Math.max(1, Math.ceil(wordCount / 200));
-  const slug = path.basename(filePath, '.md');
+  const ext = getExtension(filePath);
+  const slug = path.basename(filePath, ext);
 
   return {
     title: data.title,
@@ -80,7 +87,7 @@ export function getAllPosts(dir: 'blog' | 'portfolio', limit?: number): PostMeta
   const dirPath = getDir(dir);
   if (!fs.existsSync(dirPath)) return [];
 
-  const files = fs.readdirSync(dirPath).filter((f) => f.endsWith('.md'));
+  const files = fs.readdirSync(dirPath).filter((f) => f.endsWith('.md') || f.endsWith('.mdx'));
   const posts: PostMeta[] = [];
 
   for (const file of files) {
@@ -132,9 +139,17 @@ async function renderMarkdown(raw: string): Promise<string> {
   return html;
 }
 
+function resolveFile(dir: string, slug: string): string | null {
+  for (const ext of ['.mdx', '.md']) {
+    const filePath = path.join(dir, `${slug}${ext}`);
+    if (fs.existsSync(filePath)) return filePath;
+  }
+  return null;
+}
+
 export async function getPost(dir: 'blog' | 'portfolio', slug: string): Promise<Post | null> {
-  const filePath = path.join(getDir(dir), `${slug}.md`);
-  if (!fs.existsSync(filePath)) return null;
+  const filePath = resolveFile(getDir(dir), slug);
+  if (!filePath) return null;
 
   const raw = fs.readFileSync(filePath, 'utf-8');
   const { data, content } = matter(raw);
@@ -155,6 +170,7 @@ export async function getPost(dir: 'blog' | 'portfolio', slug: string): Promise<
     slug,
     readTime,
     content: html,
+    rawContent: content,
   };
 }
 
@@ -173,4 +189,44 @@ export function getAllTags(): string[] {
     }
   }
   return Array.from(tags);
+}
+
+export function getAdjacentPosts(dir: 'blog' | 'portfolio', slug: string): { prev: PostMeta | null; next: PostMeta | null } {
+  const posts = getAllPosts(dir);
+  const idx = posts.findIndex((p) => p.slug === slug);
+  return {
+    prev: idx < posts.length - 1 ? posts[idx + 1] : null,
+    next: idx > 0 ? posts[idx - 1] : null,
+  };
+}
+
+export interface Heading {
+  id: string;
+  text: string;
+  level: number;
+}
+
+export function extractHeadings(source: string): Heading[] {
+  // Works on both raw markdown and HTML
+  // Try markdown heading syntax first
+  const mdRegex = /^(#{2,4})\s+(.+)$/gm;
+  const headings: Heading[] = [];
+  let match;
+  while ((match = mdRegex.exec(source)) !== null) {
+    const text = match[2].trim();
+    const id = text.toLowerCase().replace(/[^\w]+/g, '-').replace(/(^-|-$)/g, '');
+    headings.push({ level: match[1].length, id, text });
+  }
+  if (headings.length > 0) return headings;
+
+  // Fallback: HTML heading tags
+  const htmlRegex = /<h([2-4])\s+id="([^"]+)"[^>]*>(.*?)<\/h[2-4]>/g;
+  while ((match = htmlRegex.exec(source)) !== null) {
+    headings.push({
+      level: parseInt(match[1]),
+      id: match[2],
+      text: match[3].replace(/<[^>]+>/g, ''),
+    });
+  }
+  return headings;
 }

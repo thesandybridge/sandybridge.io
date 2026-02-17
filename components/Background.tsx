@@ -66,12 +66,31 @@ function Shapes() {
     };
   }, [camera, halfFovTan]);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     focal.current.lerp(targetFocal.current, 0.05);
+    const t = performance.now() * 0.001;
+
     for (let i = 0; i < shapes.length; i++) {
       const mesh = meshRefs.current[i];
       if (!mesh) continue;
-      mesh.position.y = shapes[i].y + scrollY.current * shapes[i].scrollFactor;
+      const s = shapes[i];
+
+      // Parallax
+      mesh.position.y = s.y + scrollY.current * s.scrollFactor;
+
+      // Gentle drift: sine wave offset unique per shape
+      mesh.position.x = s.x + Math.sin(t * 0.3 + i * 1.7) * 0.15;
+
+      // Slow idle rotation
+      mesh.rotation.x += delta * 0.08 * (i % 2 === 0 ? 1 : -1);
+      mesh.rotation.y += delta * 0.05;
+
+      // Pulse opacity based on scroll proximity to viewport center
+      const screenY = mesh.position.y - scrollY.current * s.scrollFactor * 0.5;
+      const distFromCenter = Math.abs(screenY);
+      const pulse = Math.max(0.08, s.opacity + Math.sin(t * 0.5 + i) * 0.03 - distFromCenter * 0.01);
+      (mesh.material as { opacity: number }).opacity = Math.min(0.3, pulse);
+
       mesh.lookAt(focal.current);
     }
   });

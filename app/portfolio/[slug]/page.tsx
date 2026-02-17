@@ -1,6 +1,13 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
+import { MDXRemote } from 'next-mdx-remote/rsc';
+import remarkGfm from 'remark-gfm';
+import rehypeSlug from 'rehype-slug';
+import rehypeRaw from 'rehype-raw';
+import rehypeShiki from '@shikijs/rehype';
 import { getPost, getAllPosts } from '@/lib/content';
+import { getMDXComponents } from '@/lib/mdx-components';
 import { CopyButton } from '@/components/CopyButton';
 import type { Metadata } from 'next';
 
@@ -55,7 +62,15 @@ export default async function PortfolioItem({ params }: Props) {
           )}
         </div>
         {post.image && (
-          <img src={`/assets/portfolio/${post.image}`} alt={post.title} className="portfolio-hero" loading="lazy" />
+          <Image
+            src={`/assets/portfolio/${post.image}`}
+            alt={post.title}
+            width={800}
+            height={450}
+            className="portfolio-hero"
+            priority
+            style={{ width: '100%', height: 'auto' }}
+          />
         )}
         {post.date && <time className="post-date" dateTime={post.date}>{post.date}</time>}
         {post.tags.length > 0 && (
@@ -65,7 +80,20 @@ export default async function PortfolioItem({ params }: Props) {
             ))}
           </div>
         )}
-        <div dangerouslySetInnerHTML={{ __html: post.content }} />
+        <MDXRemote
+          source={post.rawContent}
+          components={getMDXComponents()}
+          options={{
+            mdxOptions: {
+              remarkPlugins: [remarkGfm],
+              rehypePlugins: [
+                rehypeRaw,
+                rehypeSlug,
+                [rehypeShiki, { theme: 'gruvbox-dark-medium' }],
+              ],
+            },
+          }}
+        />
       </article>
       <CopyButton />
     </>

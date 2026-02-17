@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { getAllPosts } from '@/lib/content';
 import type { Metadata } from 'next';
 
@@ -18,7 +19,13 @@ export default function PortfolioPage() {
         {items.map((item) => (
           <Link key={item.slug} href={`/portfolio/${item.slug}`} className="portfolio-card">
             {item.image && (
-              <img src={`/assets/portfolio/${item.image}`} alt={item.title} loading="lazy" />
+              <Image
+                src={`/assets/portfolio/${item.image}`}
+                alt={item.title}
+                width={600}
+                height={338}
+                style={{ width: '100%', height: 'auto' }}
+              />
             )}
             <div className="portfolio-card-body">
               <h3>{item.title}</h3>
