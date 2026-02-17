@@ -1,8 +1,8 @@
 ---
 title: "sandybridge.io"
-date: 2024-04-08
-description: "A self-hosted personal site built with Go, running on Proxmox with nginx and Cloudflare Tunnel."
-tags: ["go", "self-hosted", "infrastructure"]
+date: 2026-02-17
+description: "A personal site and blog built with Next.js App Router, React Three Fiber, and shiki, deployed on Railway."
+tags: ["nextjs", "typescript", "react", "threejs"]
 image: "sandybridge-io.png"
 github: "https://github.com/thesandybridge/sandybridge.io"
 url: "https://sandybridge.io"
@@ -10,21 +10,23 @@ url: "https://sandybridge.io"
 
 # sandybridge.io
 
-This site is a personal blog and portfolio built from scratch in Go. It serves markdown content with syntax-highlighted code blocks, has a built-in terminal emulator for navigation, and runs on self-hosted infrastructure.
+My personal site and blog, built with Next.js and deployed on Railway. Features a gruvbox dark theme, animated corona glow borders, a Three.js wireframe background, and an interactive browser terminal.
 
-## Architecture
+Previously built with [Go + HTMX](https://github.com/thesandybridge/sandybridge.io-go) and self-hosted on Proxmox.
 
-- **Go backend** — serves HTML templates populated with parsed markdown content using Goldmark
-- **Markdown content** — blog posts and portfolio items are plain `.md` files with YAML frontmatter
-- **Terminal emulator** — a browser-based terminal that accepts commands like `cd`, `ls`, and `help` for navigating the site
+## Stack
 
-## Infrastructure
+- **Next.js 16** (App Router) — static generation for all pages
+- **TypeScript** — end to end
+- **Markdown** — unified / remark / rehype pipeline with shiki syntax highlighting (gruvbox theme)
+- **Three.js** via React Three Fiber — wireframe shapes in side gutters with mouse lookAt and scroll parallax
+- **Kode Mono** — self-hosted monospace font
 
-- **Proxmox** — hypervisor running on bare metal, hosting the VM that runs this site
-- **nginx** — reverse proxy handling TLS termination and routing
-- **Cloudflare Tunnel** — exposes the site to the public internet without opening ports on the home network
-- **systemd** — manages the Go binary as a service with automatic restarts
+## Features
 
-## Why Self-Host?
-
-I wanted full control over the stack and the ability to experiment with infrastructure without cloud provider abstractions. Running on Proxmox means I can snapshot, clone, and migrate VMs freely. Cloudflare Tunnel keeps things secure without needing a static IP or exposing ports.
+- Gruvbox dark theme with animated corona glow on nav and main borders (CSS `@property` + SVG feTurbulence filter)
+- Interactive terminal (Ctrl+K) with command history, tab completion, and easter eggs
+- Blog with tag filtering, read time estimates, share buttons, and code copy buttons
+- Portfolio grid with project links
+- RSS feed, sitemap, and robots.txt
+- Mobile responsive — Three.js background disabled on small screens
