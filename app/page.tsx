@@ -1,66 +1,62 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import Link from 'next/link';
+import { getAllPosts } from '@/lib/content';
 
 export default function Home() {
+  const posts = getAllPosts('blog', 3);
+  const portfolioItems = getAllPosts('portfolio', 3);
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <>
+      <pre className="ascii" aria-hidden="true">
+{`███████╗ █████╗ ███╗   ██╗██████╗ ██╗   ██╗██████╗ ██████╗ ██╗██████╗  ██████╗ ███████╗
+██╔════╝██╔══██╗████╗  ██║██╔══██╗╚██╗ ██╔╝██╔══██╗██╔══██╗██║██╔══██╗██╔════╝ ██╔════╝
+███████╗███████║██╔██╗ ██║██║  ██║ ╚████╔╝ ██████╔╝██████╔╝██║██║  ██║██║  ███╗█████╗
+╚════██║██╔══██║██║╚██╗██║██║  ██║  ╚██╔╝  ██╔══██╗██╔══██╗██║██║  ██║██║   ██║██╔══╝
+███████║██║  ██║██║ ╚████║██████╔╝   ██║   ██████╔╝██║  ██║██║██████╔╝╚██████╔╝███████╗
+╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝    ╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝╚═════╝  ╚═════╝ ╚══════╝`}
+      </pre>
+      <h1>Hey, I&apos;m Matt.</h1>
+      <p>I&apos;m a software engineer focused on frontend development and expanding into systems work. I started building WordPress sites, then moved into modern web applications with React and TypeScript. These days I&apos;m learning Rust and working on CLI tools, debugging infrastructure, and understanding the systems that power the web. I deliver working software that solves actual problems.</p>
+      <p>Currently working for a SaaS startup, where I&apos;ve become the goto for frontend architecture and increasingly for backend and infrastructure work. I&apos;ve optimized CI/CD pipelines, debugged production microservices, and built tooling that actually saves time and money. I am self taught with no degree, just consistent focus on understanding how things work and making them work better.</p>
+
+      {posts.length > 0 && (
+        <>
+          <h2>Recent Posts</h2>
+          <nav>
+            <ul>
+              {posts.map((post) => (
+                <li key={post.slug}>
+                  <Link href={`/blog/${post.slug}`}>
+                    <h3>{post.title}</h3>
+                    {post.date && <time dateTime={post.date}>{post.date}</time>}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <p><Link href="/blog">View all posts</Link></p>
+        </>
+      )}
+
+      {portfolioItems.length > 0 && (
+        <>
+          <h2>Projects</h2>
+          <div className="portfolio-grid">
+            {portfolioItems.map((item) => (
+              <Link key={item.slug} href={`/portfolio/${item.slug}`} className="portfolio-card">
+                {item.image && (
+                  <img src={`/assets/portfolio/${item.image}`} alt={item.title} loading="lazy" />
+                )}
+                <div className="portfolio-card-body">
+                  <h3>{item.title}</h3>
+                  {item.description && <p>{item.description}</p>}
+                </div>
+              </Link>
+            ))}
+          </div>
+          <p><Link href="/portfolio">View all projects</Link></p>
+        </>
+      )}
+    </>
   );
 }
