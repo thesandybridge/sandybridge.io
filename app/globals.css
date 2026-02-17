@@ -585,6 +585,17 @@ a.tag {
     }
 }
 
+.reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0;
+    background: var(--secondary-fg);
+    z-index: 1000;
+    will-change: width;
+}
+
 main nav:not(.toc, .series-nav, .related-posts, .post-nav) ul {
     padding-left: 2rem;
 }

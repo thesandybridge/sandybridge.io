@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import Fuse from 'fuse.js';
+import type Fuse from 'fuse.js';
 import type { SearchItem } from '@/lib/search-index';
 
 const COMMANDS = ['help', 'cd', 'ls', 'clear', 'github', 'echo', 'contact', 'cat', 'pwd', 'grep', 'man', 'tree', 'history', 'ascii'];
@@ -45,18 +45,19 @@ export function CommandPalette() {
   const isTerminalMode = inputValue.startsWith('>');
   const promptDir = pathname === '/' ? '~' : '~' + pathname.replace(/\/$/, '');
 
-  // Load search index on first open
+  // Load search index + Fuse.js on first open
   useEffect(() => {
     if (!isVisible || searchIndex) return;
-    fetch('/api/search')
-      .then((r) => r.json())
-      .then((data: SearchItem[]) => {
-        setSearchIndex(data);
-        fuseRef.current = new Fuse(data, {
-          keys: ['title', 'description', 'tags'],
-          threshold: 0.3,
-        });
+    Promise.all([
+      fetch('/api/search').then((r) => r.json()),
+      import('fuse.js').then((m) => m.default),
+    ]).then(([data, FuseClass]: [SearchItem[], typeof Fuse]) => {
+      setSearchIndex(data);
+      fuseRef.current = new FuseClass(data, {
+        keys: ['title', 'description', 'tags'],
+        threshold: 0.3,
       });
+    });
   }, [isVisible, searchIndex]);
 
   // Search when in search mode
