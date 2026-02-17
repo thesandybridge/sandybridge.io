@@ -11,23 +11,6 @@ The following guide assumes you have installed Arch on a a bootable USB and have
 
 This guide will walk through how to configure Arch using Grub as a bootloader, Gnome display manager and i3wm for the desktop environment.
 
-## Table of Contents
-
-1. [Check Network Connection](#check-network-connection)
-2. [Partition the disks](#partition-the-disks)
-3. [Format the partitions](#format-the-partitions)
-	1. [Mount the file systems](#mount-the-file-systems)
-4. [Install Linux](#install-linux)
-5. [Configure the system](#configure-the-system)
-	1. [Localization](#localization)
-	2. [Network configuration](#network-configuration)
-	3. [Root](#root)
-6. [Install Grub Bootloader](#install-grub-bootloader)
-7. [Install a desktop environment](#install-a-desktop-environment)
-8. [Create a user](#create-a-normal-user)
-9. [Install i3wm](#install-i3wm-alternative-desktop-environment)
-10. [Complete](#complete)
-
 ## Check Network Connection
 - Check to make sure you are connected to the internet.
 	`$ ip link`  you can verify you are connected by `$ ping archlinux.org`

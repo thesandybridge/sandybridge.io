@@ -13,19 +13,6 @@ There are tools out there that do this but they all either require uploading you
 
 So I built Tileforge. The tiling engine is written in Rust, compiled to WebAssembly, and runs inside a Web Worker in the browser. There's also a native CLI if you prefer working from the terminal. This post walks through how it works and some of the decisions I made along the way.
 
-## Table of Contents
-
-1. [The Problem](#the-problem)
-2. [Architecture](#architecture)
-3. [Tiling Math](#tiling-math)
-4. [The Rust Core](#the-rust-core)
-5. [Processing Strategies](#processing-strategies)
-6. [Mercator Projection](#mercator-projection)
-7. [WASM and the Browser](#wasm-and-the-browser)
-8. [The Web Worker Problem](#the-web-worker-problem)
-9. [The CLI](#the-cli)
-10. [What I Learned](#what-i-learned)
-
 ## The Problem
 
 Map libraries like Leaflet, MapLibre and OpenLayers all expect tile sets. At zoom level 0 you have a single tile showing the whole image. At zoom 1 you have a 2x2 grid, at zoom 2 a 4x4 grid, and so on. Each zoom level doubles the grid in both dimensions. The library only loads the tiles visible in the viewport so you can have an absurdly large image and it still feels snappy because you're only ever rendering a few small PNGs at a time.
