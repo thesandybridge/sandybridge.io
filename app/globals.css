@@ -294,7 +294,7 @@ footer {
 
 .palette-modal {
     width: 100%;
-    max-width: 560px;
+    max-width: 680px;
     background: var(--primary-bg);
     border: 1px solid var(--secondary-bg);
     border-radius: 5px;
@@ -354,14 +354,6 @@ footer {
         animation: blink 0.7s step-end infinite;
     }
 
-    #term-tri {
-        position: absolute;
-        top: 0.4rem;
-        right: 0.4rem;
-        width: 40px;
-        height: 40px;
-        pointer-events: none;
-    }
 }
 
 .palette-search-input {

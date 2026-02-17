@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, useCallback, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Fuse from 'fuse.js';
-import { TermTriangle } from './TermTriangle';
 import type { SearchItem } from '@/lib/search-index';
 
 const COMMANDS = ['help', 'cd', 'ls', 'clear', 'github', 'echo', 'contact', 'cat', 'pwd', 'grep', 'man', 'tree', 'history', 'ascii'];
@@ -384,7 +383,6 @@ export function CommandPalette() {
       <div className="palette-modal" onClick={(e) => e.stopPropagation()}>
         {isTerminalMode ? (
           <>
-            <TermTriangle />
             <div className="term-messages" ref={messagesRef}>
               <div className="msg">
                 {messages.map((msg) => (
