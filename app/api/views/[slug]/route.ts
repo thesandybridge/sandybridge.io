@@ -3,7 +3,7 @@ import redis from '@/lib/redis';
 
 export const runtime = 'nodejs';
 
-const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const SLUG_RE = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
 
 export async function POST(
   _req: Request,
