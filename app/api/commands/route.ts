@@ -333,6 +333,11 @@ ${(() => {
       break;
     }
 
+    case 'stats':
+      response.action = 'navigate';
+      response.url = '/stats/views';
+      break;
+
     case 'rotate':
       response.action = 'rotate';
       break;
