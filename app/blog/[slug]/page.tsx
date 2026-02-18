@@ -16,6 +16,7 @@ import { ReadingProgress } from '@/components/ReadingProgress';
 import { TableOfContents } from '@/components/TableOfContents';
 import { SeriesNav } from '@/components/SeriesNav';
 import { Giscus } from '@/components/Giscus';
+import { ViewCounter } from '@/components/ViewCounter';
 import type { Metadata } from 'next';
 
 interface Props {
@@ -61,6 +62,7 @@ export default async function BlogPost({ params }: Props) {
         {post.date && <time className="post-date" dateTime={post.date}>{post.date}</time>}
         {showUpdated && <time className="post-updated" dateTime={post.lastModified}>Updated {post.lastModified}</time>}
         {post.readTime > 0 && <span className="read-time">{post.readTime} min read</span>}
+        <ViewCounter slug={slug} />
         {post.tags.length > 0 && (
           <div className="post-tags">
             {post.tags.map((tag) => (
