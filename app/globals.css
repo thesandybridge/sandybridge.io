@@ -72,6 +72,13 @@ main {
     position: relative;
 }
 
+@property --corona-angle {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+}
+
+/* Static organic glow — filter evaluated once, never re-computed */
 main::before {
     content: '';
     position: absolute;
@@ -79,7 +86,7 @@ main::before {
     border-radius: 7px;
     z-index: -1;
     background: conic-gradient(
-        from var(--corona-angle),
+        from 0deg,
         transparent 0%,
         rgba(250, 200, 80, 0.3) 5%,
         rgba(215, 153, 33, 0.15) 10%,
@@ -93,6 +100,25 @@ main::before {
     );
     box-shadow: 0 0 8px 3px rgba(215, 153, 33, 0.15),
                 0 0 3px 1px rgba(250, 200, 80, 0.1);
+    filter: url(#corona-filter);
+}
+
+/* Rotating highlight sweep — smooth GPU animation, no filter */
+main::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 7px;
+    z-index: -1;
+    background: conic-gradient(
+        from var(--corona-angle),
+        transparent 0%,
+        rgba(250, 200, 80, 0.45) 5%,
+        rgba(215, 153, 33, 0.3) 12%,
+        rgba(250, 200, 80, 0.1) 22%,
+        transparent 32%,
+        transparent 100%
+    );
     animation: corona-drift 20s linear infinite;
 }
 
@@ -109,6 +135,7 @@ nav {
     }
 }
 
+/* Static organic glow */
 nav::before {
     content: '';
     position: absolute;
@@ -116,7 +143,7 @@ nav::before {
     border-radius: 7px;
     z-index: -1;
     background: conic-gradient(
-        from var(--corona-angle),
+        from 0deg,
         transparent 0%,
         rgba(250, 200, 80, 0.3) 5%,
         rgba(215, 153, 33, 0.15) 10%,
@@ -130,13 +157,26 @@ nav::before {
     );
     box-shadow: 0 0 8px 3px rgba(215, 153, 33, 0.15),
                 0 0 3px 1px rgba(250, 200, 80, 0.1);
-    animation: corona-drift 20s linear infinite;
+    filter: url(#corona-filter);
 }
 
-@property --corona-angle {
-    syntax: '<angle>';
-    initial-value: 0deg;
-    inherits: false;
+/* Rotating highlight sweep */
+nav::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 7px;
+    z-index: -1;
+    background: conic-gradient(
+        from var(--corona-angle),
+        transparent 0%,
+        rgba(250, 200, 80, 0.45) 5%,
+        rgba(215, 153, 33, 0.3) 12%,
+        rgba(250, 200, 80, 0.1) 22%,
+        transparent 32%,
+        transparent 100%
+    );
+    animation: corona-drift 20s linear infinite;
 }
 
 @keyframes corona-drift {
