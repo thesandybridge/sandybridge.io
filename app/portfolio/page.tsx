@@ -29,33 +29,37 @@ export default async function PortfolioPage() {
       <h1>Portfolio</h1>
       <p>Projects I&apos;ve built.</p>
       <CoronaReveal className="portfolio-grid">
-        {items.map((item) => {
-          const stats = statsMap.get(item.slug);
-          return (
-            <Link key={item.slug} href={`/portfolio/${item.slug}`} className="portfolio-card">
-              {item.image && (
-                <Image
-                  src={`/assets/portfolio/${item.image}`}
-                  alt={item.title}
-                  width={600}
-                  height={338}
-                  style={{ width: '100%', height: 'auto' }}
-                />
-              )}
-              <div className="portfolio-card-body">
-                <h3>{item.title}</h3>
-                {item.description && <p>{item.description}</p>}
-                {stats && (
-                  <div className="portfolio-stats">
-                    {stats.language && <span className="portfolio-stat">{stats.language}</span>}
-                    <span className="portfolio-stat">&#9733; {stats.stars}</span>
-                    <span className="portfolio-stat">Updated {stats.lastPush}</span>
+        {[0, 1].map((col) => (
+          <div key={col} className="portfolio-column">
+            {items.filter((_, i) => i % 2 === col).map((item) => {
+              const stats = statsMap.get(item.slug);
+              return (
+                <Link key={item.slug} href={`/portfolio/${item.slug}`} className="portfolio-card">
+                  {item.image && (
+                    <Image
+                      src={`/assets/portfolio/${item.image}`}
+                      alt={item.title}
+                      width={600}
+                      height={338}
+                      style={{ width: '100%', height: 'auto' }}
+                    />
+                  )}
+                  <div className="portfolio-card-body">
+                    <h3>{item.title}</h3>
+                    {item.description && <p>{item.description}</p>}
+                    {stats && (
+                      <div className="portfolio-stats">
+                        {stats.language && <span className="portfolio-stat">{stats.language}</span>}
+                        <span className="portfolio-stat">&#9733; {stats.stars}</span>
+                        <span className="portfolio-stat">Updated {stats.lastPush}</span>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </Link>
-          );
-        })}
+                </Link>
+              );
+            })}
+          </div>
+        ))}
       </CoronaReveal>
     </>
   );
