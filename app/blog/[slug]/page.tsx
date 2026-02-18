@@ -61,8 +61,10 @@ export default async function BlogPost({ params }: Props) {
       <article>
         {post.date && <time className="post-date" dateTime={post.date}>{post.date}</time>}
         {showUpdated && <time className="post-updated" dateTime={post.lastModified}>Updated {post.lastModified}</time>}
-        {post.readTime > 0 && <span className="read-time">{post.readTime} min read</span>}
-        <ViewCounter slug={slug} />
+        <div className="post-meta-line">
+          {post.readTime > 0 && <span className="read-time">{post.readTime} min read</span>}
+          <ViewCounter slug={slug} />
+        </div>
         {post.tags.length > 0 && (
           <div className="post-tags">
             {post.tags.map((tag) => (

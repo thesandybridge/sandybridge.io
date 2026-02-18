@@ -40,7 +40,7 @@ export default function Home() {
               ))}
             </ul>
           </nav>
-          <p><Link href="/blog">View all posts</Link></p>
+          <p style={{ marginTop: '1rem' }}><Link href="/blog">View all posts</Link></p>
         </CoronaReveal>
       )}
 
@@ -66,7 +66,7 @@ export default function Home() {
               </Link>
             ))}
           </div>
-          <p><Link href="/portfolio">View all projects</Link></p>
+          <p style={{ marginTop: '1rem' }}><Link href="/portfolio">View all projects</Link></p>
         </CoronaReveal>
       )}
     </>

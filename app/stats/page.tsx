@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import Link from 'next/link';
 import { getAllPosts, getAllTags } from '@/lib/content';
 import type { Metadata } from 'next';
 
@@ -115,11 +116,10 @@ export default function StatsPage() {
         </>
       )}
 
+      <h2>Analytics</h2>
+      <p><Link href="/stats/views">View analytics dashboard</Link> — blog post view counts, heatmaps, and visualizations.</p>
       {process.env.NEXT_PUBLIC_UMAMI_URL && (
-        <>
-          <h2>Analytics</h2>
-          <p>View the <a href={`${process.env.NEXT_PUBLIC_UMAMI_URL.replace('/script.js', '')}/share`} target="_blank" rel="noopener">public analytics dashboard</a>.</p>
-        </>
+        <p>View the <a href={`${process.env.NEXT_PUBLIC_UMAMI_URL.replace('/script.js', '')}/share`} target="_blank" rel="noopener">Umami analytics dashboard</a>.</p>
       )}
     </>
   );

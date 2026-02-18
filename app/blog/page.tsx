@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getAllPosts } from '@/lib/content';
 import { PostViewCounts } from '@/components/PostViewCounts';
+import { TrendingPosts } from '@/components/TrendingPosts';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -15,6 +16,7 @@ export default function BlogPage() {
     <>
       <h1>Blog, Guides, Notes</h1>
       <p>This is collection of blog posts on whatever I feel like writing about, as well as some guides I wrote. I also keep some notes here for personal use that I have marked public.</p>
+      <TrendingPosts posts={posts.map((p) => ({ slug: p.slug, title: p.title }))} />
       <nav>
         <ul>
           {posts.map((post) => (

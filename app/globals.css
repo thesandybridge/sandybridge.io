@@ -555,11 +555,153 @@ footer {
     font-size: 0.85rem;
 }
 
+/* Post meta inline layout */
+.post-meta-line {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.meta-dot {
+    color: var(--primary-fg);
+    opacity: 0.4;
+}
+
 .view-count {
     color: var(--primary-fg);
     font-size: 0.85rem;
     opacity: 0.7;
-    margin-left: 0.5rem;
+}
+
+/* Heat indicator */
+.heat-indicator {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: #fb4934;
+    border-radius: 50%;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+    animation: heat-pulse 2s ease-in-out infinite;
+}
+
+@keyframes heat-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+/* Trending section */
+.trending-section {
+    margin-bottom: 2rem;
+    border: 1px solid var(--secondary-bg);
+    border-radius: 5px;
+    padding: 1rem;
+
+    h2 {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+        color: var(--secondary-fg);
+    }
+}
+
+.trending-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.trending-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.35rem 0;
+    font-size: 0.85rem;
+}
+
+.trending-rank {
+    color: var(--secondary-fg);
+    font-weight: 700;
+    min-width: 1.5rem;
+}
+
+.trending-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.trending-views {
+    color: var(--primary-fg);
+    opacity: 0.6;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    margin-left: auto;
+}
+
+/* Heatmap */
+.heatmap-container {
+    overflow-x: auto;
+    margin: 1rem 0 2rem;
+}
+
+.heatmap-cell:hover {
+    stroke: var(--secondary-fg);
+    stroke-width: 2;
+}
+
+.heatmap-legend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 0.5rem;
+}
+
+/* Top posts chart */
+.top-posts-chart {
+    margin: 1rem 0 2rem;
+    overflow-x: auto;
+}
+
+/* Flamegraph */
+.flamegraph-container {
+    margin: 1rem 0 2rem;
+    overflow-x: auto;
+}
+
+.flamegraph-bar:hover rect {
+    filter: brightness(1.2);
+}
+
+.flamegraph-tooltip {
+    background: var(--primary-bg);
+    border: 1px solid var(--secondary-bg);
+    border-radius: 4px;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.75rem;
+    color: var(--primary-fg);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 100;
+}
+
+/* Dashboard */
+.dashboard-section {
+    margin-bottom: 3rem;
+}
+
+.loading-text {
+    font-size: 0.85rem;
+    color: var(--primary-fg);
+    opacity: 0.6;
+    animation: loading-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes loading-pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.3; }
 }
 
 .share-buttons {
@@ -1324,7 +1466,9 @@ h4:hover .heading-anchor {
     nav, footer, .palette-overlay, .palette-modal, .terminal-wrapper,
     .search-overlay, .share-buttons, .toc, .giscus-wrapper, .post-nav,
     .skip-link, .reading-progress, .series-nav, .related-posts,
-    .copy-button, .heading-anchor, .back-link {
+    .copy-button, .heading-anchor, .back-link,
+    .heatmap-container, .top-posts-chart, .flamegraph-container,
+    .trending-section, .heat-indicator {
         display: none !important;
     }
 
