@@ -127,9 +127,9 @@ export function Background() {
       camera={{ fov: 60, near: 0.1, far: 100, position: [0, 0, 5] }}
       gl={{ antialias: false, powerPreference: 'low-power' }}
       style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1, pointerEvents: 'none', background: '#151515' }}
+      dpr={1}
       onCreated={({ gl }) => {
         gl.setClearColor(0x151515);
-        gl.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       }}
     >
       <Shapes />

@@ -76,7 +76,7 @@ export default function RootLayout({
       <body style={{ fontFamily: 'var(--font-kode-mono), monospace' }}>
         <svg width="0" height="0" aria-hidden="true" style={{ position: 'absolute' }}>
           <filter id="corona-filter">
-            <feTurbulence type="fractalNoise" baseFrequency="0.04 0.06" numOctaves={4} seed="3" result="noise" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.04 0.06" numOctaves={2} seed="3" result="noise" />
             <feDisplacementMap in="SourceGraphic" in2="noise" scale={6} xChannelSelector="R" yChannelSelector="G" />
           </filter>
         </svg>
