@@ -93,8 +93,7 @@ main::before {
     );
     box-shadow: 0 0 8px 3px rgba(215, 153, 33, 0.15),
                 0 0 3px 1px rgba(250, 200, 80, 0.1);
-    filter: url(#corona-filter);
-    animation: corona-drift 20s steps(60) infinite;
+    animation: corona-drift 20s linear infinite;
 }
 
 nav {
@@ -131,8 +130,7 @@ nav::before {
     );
     box-shadow: 0 0 8px 3px rgba(215, 153, 33, 0.15),
                 0 0 3px 1px rgba(250, 200, 80, 0.1);
-    filter: url(#corona-filter);
-    animation: corona-drift 20s steps(60) infinite;
+    animation: corona-drift 20s linear infinite;
 }
 
 @property --corona-angle {
