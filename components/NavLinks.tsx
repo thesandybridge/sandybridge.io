@@ -7,6 +7,7 @@ const links = [
   { href: '/', label: 'Home' },
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/blog', label: 'Blog' },
+  { href: '/uses', label: 'Uses' },
 ];
 
 export function NavLinks() {

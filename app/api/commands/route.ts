@@ -12,7 +12,7 @@ interface CommandResponse {
   message?: string;
 }
 
-const items = ['blog', 'home', 'portfolio'];
+const items = ['blog', 'home', 'portfolio', 'uses'];
 const contentDir = path.join(process.cwd(), 'content');
 
 function escapeHtml(str: string): string {
@@ -304,13 +304,14 @@ ${(() => {
     `│   ${i === posts.length - 1 ? '└' : '├'}── ${escapeHtml(p.slug)}`
   ).join('\n');
 })()}
-└── portfolio/
+├── portfolio/
 ${(() => {
   const items = getPostIndex().filter(p => p.dir === 'portfolio');
   return items.map((p, i) =>
-    `    ${i === items.length - 1 ? '└' : '├'}── ${escapeHtml(p.slug)}`
+    `│   ${i === items.length - 1 ? '└' : '├'}── ${escapeHtml(p.slug)}`
   ).join('\n');
-})()}`;
+})()}
+└── uses`;
       break;
     }
 

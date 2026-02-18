@@ -5,6 +5,7 @@ import { Nav } from '@/components/Nav';
 import { CommandPalette } from '@/components/CommandPalette';
 import { Background } from '@/components/Background';
 import { CursorGlow } from '@/components/CursorGlow';
+import { VimBindings } from '@/components/VimBindings';
 import './globals.css';
 
 const kodeMono = localFont({
@@ -108,6 +109,7 @@ export default function RootLayout({
         <Background />
         <CursorGlow />
         <CommandPalette />
+        <VimBindings />
       </body>
     </html>
   );

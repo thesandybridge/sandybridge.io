@@ -6,7 +6,7 @@ import type Fuse from 'fuse.js';
 import type { SearchItem } from '@/lib/search-index';
 
 const COMMANDS = ['help', 'cd', 'ls', 'clear', 'github', 'echo', 'contact', 'cat', 'pwd', 'grep', 'man', 'tree', 'history', 'ascii'];
-const CD_TARGETS = ['home', 'blog', 'portfolio'];
+const CD_TARGETS = ['home', 'blog', 'portfolio', 'uses'];
 
 function escapeHtmlClient(str: string): string {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');

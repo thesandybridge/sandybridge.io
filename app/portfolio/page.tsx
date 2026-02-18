@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getAllPosts } from '@/lib/content';
 import { parseGitHubUrl, getRepoStats, type RepoStats } from '@/lib/github';
+import { CoronaReveal } from '@/components/CoronaReveal';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -27,7 +28,7 @@ export default async function PortfolioPage() {
     <>
       <h1>Portfolio</h1>
       <p>Projects I&apos;ve built.</p>
-      <div className="portfolio-grid">
+      <CoronaReveal className="portfolio-grid">
         {items.map((item) => {
           const stats = statsMap.get(item.slug);
           return (
@@ -55,7 +56,7 @@ export default async function PortfolioPage() {
             </Link>
           );
         })}
-      </div>
+      </CoronaReveal>
     </>
   );
 }
