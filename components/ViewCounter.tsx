@@ -27,5 +27,5 @@ export function ViewCounter({ slug }: { slug: string }) {
 
   if (views === null) return null;
 
-  return <span className="view-count">{views.toLocaleString()} views</span>;
+  return <span className="view-count">{views.toLocaleString()} {views === 1 ? 'view' : 'views'}</span>;
 }

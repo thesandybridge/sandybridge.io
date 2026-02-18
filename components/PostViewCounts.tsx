@@ -17,7 +17,7 @@ export function PostViewCounts() {
 
           const span = document.createElement('span');
           span.className = 'view-count';
-          span.textContent = `${views.toLocaleString()} views`;
+          span.textContent = `${views.toLocaleString()} ${views === 1 ? 'view' : 'views'}`;
           link.appendChild(span);
           spans.push(span);
         }
