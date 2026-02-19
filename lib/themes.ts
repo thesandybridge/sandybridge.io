@@ -27,3 +27,31 @@ export const THEME_LOOKUP: Record<string, Theme> = THEMES.reduce((acc, t) => {
   t.aliases.forEach(alias => { acc[alias] = t.id; });
   return acc;
 }, {} as Record<string, Theme>);
+
+// Background colors for each theme/mode (used for initial page load)
+export const THEME_BACKGROUNDS: Record<Theme, Record<Mode, string>> = {
+  gruvbox: { dark: '#151515', light: '#fbf1c7' },
+  dracula: { dark: '#282a36', light: '#f8f8f2' },
+  alucard: { dark: '#0a0a0f', light: '#f8f8f2' },
+  nord: { dark: '#2e3440', light: '#eceff4' },
+  catppuccin: { dark: '#1e1e2e', light: '#eff1f5' },
+  'one-dark': { dark: '#282c34', light: '#fafafa' },
+  solarized: { dark: '#002b36', light: '#fdf6e3' },
+  prism: { dark: '#0a0a0c', light: '#fefefe' },
+  'oil-spill': { dark: '#08080c', light: '#f0f8f8' },
+};
+
+// Generate inline script for initial theme (prevents flash)
+export function generateThemeScript(): string {
+  const bgJson = JSON.stringify(THEME_BACKGROUNDS);
+  return `(function(){
+    var t=localStorage.getItem('theme')||'gruvbox';
+    var m=localStorage.getItem('mode');
+    if(!m){m=window.matchMedia&&window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark';}
+    document.documentElement.setAttribute('data-theme',t);
+    document.documentElement.setAttribute('data-mode',m);
+    var bg=${bgJson};
+    var c=bg[t]&&bg[t][m]?bg[t][m]:bg.gruvbox[m];
+    document.documentElement.style.backgroundColor=c;
+  })();`;
+}

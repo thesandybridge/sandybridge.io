@@ -3,8 +3,8 @@
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Home, Briefcase, BookOpen, Wrench, Palette, Check, Sun, Moon } from 'lucide-react';
-import { useTheme, THEMES } from './ThemeProvider';
+import { Menu, X, Home, Briefcase, BookOpen, Wrench, Palette, Check, Sun, Moon, Search } from 'lucide-react';
+import { useTheme, THEMES } from '../theme/ThemeProvider';
 
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
@@ -43,6 +43,12 @@ export function MobileNav() {
     toggleMode();
     setIsOpen(false);
   }, [toggleMode]);
+
+  const handleSearchClick = useCallback(() => {
+    setIsOpen(false);
+    // Open mobile search
+    window.dispatchEvent(new CustomEvent('open-mobile-search'));
+  }, []);
 
   return (
     <div className="mobile-nav">
@@ -96,6 +102,14 @@ export function MobileNav() {
             <button
               className="mobile-nav-pill"
               style={{ transitionDelay: `${navItems.length * 30}ms` }}
+              onClick={handleSearchClick}
+            >
+              <Search size={14} />
+              <span>Search</span>
+            </button>
+            <button
+              className="mobile-nav-pill"
+              style={{ transitionDelay: `${(navItems.length + 1) * 30}ms` }}
               onClick={handleModeToggle}
             >
               {mode === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
@@ -103,7 +117,7 @@ export function MobileNav() {
             </button>
             <button
               className="mobile-nav-pill"
-              style={{ transitionDelay: `${(navItems.length + 1) * 30}ms` }}
+              style={{ transitionDelay: `${(navItems.length + 2) * 30}ms` }}
               onClick={toggleThemes}
             >
               <Palette size={14} />

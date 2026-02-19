@@ -1,6 +1,6 @@
 import { Search } from 'lucide-react';
 import { NavLinks } from './NavLinks';
-import { ThemePicker } from './ThemePicker';
+import { ThemePicker } from '../theme/ThemePicker';
 
 export function Nav() {
   return (

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { NotFoundPath } from '@/components/NotFoundPath';
+import { NotFoundPath } from '@/components/features';
 
 export default function NotFound() {
   return (

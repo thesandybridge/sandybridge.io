@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { Skeleton } from './Skeleton';
+import { Skeleton } from '../ui/Skeleton';
 
 export function ViewCounter({ slug }: { slug: string }) {
   const [views, setViews] = useState<number | null>(null);

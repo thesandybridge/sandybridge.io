@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Skeleton } from './Skeleton';
+import { Skeleton } from '../ui/Skeleton';
 
 interface PostInfo {
   slug: string;

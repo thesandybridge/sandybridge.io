@@ -10,16 +10,8 @@ import rehypeShiki from '@shikijs/rehype';
 import { shikiConfig } from '@/lib/shiki-config';
 import { getPost, getAllPosts, getAdjacentPosts, extractHeadings, getRelatedPosts, getSeriesPosts } from '@/lib/content';
 import { getMDXComponents } from '@/lib/mdx-components';
-import { CopyButton } from '@/components/CopyButton';
-import { HeadingAnchors } from '@/components/HeadingAnchors';
-import { Lightbox } from '@/components/Lightbox';
-import { Share } from '@/components/Share';
-import { ReadingProgress } from '@/components/ReadingProgress';
-import { TableOfContents } from '@/components/TableOfContents';
-import { SeriesNav } from '@/components/SeriesNav';
-import { Giscus } from '@/components/Giscus';
-import { ViewCounter } from '@/components/ViewCounter';
-import { ResumeReading } from '@/components/ResumeReading';
+import { CopyButton, Lightbox } from '@/components/ui';
+import { HeadingAnchors, Share, ReadingProgress, TableOfContents, SeriesNav, Giscus, ViewCounter, ResumeReading } from '@/components/blog';
 import type { Metadata } from 'next';
 
 function generateArticleJsonLd(post: { title: string; description: string; date: string; lastModified?: string; slug: string; tags: string[] }) {

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { useIsMobile } from '@/lib/use-mobile';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Vector3, Shape, ExtrudeGeometry, type Mesh, type PerspectiveCamera } from 'three';
-import { useTheme, THEME_COLORS, type Theme } from './ThemeProvider';
+import { useTheme, THEME_COLORS, type Theme } from '../theme/ThemeProvider';
 
 // Create a bat-shaped geometry
 function createBatGeometry() {

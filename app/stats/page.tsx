@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import Link from 'next/link';
 import { getAllPosts, getAllTags } from '@/lib/content';
-import { CoronaReveal } from '@/components/CoronaReveal';
-import { TextScramble } from '@/components/TextScramble';
+import { CoronaReveal } from '@/components/effects';
+import { TextScramble } from '@/components/home';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {

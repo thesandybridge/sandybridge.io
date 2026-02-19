@@ -1,18 +1,12 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import Script from 'next/script';
-import { Nav } from '@/components/Nav';
-import { CommandPalette } from '@/components/CommandPalette';
-import { BackgroundLazy as Background } from '@/components/BackgroundLazy';
-import { CursorGlow } from '@/components/CursorGlow';
-import { MobileNav } from '@/components/MobileNav';
-import { VimBindings } from '@/components/VimBindings';
-import { KonamiCode } from '@/components/KonamiCode';
-import { DynamicFavicon } from '@/components/DynamicFavicon';
-import { TriangleBurst } from '@/components/TriangleBurst';
-import { CoronaScroll } from '@/components/CoronaScroll';
-import { Footer } from '@/components/Footer';
-import { ThemeProvider } from '@/components/ThemeProvider';
+import { Nav, MobileNav } from '@/components/nav';
+import { CommandPalette, MobileSearch } from '@/components/search';
+import { BackgroundLazy as Background, CursorGlow, TriangleBurst, CoronaScroll } from '@/components/effects';
+import { VimBindings, KonamiCode, Footer } from '@/components/features';
+import { DynamicFavicon, ThemeProvider } from '@/components/theme';
+import { generateThemeScript } from '@/lib/themes';
 import './globals.css';
 
 const kodeMono = localFont({
@@ -66,18 +60,7 @@ export default function RootLayout({
     <html lang="en" className={kodeMono.variable} suppressHydrationWarning>
       <head>
         <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){
-              var t=localStorage.getItem('theme')||'gruvbox';
-              var m=localStorage.getItem('mode');
-              if(!m){m=window.matchMedia&&window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark';}
-              document.documentElement.setAttribute('data-theme',t);
-              document.documentElement.setAttribute('data-mode',m);
-              var bg={gruvbox:{dark:'#151515',light:'#fbf1c7'},dracula:{dark:'#282a36',light:'#f8f8f2'},nord:{dark:'#2e3440',light:'#eceff4'},catppuccin:{dark:'#1e1e2e',light:'#eff1f5'},'one-dark':{dark:'#282c34',light:'#fafafa'},solarized:{dark:'#002b36',light:'#fdf6e3'},prism:{dark:'#0a0a0c',light:'#fefefe'},'oil-spill':{dark:'#08080c',light:'#f0f8f8'}};
-              var c=bg[t]&&bg[t][m]?bg[t][m]:bg.gruvbox[m];
-              document.documentElement.style.backgroundColor=c;
-            })();`,
-          }}
+          dangerouslySetInnerHTML={{ __html: generateThemeScript() }}
         />
         <Script id="gtm" strategy="afterInteractive">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -130,6 +113,7 @@ export default function RootLayout({
           <CommandPalette />
           <VimBindings />
           <MobileNav />
+          <MobileSearch />
           <KonamiCode />
           <DynamicFavicon />
         </ThemeProvider>

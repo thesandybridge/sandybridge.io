@@ -1,9 +1,8 @@
 import Link from 'next/link';
 import { getAllPosts } from '@/lib/content';
-import { PostViewCounts } from '@/components/PostViewCounts';
-import { TrendingPosts } from '@/components/TrendingPosts';
-import { CoronaReveal } from '@/components/CoronaReveal';
-import { TextScramble } from '@/components/TextScramble';
+import { PostViewCounts, TrendingPosts } from '@/components/blog';
+import { CoronaReveal } from '@/components/effects';
+import { TextScramble } from '@/components/home';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {

@@ -1,16 +1,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { getAllPosts } from '@/lib/content';
-import { CoronaReveal } from '@/components/CoronaReveal';
-import { BootSequence } from '@/components/BootSequence';
-import { TiltCard } from '@/components/TiltCard';
+import { CoronaReveal, TiltCard } from '@/components/effects';
 import { BLUR_DATA_URL } from '@/lib/blur-placeholder';
-import { HeroText } from '@/components/HeroText';
-import { InteractiveAscii } from '@/components/InteractiveAscii';
-import { Typewriter } from '@/components/Typewriter';
-import { StatusIndicator } from '@/components/StatusIndicator';
-import { TechStack } from '@/components/TechStack';
-import { AsciiInfo } from '@/components/AsciiInfo';
+import { BootSequence, HeroText, InteractiveAscii, Typewriter, TechStack, AsciiInfo } from '@/components/home';
+import { StatusIndicator } from '@/components/ui';
 
 export default function Home() {
   const posts = getAllPosts('blog');

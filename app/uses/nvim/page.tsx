@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { NvimConfigExplorer } from '@/components/NvimConfigExplorer';
+import { NvimConfigExplorer } from '@/components/features';
 
 export const metadata: Metadata = {
   title: 'Neovim Config',

@@ -2,10 +2,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getAllPosts } from '@/lib/content';
 import { parseGitHubUrl, getRepoStats, type RepoStats } from '@/lib/github';
-import { CoronaReveal } from '@/components/CoronaReveal';
-import { TiltCard } from '@/components/TiltCard';
+import { CoronaReveal, TiltCard } from '@/components/effects';
 import { BLUR_DATA_URL } from '@/lib/blur-placeholder';
-import { TextScramble } from '@/components/TextScramble';
+import { TextScramble } from '@/components/home';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {

@@ -10,11 +10,9 @@ import rehypeShiki from '@shikijs/rehype';
 import { shikiConfig } from '@/lib/shiki-config';
 import { getPost, getAllPosts } from '@/lib/content';
 import { getMDXComponents } from '@/lib/mdx-components';
-import { CopyButton } from '@/components/CopyButton';
-import { HeadingAnchors } from '@/components/HeadingAnchors';
-import { Lightbox } from '@/components/Lightbox';
-import { Share } from '@/components/Share';
-import { ProjectLinks } from '@/components/ProjectLinks';
+import { CopyButton, Lightbox } from '@/components/ui';
+import { HeadingAnchors, Share } from '@/components/blog';
+import { ProjectLinks } from '@/components/features';
 import { BLUR_DATA_URL } from '@/lib/blur-placeholder';
 import type { Metadata } from 'next';
 

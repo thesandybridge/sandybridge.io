@@ -5,7 +5,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import type Fuse from 'fuse.js';
 import type { SearchItem } from '@/lib/search-index';
 import { PaletteTitlebar } from './PaletteTitlebar';
-import { useTheme, type ParticleDensity } from './ThemeProvider';
+import { useTheme, type ParticleDensity } from '../theme/ThemeProvider';
+import { useIsMobile } from '@/lib/use-mobile';
 
 const COMMANDS = ['help', 'cd', 'ls', 'clear', 'github', 'echo', 'contact', 'cat', 'pwd', 'grep', 'man', 'tree', 'history', 'ascii', 'neofetch', 'matrix', 'theme'];
 const CD_TARGETS = ['home', 'blog', 'portfolio', 'uses'];
@@ -50,8 +51,10 @@ export function CommandPalette() {
   const pathname = usePathname();
   const router = useRouter();
   const { colors, setParticleDensity } = useTheme();
+  const isMobile = useIsMobile();
 
-  const isTerminalMode = inputValue.startsWith('>');
+  // Terminal mode disabled on mobile - search only
+  const isTerminalMode = !isMobile && inputValue.startsWith('>');
   const promptDir = pathname === '/' ? '~' : '~' + pathname.replace(/\/$/, '');
 
   // Load search index + Fuse.js on first open
@@ -693,7 +696,7 @@ export function CommandPalette() {
                     ref={searchInputRef}
                     type="text"
                     className="palette-search-input"
-                    placeholder="Search posts... or type > for terminal"
+                    placeholder={isMobile ? "Search posts..." : "Search posts... or type > for terminal"}
                     value={inputValue}
                     onChange={handleSearchInputChange}
                     onKeyDown={handleKeyDown}
@@ -718,10 +721,10 @@ export function CommandPalette() {
                   )}
                 </div>
                 <div className="palette-hint">
-                  <span><kbd>/</kbd> or <kbd>Ctrl+K</kbd> open</span>
+                  {!isMobile && <span><kbd>/</kbd> or <kbd>Ctrl+K</kbd> open</span>}
                   <span><kbd>↑↓</kbd> navigate</span>
                   <span><kbd>Enter</kbd> select</span>
-                  <span><kbd>&gt;</kbd> terminal mode</span>
+                  {!isMobile && <span><kbd>&gt;</kbd> terminal mode</span>}
                   <span><kbd>Esc</kbd> close</span>
                 </div>
               </>

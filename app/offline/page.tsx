@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { WifiOff } from 'lucide-react';
-import { CachedPages } from '@/components/CachedPages';
+import { CachedPages } from '@/components/features';
 
 export const metadata: Metadata = {
   title: 'Offline',

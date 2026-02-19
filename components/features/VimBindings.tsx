@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useCallback } from 'react';
-import { useTheme } from './ThemeProvider';
+import { useTheme } from '../theme/ThemeProvider';
 
 export function VimBindings() {
   const lastGRef = useRef(0);

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useIsMobile } from '@/lib/use-mobile';
-import { useTheme, type Theme } from './ThemeProvider';
+import { useTheme, type Theme } from '../theme/ThemeProvider';
 
 interface Particle {
   x: number;
