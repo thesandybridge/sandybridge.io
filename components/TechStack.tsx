@@ -7,10 +7,14 @@ const technologies = [
   { name: 'React', color: '#61dafb' },
   { name: 'Next.js', color: '#ffffff' },
   { name: 'Rust', color: '#dea584' },
+  { name: 'Go', color: '#00add8' },
   { name: 'Node.js', color: '#68a063' },
   { name: 'PostgreSQL', color: '#336791' },
   { name: 'Redis', color: '#dc382d' },
   { name: 'Docker', color: '#2496ed' },
+  { name: 'Neovim', color: '#57a143' },
+  { name: 'tmux', color: '#1bb91f' },
+  { name: 'Arch Linux', color: '#1793d1' },
 ];
 
 export function TechStack() {

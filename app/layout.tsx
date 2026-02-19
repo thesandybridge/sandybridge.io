@@ -7,6 +7,8 @@ import { BackgroundLazy as Background } from '@/components/BackgroundLazy';
 import { CursorGlow } from '@/components/CursorGlow';
 import { MobileNav } from '@/components/MobileNav';
 import { VimBindings } from '@/components/VimBindings';
+import { KonamiCode } from '@/components/KonamiCode';
+import { DynamicFavicon } from '@/components/DynamicFavicon';
 import { TriangleBurst } from '@/components/TriangleBurst';
 import { CoronaScroll } from '@/components/CoronaScroll';
 import { Footer } from '@/components/Footer';
@@ -65,7 +67,16 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var t=localStorage.getItem('theme');var m=localStorage.getItem('mode');if(t)document.documentElement.setAttribute('data-theme',t);if(m)document.documentElement.setAttribute('data-mode',m);})();`,
+            __html: `(function(){
+              var t=localStorage.getItem('theme')||'gruvbox';
+              var m=localStorage.getItem('mode');
+              if(!m){m=window.matchMedia&&window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark';}
+              document.documentElement.setAttribute('data-theme',t);
+              document.documentElement.setAttribute('data-mode',m);
+              var bg={gruvbox:{dark:'#151515',light:'#fbf1c7'},dracula:{dark:'#282a36',light:'#f8f8f2'},nord:{dark:'#2e3440',light:'#eceff4'},catppuccin:{dark:'#1e1e2e',light:'#eff1f5'},'one-dark':{dark:'#282c34',light:'#fafafa'},solarized:{dark:'#002b36',light:'#fdf6e3'},prism:{dark:'#0a0a0c',light:'#fefefe'},'oil-spill':{dark:'#08080c',light:'#f0f8f8'}};
+              var c=bg[t]&&bg[t][m]?bg[t][m]:bg.gruvbox[m];
+              document.documentElement.style.backgroundColor=c;
+            })();`,
           }}
         />
         <Script id="gtm" strategy="afterInteractive">
@@ -119,6 +130,8 @@ export default function RootLayout({
           <CommandPalette />
           <VimBindings />
           <MobileNav />
+          <KonamiCode />
+          <DynamicFavicon />
         </ThemeProvider>
       </body>
     </html>

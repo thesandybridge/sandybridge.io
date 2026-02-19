@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import type Fuse from 'fuse.js';
 import type { SearchItem } from '@/lib/search-index';
 import { PaletteTitlebar } from './PaletteTitlebar';
-import { useTheme } from './ThemeProvider';
+import { useTheme, type ParticleDensity } from './ThemeProvider';
 
 const COMMANDS = ['help', 'cd', 'ls', 'clear', 'github', 'echo', 'contact', 'cat', 'pwd', 'grep', 'man', 'tree', 'history', 'ascii', 'neofetch', 'matrix', 'theme'];
 const CD_TARGETS = ['home', 'blog', 'portfolio', 'uses'];
@@ -49,7 +49,7 @@ export function CommandPalette() {
   const fuseRef = useRef<Fuse<SearchItem> | null>(null);
   const pathname = usePathname();
   const router = useRouter();
-  const { colors } = useTheme();
+  const { colors, setParticleDensity } = useTheme();
 
   const isTerminalMode = inputValue.startsWith('>');
   const promptDir = pathname === '/' ? '~' : '~' + pathname.replace(/\/$/, '');
@@ -279,6 +279,132 @@ export function CommandPalette() {
     }, 100);
   }, [colors]);
 
+  const triggerFireworks = useCallback(() => {
+    setIsVisible(false);
+    const canvas = document.createElement('canvas');
+    canvas.style.cssText = `position:fixed;inset:0;z-index:9999;background:transparent;pointer-events:auto;`;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext('2d')!;
+
+    interface Particle { x: number; y: number; vx: number; vy: number; life: number; color: string; size: number; }
+    const particles: Particle[] = [];
+
+    const explode = (x: number, y: number) => {
+      const hue = Math.random() * 360;
+      for (let i = 0; i < 80; i++) {
+        const angle = (Math.PI * 2 * i) / 80;
+        const speed = 2 + Math.random() * 4;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 100,
+          color: `hsl(${hue + Math.random() * 30}, 100%, ${50 + Math.random() * 30}%)`,
+          size: 2 + Math.random() * 2,
+        });
+      }
+    };
+
+    let frame = 0;
+    const draw = () => {
+      ctx.fillStyle = 'rgba(0,0,0,0.1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      if (frame % 30 === 0) {
+        explode(Math.random() * canvas.width, Math.random() * canvas.height * 0.6);
+      }
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.05;
+        p.life -= 1;
+        if (p.life <= 0) { particles.splice(i, 1); continue; }
+        ctx.globalAlpha = p.life / 100;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      frame++;
+    };
+
+    const interval = setInterval(draw, 16);
+    const dismiss = () => { clearInterval(interval); canvas.remove(); document.removeEventListener('keydown', dismiss); document.removeEventListener('click', dismiss); };
+    setTimeout(dismiss, 6000);
+    setTimeout(() => { document.addEventListener('keydown', dismiss); document.addEventListener('click', dismiss); }, 100);
+  }, []);
+
+  const triggerConfetti = useCallback(() => {
+    const particles: HTMLDivElement[] = [];
+    for (let i = 0; i < 100; i++) {
+      const p = document.createElement('div');
+      p.style.cssText = `position:fixed;width:10px;height:10px;background:hsl(${Math.random()*360},100%,50%);z-index:9999;pointer-events:none;border-radius:2px;`;
+      p.style.left = `${Math.random() * 100}vw`;
+      p.style.top = '-20px';
+      p.style.transform = `rotate(${Math.random()*360}deg)`;
+      document.body.appendChild(p);
+      particles.push(p);
+      const duration = 2 + Math.random() * 2;
+      p.animate([
+        { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+        { transform: `translateY(100vh) rotate(${360 + Math.random()*360}deg)`, opacity: 0 }
+      ], { duration: duration * 1000, easing: 'ease-in' }).onfinish = () => p.remove();
+    }
+  }, []);
+
+  const triggerRain = useCallback(() => {
+    setIsVisible(false);
+    const canvas = document.createElement('canvas');
+    canvas.style.cssText = `position:fixed;inset:0;z-index:9999;background:${colors.background};`;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext('2d')!;
+
+    interface Drop { x: number; y: number; speed: number; length: number; }
+    const drops: Drop[] = [];
+    for (let i = 0; i < 200; i++) {
+      drops.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, speed: 5 + Math.random() * 10, length: 10 + Math.random() * 20 });
+    }
+
+    const draw = () => {
+      ctx.fillStyle = colors.background;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = colors.accent;
+      ctx.lineWidth = 1;
+      for (const d of drops) {
+        ctx.beginPath();
+        ctx.moveTo(d.x, d.y);
+        ctx.lineTo(d.x, d.y + d.length);
+        ctx.stroke();
+        d.y += d.speed;
+        if (d.y > canvas.height) { d.y = -d.length; d.x = Math.random() * canvas.width; }
+      }
+    };
+
+    const interval = setInterval(draw, 16);
+    const dismiss = () => { clearInterval(interval); canvas.remove(); document.removeEventListener('keydown', dismiss); document.removeEventListener('click', dismiss); };
+    setTimeout(dismiss, 6000);
+    setTimeout(() => { document.addEventListener('keydown', dismiss); document.addEventListener('click', dismiss); }, 100);
+  }, [colors]);
+
+  const toggleMode = useCallback(() => {
+    const current = document.documentElement.getAttribute('data-mode') || 'dark';
+    const newMode = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-mode', newMode);
+    localStorage.setItem('mode', newMode);
+  }, []);
+
+  const setMode = useCallback((mode: string) => {
+    document.documentElement.setAttribute('data-mode', mode);
+    localStorage.setItem('mode', mode);
+  }, []);
+
   const navigateSearch = useCallback((item: SearchItem) => {
     const url = item.type === 'blog' ? `/blog/${item.slug}` : `/portfolio/${item.slug}`;
     router.push(url);
@@ -348,6 +474,24 @@ export function CommandPalette() {
             ]);
             break;
           }
+          case 'fireworks':
+            triggerFireworks();
+            break;
+          case 'confetti':
+            triggerConfetti();
+            break;
+          case 'rain':
+            triggerRain();
+            break;
+          case 'toggle-mode':
+            toggleMode();
+            break;
+          case 'set-mode':
+            if (data.theme) setMode(data.theme);
+            break;
+          case 'particles':
+            if (data.theme) setParticleDensity(data.theme as ParticleDensity);
+            break;
         }
       } else {
         const html = await res.text();
@@ -361,7 +505,7 @@ export function CommandPalette() {
         { id: ++msgId, html: '<pre class="ignore"><span class="term-error">Error: failed to execute command</span></pre>' },
       ]);
     }
-  }, [router, close, doesSomethingDangerous, rmRf, triggerMatrix, cmdHistory]);
+  }, [router, close, doesSomethingDangerous, rmRf, triggerMatrix, triggerFireworks, triggerConfetti, triggerRain, toggleMode, setMode, setParticleDensity, cmdHistory]);
 
   const handleSubmit = useCallback((e: FormEvent) => {
     e.preventDefault();

@@ -139,6 +139,23 @@ const COMMAND_HELP: Record<string, { usage: string; description: string; example
     usage: 'matrix',
     description: 'Enter the matrix. Press any key or click to exit.',
   },
+  fireworks: {
+    usage: 'fireworks',
+    description: 'Launch a fireworks display. Press any key or click to exit.',
+  },
+  confetti: {
+    usage: 'confetti',
+    description: 'Celebrate with confetti!',
+  },
+  mode: {
+    usage: 'mode [light|dark]',
+    description: 'Toggle or set the color mode (light/dark).',
+    examples: ['mode', 'mode light', 'mode dark'],
+  },
+  rain: {
+    usage: 'rain',
+    description: 'Watch the digital rain fall. Press any key or click to exit.',
+  },
   clear: {
     usage: 'clear',
     description: 'Clear the terminal screen.',
@@ -160,6 +177,11 @@ const COMMAND_HELP: Record<string, { usage: string; description: string; example
     usage: 'theme [name]',
     description: 'Switch the site theme. Run without arguments to see available themes.',
     examples: ['theme', 'theme dracula', 'theme nord'],
+  },
+  particles: {
+    usage: 'particles [off|low|medium|high]',
+    description: 'Set the cursor particle effect density. Run without arguments to see current setting.',
+    examples: ['particles', 'particles high', 'particles off'],
   },
 };
 
@@ -431,6 +453,35 @@ ${(() => {
       response.action = 'matrix';
       break;
 
+    case 'fireworks':
+      response.action = 'fireworks';
+      break;
+
+    case 'confetti':
+      response.action = 'confetti';
+      break;
+
+    case 'rain':
+      response.action = 'rain';
+      break;
+
+    case 'mode': {
+      if (args.length < 2) {
+        response.action = 'toggle-mode';
+        message = '<span class="term-info">Toggling color mode...</span>';
+      } else {
+        const targetMode = args[1].toLowerCase();
+        if (targetMode === 'light' || targetMode === 'dark') {
+          response.action = 'set-mode';
+          response.theme = targetMode; // reusing theme field for mode
+          message = `<span class="term-info">Color mode set to ${targetMode}</span>`;
+        } else {
+          message = `<span class="term-error">Invalid mode: ${escapeHtml(targetMode)}. Use 'light' or 'dark'.</span>`;
+        }
+      }
+      break;
+    }
+
     case 'stats':
       response.action = 'navigate';
       response.url = '/stats/views';
@@ -456,6 +507,23 @@ ${(() => {
           message = `<span class="term-info">Theme changed to ${escapeHtml(target)}</span>`;
         } else {
           message = `<span class="term-error">Unknown theme: ${escapeHtml(target)}</span>\n<span class="term-info">Run 'theme' to see available options</span>`;
+        }
+      }
+      break;
+    }
+
+    case 'particles': {
+      const validDensities = ['off', 'low', 'medium', 'high'];
+      if (args.length < 2) {
+        message = `<span class="term-highlight">Particle Density Settings</span>\n\n  off     <span class="term-info">No cursor particles</span>\n  low     <span class="term-info">Subtle particles</span>\n  medium  <span class="term-info">Default density</span>\n  high    <span class="term-info">Maximum particles</span>\n\n<span class="term-info">Usage: particles &lt;density&gt;</span>`;
+      } else {
+        const target = args[1].toLowerCase();
+        if (validDensities.includes(target)) {
+          response.action = 'particles';
+          response.theme = target; // reusing theme field for density
+          message = `<span class="term-info">Particle density set to ${escapeHtml(target)}</span>`;
+        } else {
+          message = `<span class="term-error">Invalid density: ${escapeHtml(target)}</span>\n<span class="term-info">Options: off, low, medium, high</span>`;
         }
       }
       break;

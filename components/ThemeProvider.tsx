@@ -4,6 +4,14 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 
 export type Theme = 'gruvbox' | 'dracula' | 'nord' | 'catppuccin' | 'one-dark' | 'solarized' | 'prism' | 'oil-spill';
 export type Mode = 'light' | 'dark';
+export type ParticleDensity = 'off' | 'low' | 'medium' | 'high';
+
+export const PARTICLE_DENSITIES: { id: ParticleDensity; name: string; multiplier: number }[] = [
+  { id: 'off', name: 'Off', multiplier: 0 },
+  { id: 'low', name: 'Low', multiplier: 0.5 },
+  { id: 'medium', name: 'Medium', multiplier: 1 },
+  { id: 'high', name: 'High', multiplier: 2 },
+];
 
 export const THEMES: { id: Theme; name: string }[] = [
   { id: 'gruvbox', name: "Sandy's Theme" },
@@ -197,6 +205,9 @@ const ThemeContext = createContext<{
   toggleMode: () => void;
   themes: typeof THEMES;
   colors: ThemeColors;
+  particleDensity: ParticleDensity;
+  setParticleDensity: (d: ParticleDensity) => void;
+  particleMultiplier: number;
 }>({
   theme: 'gruvbox',
   setTheme: () => {},
@@ -205,23 +216,59 @@ const ThemeContext = createContext<{
   toggleMode: () => {},
   themes: THEMES,
   colors: THEME_COLORS.gruvbox.dark,
+  particleDensity: 'medium',
+  setParticleDensity: () => {},
+  particleMultiplier: 1,
 });
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('gruvbox');
   const [mode, setModeState] = useState<Mode>('dark');
+  const [particleDensity, setParticleDensityState] = useState<ParticleDensity>('medium');
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as Theme | null;
     const savedMode = localStorage.getItem('mode') as Mode | null;
+    const savedDensity = localStorage.getItem('particleDensity') as ParticleDensity | null;
 
     if (savedTheme && THEMES.some((t) => t.id === savedTheme)) {
       setThemeState(savedTheme);
     }
+
+    // Use saved mode, or fall back to system preference
     if (savedMode && (savedMode === 'light' || savedMode === 'dark')) {
       setModeState(savedMode);
       document.documentElement.setAttribute('data-mode', savedMode);
+    } else {
+      // Check system preference
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const systemMode = prefersDark ? 'dark' : 'light';
+      setModeState(systemMode);
+      document.documentElement.setAttribute('data-mode', systemMode);
     }
+
+    // Load particle density
+    if (savedDensity && PARTICLE_DENSITIES.some((d) => d.id === savedDensity)) {
+      setParticleDensityState(savedDensity);
+    }
+  }, []);
+
+  // Listen for system preference changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      // Only auto-switch if user hasn't set a manual preference
+      const savedMode = localStorage.getItem('mode');
+      if (!savedMode) {
+        const newMode = e.matches ? 'dark' : 'light';
+        setModeState(newMode);
+        document.documentElement.setAttribute('data-mode', newMode);
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
   const setTheme = useCallback((t: Theme) => {
@@ -240,11 +287,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setMode(mode === 'dark' ? 'light' : 'dark');
   }, [mode, setMode]);
 
+  const setParticleDensity = useCallback((d: ParticleDensity) => {
+    setParticleDensityState(d);
+    localStorage.setItem('particleDensity', d);
+  }, []);
+
+  const particleMultiplier = PARTICLE_DENSITIES.find((d) => d.id === particleDensity)?.multiplier ?? 1;
+
   const colors = THEME_COLORS[theme][mode];
 
   const value = useMemo(
-    () => ({ theme, setTheme, mode, setMode, toggleMode, themes: THEMES, colors }),
-    [theme, setTheme, mode, setMode, toggleMode, colors]
+    () => ({ theme, setTheme, mode, setMode, toggleMode, themes: THEMES, colors, particleDensity, setParticleDensity, particleMultiplier }),
+    [theme, setTheme, mode, setMode, toggleMode, colors, particleDensity, setParticleDensity, particleMultiplier]
   );
 
   return (

@@ -1,12 +1,13 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Palette, Check, Sun, Moon } from 'lucide-react';
 import { useTheme, type Theme } from './ThemeProvider';
 
 export function ThemePicker() {
   const { theme, setTheme, themes, mode, toggleMode } = useTheme();
+  const previewTimeoutRef = useRef<NodeJS.Timeout>(undefined);
 
   const handleSelect = useCallback((e: Event) => {
     const target = e.currentTarget as HTMLElement;
@@ -14,8 +15,24 @@ export function ThemePicker() {
     if (themeId) setTheme(themeId);
   }, [setTheme]);
 
+  const handlePreviewEnter = useCallback((previewTheme: Theme) => {
+    clearTimeout(previewTimeoutRef.current);
+    document.documentElement.setAttribute('data-theme', previewTheme);
+  }, []);
+
+  const handlePreviewLeave = useCallback(() => {
+    previewTimeoutRef.current = setTimeout(() => {
+      document.documentElement.setAttribute('data-theme', theme);
+    }, 50);
+  }, [theme]);
+
+  const handleMenuClose = useCallback(() => {
+    clearTimeout(previewTimeoutRef.current);
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
   return (
-    <DropdownMenu.Root modal={false}>
+    <DropdownMenu.Root modal={false} onOpenChange={(open) => !open && handleMenuClose()}>
       <DropdownMenu.Trigger className="theme-trigger" aria-label="Select theme">
         <Palette size={16} />
       </DropdownMenu.Trigger>
@@ -32,6 +49,8 @@ export function ThemePicker() {
               className="theme-item"
               data-theme={t.id}
               onSelect={handleSelect}
+              onMouseEnter={() => handlePreviewEnter(t.id)}
+              onMouseLeave={handlePreviewLeave}
             >
               {t.name}
               {theme === t.id && <Check size={14} />}

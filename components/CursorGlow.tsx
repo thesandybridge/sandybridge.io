@@ -22,11 +22,15 @@ export function CursorGlow() {
   const ringRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isMobile = useIsMobile();
-  const { colors, theme } = useTheme();
+  const { colors, theme, particleMultiplier, mode } = useTheme();
   const colorsRef = useRef(colors);
   const themeRef = useRef<Theme>(theme);
+  const multiplierRef = useRef(particleMultiplier);
+  const modeRef = useRef(mode);
   colorsRef.current = colors;
   themeRef.current = theme;
+  multiplierRef.current = particleMultiplier;
+  modeRef.current = mode;
 
   useEffect(() => {
     if (isMobile) return;
@@ -59,10 +63,13 @@ export function CursorGlow() {
     let frameCount = 0;
 
     const particles: Particle[] = [];
-    const MAX_PARTICLES = 20;
+    const BASE_MAX_PARTICLES = 20;
 
     const spawnParticle = (x: number, y: number) => {
-      if (particles.length >= MAX_PARTICLES) particles.shift();
+      const mult = multiplierRef.current;
+      if (mult === 0) return; // Particles disabled
+      const maxParticles = Math.floor(BASE_MAX_PARTICLES * mult);
+      if (particles.length >= maxParticles) particles.shift();
       const currentTheme = themeRef.current;
 
       // Theme-specific spawn parameters
@@ -286,6 +293,123 @@ export function CursorGlow() {
       ctx.restore();
     };
 
+    // Nord aurora borealis effect
+    const drawNordAurora = (cursorX: number, cursorY: number, frame: number) => {
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height * 0.3;
+      const isLight = modeRef.current === 'light';
+
+      // Cursor influence on aurora position
+      const offsetX = (cursorX - centerX) / centerX;
+      const offsetY = (cursorY - canvas.height / 2) / (canvas.height / 2);
+
+      ctx.save();
+
+      // Draw multiple aurora bands - use darker/more saturated colors for light mode
+      const bands = isLight ? [
+        { color: '94, 129, 172', yOffset: 0 },       // Nord frost darker
+        { color: '104, 157, 106', yOffset: 40 },    // Nord green darker
+        { color: '143, 103, 136', yOffset: 80 },    // Nord purple darker
+      ] : [
+        { color: '136, 192, 208', yOffset: 0 },      // Nord frost
+        { color: '163, 190, 140', yOffset: 40 },     // Nord green
+        { color: '180, 142, 173', yOffset: 80 },     // Nord purple
+      ];
+
+      // Higher opacity for light mode
+      const opacityMult = isLight ? 2.5 : 1;
+
+      bands.forEach((band, i) => {
+        const waveOffset = frame * 0.01 + i * 0.5;
+        const baseY = centerY + band.yOffset + offsetY * 30;
+
+        ctx.beginPath();
+        ctx.moveTo(0, baseY);
+
+        for (let x = 0; x <= canvas.width; x += 20) {
+          const wave1 = Math.sin(x * 0.005 + waveOffset) * 30;
+          const wave2 = Math.sin(x * 0.01 + waveOffset * 1.5) * 15;
+          const cursorWave = Math.sin((x - cursorX) * 0.01) * 20 * (1 - Math.abs(x - cursorX) / canvas.width);
+          const y = baseY + wave1 + wave2 + cursorWave + offsetX * 20;
+          ctx.lineTo(x, y);
+        }
+
+        ctx.lineTo(canvas.width, 0);
+        ctx.lineTo(0, 0);
+        ctx.closePath();
+
+        const gradient = ctx.createLinearGradient(0, baseY - 50, 0, baseY + 100);
+        gradient.addColorStop(0, `rgba(${band.color}, 0)`);
+        gradient.addColorStop(0.3, `rgba(${band.color}, ${0.15 * opacityMult})`);
+        gradient.addColorStop(0.6, `rgba(${band.color}, ${0.08 * opacityMult})`);
+        gradient.addColorStop(1, `rgba(${band.color}, 0)`);
+
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      });
+
+      ctx.restore();
+    };
+
+    // Solarized sun rays effect
+    const drawSolarizedRays = (cursorX: number, cursorY: number, frame: number) => {
+      // Sun position in corner, rays follow cursor
+      const sunX = canvas.width * 0.9;
+      const sunY = canvas.height * 0.1;
+      const isLight = modeRef.current === 'light';
+
+      // Use orange/red tones for light mode for better contrast
+      const rayColor = isLight ? '203, 75, 22' : '181, 137, 0';  // Solarized orange in light, yellow in dark
+      const opacityMult = isLight ? 2 : 1;
+
+      const angleToMouse = Math.atan2(cursorY - sunY, cursorX - sunX);
+      const rayCount = 12;
+      const maxLength = Math.max(canvas.width, canvas.height);
+
+      ctx.save();
+
+      for (let i = 0; i < rayCount; i++) {
+        const baseAngle = (Math.PI * 2 * i) / rayCount + frame * 0.002;
+        // Rays bend slightly toward cursor
+        const bendFactor = 0.1;
+        const angle = baseAngle + Math.sin(baseAngle - angleToMouse) * bendFactor;
+
+        const gradient = ctx.createLinearGradient(
+          sunX, sunY,
+          sunX + Math.cos(angle) * maxLength,
+          sunY + Math.sin(angle) * maxLength
+        );
+
+        gradient.addColorStop(0, `rgba(${rayColor}, ${0.2 * opacityMult})`);
+        gradient.addColorStop(0.3, `rgba(${rayColor}, ${0.08 * opacityMult})`);
+        gradient.addColorStop(1, `rgba(${rayColor}, 0)`);
+
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = isLight ? 4 : 3;
+
+        ctx.beginPath();
+        ctx.moveTo(sunX, sunY);
+        ctx.lineTo(
+          sunX + Math.cos(angle) * maxLength,
+          sunY + Math.sin(angle) * maxLength
+        );
+        ctx.stroke();
+      }
+
+      // Sun glow
+      const sunGradient = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, isLight ? 80 : 60);
+      sunGradient.addColorStop(0, `rgba(${rayColor}, ${0.3 * opacityMult})`);
+      sunGradient.addColorStop(0.5, `rgba(${rayColor}, ${0.1 * opacityMult})`);
+      sunGradient.addColorStop(1, `rgba(${rayColor}, 0)`);
+
+      ctx.fillStyle = sunGradient;
+      ctx.beginPath();
+      ctx.arc(sunX, sunY, isLight ? 80 : 60, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    };
+
     const drawOilDrop = (p: Particle, alpha: number) => {
       // Iridescent bubble/drop effect
       ctx.save();
@@ -317,6 +441,67 @@ export function CursorGlow() {
       ctx.restore();
     };
 
+    const drawPawPrint = (p: Particle, alpha: number) => {
+      const s = p.size * 0.8;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation);
+      ctx.globalAlpha = alpha * 0.8;
+      ctx.fillStyle = `rgba(${colorsRef.current.accentRgb}, 0.85)`;
+
+      // Main pad (oval)
+      ctx.beginPath();
+      ctx.ellipse(0, s * 0.3, s * 0.6, s * 0.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Toe beans (4 small circles)
+      const toePositions = [
+        { x: -s * 0.45, y: -s * 0.3 },
+        { x: -s * 0.15, y: -s * 0.5 },
+        { x: s * 0.15, y: -s * 0.5 },
+        { x: s * 0.45, y: -s * 0.3 },
+      ];
+      toePositions.forEach(({ x, y }) => {
+        ctx.beginPath();
+        ctx.arc(x, y, s * 0.22, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      ctx.restore();
+    };
+
+    const drawSunRay = (p: Particle, alpha: number) => {
+      const s = p.size;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation);
+      ctx.globalAlpha = alpha * 0.7;
+
+      // Glowing circle with rays
+      const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, s);
+      gradient.addColorStop(0, `rgba(${colorsRef.current.accentRgb}, 0.9)`);
+      gradient.addColorStop(0.5, `rgba(${colorsRef.current.accentRgb}, 0.4)`);
+      gradient.addColorStop(1, `rgba(${colorsRef.current.accentRgb}, 0)`);
+
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(0, 0, s, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Small rays
+      ctx.strokeStyle = `rgba(${colorsRef.current.accentRgb}, 0.6)`;
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 8; i++) {
+        const angle = (Math.PI * 2 * i) / 8;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(angle) * s * 0.6, Math.sin(angle) * s * 0.6);
+        ctx.lineTo(Math.cos(angle) * s * 1.2, Math.sin(angle) * s * 1.2);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    };
+
     const drawParticle = (p: Particle) => {
       const alpha = p.life / p.maxLife;
       const currentTheme = themeRef.current;
@@ -329,10 +514,10 @@ export function CursorGlow() {
           drawHexagon(p, alpha);
           break;
         case 'solarized':
-          drawCircle(p, alpha);
+          drawSunRay(p, alpha);
           break;
         case 'catppuccin':
-          drawDiamond(p, alpha);
+          drawPawPrint(p, alpha);
           break;
         case 'dracula':
           drawBat(p, alpha);
@@ -365,9 +550,17 @@ export function CursorGlow() {
       // Clear and draw
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw fullscreen prism refraction if theme is prism
-      if (themeRef.current === 'prism') {
-        drawPrismRefraction(mouseX, mouseY);
+      // Draw fullscreen theme effects
+      switch (themeRef.current) {
+        case 'prism':
+          drawPrismRefraction(mouseX, mouseY);
+          break;
+        case 'nord':
+          drawNordAurora(mouseX, mouseY, frameCount);
+          break;
+        case 'solarized':
+          drawSolarizedRays(mouseX, mouseY, frameCount);
+          break;
       }
 
       // Draw particles
@@ -383,11 +576,11 @@ export function CursorGlow() {
         drawParticle(p);
       }
 
-      // Stop loop when idle: no particles, ring converged, and not prism theme
+      // Stop loop when idle: no particles, ring converged, and no fullscreen effect
       const dx = mouseX - ringX;
       const dy = mouseY - ringY;
-      const isPrism = themeRef.current === 'prism';
-      if (particles.length === 0 && dx * dx + dy * dy < 1 && !isPrism) {
+      const hasFullscreenEffect = ['prism', 'nord', 'solarized'].includes(themeRef.current);
+      if (particles.length === 0 && dx * dx + dy * dy < 1 && !hasFullscreenEffect) {
         running = false;
         return;
       }
@@ -409,7 +602,10 @@ export function CursorGlow() {
       ring.style.opacity = '1';
 
       moveCount++;
-      if (moveCount % 3 === 0) {
+      const mult = multiplierRef.current;
+      // Spawn rate: every 3rd move for medium, every 2nd for high, every 6th for low
+      const spawnInterval = mult === 0 ? Infinity : Math.max(1, Math.floor(3 / mult));
+      if (moveCount % spawnInterval === 0) {
         spawnParticle(e.clientX, e.clientY);
       }
 
