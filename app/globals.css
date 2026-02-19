@@ -3482,4 +3482,12 @@ html.konami-active {
     .nvim-explorer-content {
         min-height: 350px;
     }
+
+    .nvim-explorer-highlighted pre {
+        font-size: 0.7rem;
+    }
+
+    .nvim-explorer-highlighted .line-numbers {
+        font-size: 0.7rem;
+    }
 }
