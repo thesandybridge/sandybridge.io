@@ -5,6 +5,7 @@ import { Nav } from '@/components/Nav';
 import { CommandPalette } from '@/components/CommandPalette';
 import { BackgroundLazy as Background } from '@/components/BackgroundLazy';
 import { CursorGlow } from '@/components/CursorGlow';
+import { MobileNav } from '@/components/MobileNav';
 import { VimBindings } from '@/components/VimBindings';
 import { TriangleBurst } from '@/components/TriangleBurst';
 import { CoronaScroll } from '@/components/CoronaScroll';
@@ -117,6 +118,7 @@ export default function RootLayout({
           <CoronaScroll />
           <CommandPalette />
           <VimBindings />
+          <MobileNav />
         </ThemeProvider>
       </body>
     </html>
