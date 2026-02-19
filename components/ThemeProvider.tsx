@@ -1,9 +1,9 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { THEMES, type Theme, type Mode } from '@/lib/themes';
 
-export type Theme = 'gruvbox' | 'dracula' | 'alucard' | 'nord' | 'catppuccin' | 'one-dark' | 'solarized' | 'prism' | 'oil-spill';
-export type Mode = 'light' | 'dark';
+export { THEMES, type Theme, type Mode };
 export type ParticleDensity = 'off' | 'low' | 'medium' | 'high';
 
 export const PARTICLE_DENSITIES: { id: ParticleDensity; name: string; multiplier: number }[] = [
@@ -11,18 +11,6 @@ export const PARTICLE_DENSITIES: { id: ParticleDensity; name: string; multiplier
   { id: 'low', name: 'Low', multiplier: 0.5 },
   { id: 'medium', name: 'Medium', multiplier: 1 },
   { id: 'high', name: 'High', multiplier: 2 },
-];
-
-export const THEMES: { id: Theme; name: string }[] = [
-  { id: 'gruvbox', name: "Sandy's Theme" },
-  { id: 'dracula', name: 'Dracula' },
-  { id: 'alucard', name: 'Alucard' },
-  { id: 'nord', name: 'Nord' },
-  { id: 'catppuccin', name: 'Catppuccin' },
-  { id: 'one-dark', name: 'One Dark' },
-  { id: 'solarized', name: 'Solarized' },
-  { id: 'prism', name: 'Prism' },
-  { id: 'oil-spill', name: 'Oil Spill' },
 ];
 
 export interface ThemeColors {

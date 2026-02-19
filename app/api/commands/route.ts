@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import sanitizeHtml from 'sanitize-html';
 import { getAllPosts } from '@/lib/content';
+import { THEMES, THEME_IDS } from '@/lib/themes';
 
 export const runtime = 'nodejs';
 
@@ -171,7 +172,7 @@ const COMMAND_HELP: Record<string, { usage: string; description: string; example
   },
   contact: {
     usage: 'contact',
-    description: 'Display contact information including email, LinkedIn, and GitHub.',
+    description: 'Display contact information including email, LinkedIn, GitHub, and X.',
   },
   theme: {
     usage: 'theme [name]',
@@ -241,7 +242,8 @@ function executeCommand(args: string[], referer: string): { response: CommandRes
       message = `Contact info:
     email:      matt@mattmillerdev.io
     linkedin:   /in/mattmillerdev/
-    github:     /thesandybridge`;
+    github:     /thesandybridge
+    x:          @sandybridge__`;
       break;
 
     case 'cd': {
@@ -496,12 +498,14 @@ ${(() => {
       break;
 
     case 'theme': {
-      const validThemes = ['gruvbox', 'dracula', 'nord', 'catppuccin', 'one-dark', 'solarized', 'prism', 'oil-spill'];
       if (args.length < 2) {
-        message = `<span class="term-highlight">Available themes</span>\n\n  gruvbox     <span class="term-info">Sandy's Theme (default)</span>\n  dracula     <span class="term-info">Dracula</span>\n  nord        <span class="term-info">Nord</span>\n  catppuccin  <span class="term-info">Catppuccin Mocha</span>\n  one-dark    <span class="term-info">One Dark</span>\n  solarized   <span class="term-info">Solarized Dark</span>\n  prism       <span class="term-info">Iridescent holographic</span>\n  oil-spill   <span class="term-info">Petroleum iridescent</span>\n\n<span class="term-info">Usage: theme &lt;name&gt;</span>`;
+        const themeList = THEMES.map(t =>
+          `  ${t.id.padEnd(12)}<span class="term-info">${t.name}${t.id === 'gruvbox' ? ' (default)' : ''}</span>`
+        ).join('\n');
+        message = `<span class="term-highlight">Available themes</span>\n\n${themeList}\n\n<span class="term-info">Usage: theme &lt;name&gt;</span>`;
       } else {
         const target = args[1].toLowerCase();
-        if (validThemes.includes(target)) {
+        if (THEME_IDS.includes(target as typeof THEME_IDS[number])) {
           response.action = 'theme';
           response.theme = target;
           message = `<span class="term-info">Theme changed to ${escapeHtml(target)}</span>`;
