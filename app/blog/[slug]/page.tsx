@@ -1,6 +1,7 @@
 import { cache } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Script from 'next/script';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
@@ -18,7 +19,33 @@ import { TableOfContents } from '@/components/TableOfContents';
 import { SeriesNav } from '@/components/SeriesNav';
 import { Giscus } from '@/components/Giscus';
 import { ViewCounter } from '@/components/ViewCounter';
+import { ResumeReading } from '@/components/ResumeReading';
 import type { Metadata } from 'next';
+
+function generateArticleJsonLd(post: { title: string; description: string; date: string; lastModified?: string; slug: string; tags: string[] }) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.description,
+    datePublished: post.date,
+    dateModified: post.lastModified || post.date,
+    author: {
+      '@type': 'Person',
+      name: 'Matt Miller',
+      url: 'https://sandybridge.io',
+    },
+    publisher: {
+      '@type': 'Person',
+      name: 'Matt Miller',
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://sandybridge.io/blog/${post.slug}`,
+    },
+    keywords: post.tags.join(', '),
+  };
+}
 
 const getCachedPost = cache((slug: string) => getPost('blog', slug));
 
@@ -57,9 +84,17 @@ export default async function BlogPost({ params }: Props) {
   const seriesPosts = post.series ? getSeriesPosts(post.series) : [];
   const showUpdated = post.lastModified && post.lastModified !== post.date;
 
+  const jsonLd = generateArticleJsonLd(post);
+
   return (
     <>
+      <Script
+        id="json-ld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <ReadingProgress />
+      <ResumeReading slug={slug} />
       <Link href="/blog" className="back-link">&larr; Back to Blog</Link>
       <article>
         <h1 style={{ viewTransitionName: `post-${slug}` }}>{post.title}</h1>

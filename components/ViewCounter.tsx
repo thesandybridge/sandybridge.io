@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import { Skeleton } from './Skeleton';
 
 export function ViewCounter({ slug }: { slug: string }) {
   const [views, setViews] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
   const depthSent = useRef(false);
 
   useEffect(() => {
@@ -12,6 +14,7 @@ export function ViewCounter({ slug }: { slug: string }) {
 
     if (already) {
       setViews(parseInt(already, 10));
+      setLoading(false);
       return;
     }
 
@@ -23,7 +26,8 @@ export function ViewCounter({ slug }: { slug: string }) {
         }
         setViews(data.views);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, [slug]);
 
   // Scroll depth tracking
@@ -73,6 +77,15 @@ export function ViewCounter({ slug }: { slug: string }) {
       sendDepth();
     };
   }, [slug]);
+
+  if (loading) {
+    return (
+      <span className="view-skeleton">
+        <span className="meta-dot">&middot;</span>
+        <Skeleton width="4rem" height="1em" />
+      </span>
+    );
+  }
 
   if (views === null) return null;
 

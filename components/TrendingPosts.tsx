@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { Skeleton } from './Skeleton';
 
 interface PostInfo {
   slug: string;
@@ -13,7 +14,7 @@ interface StatsResponse {
 }
 
 export function TrendingPosts({ posts }: { posts: PostInfo[] }) {
-  const [trending, setTrending] = useState<{ slug: string; title: string; views: number }[]>([]);
+  const [trending, setTrending] = useState<{ slug: string; title: string; views: number }[] | null>(null);
 
   useEffect(() => {
     fetch('/api/views/stats')
@@ -26,10 +27,27 @@ export function TrendingPosts({ posts }: { posts: PostInfo[] }) {
           .sort((a, b) => b.views - a.views)
           .slice(0, 5);
 
-        if (ranked.length > 0) setTrending(ranked);
+        setTrending(ranked.length > 0 ? ranked : []);
       })
-      .catch(() => {});
+      .catch(() => setTrending([]));
   }, [posts]);
+
+  if (trending === null) {
+    return (
+      <section className="trending-section">
+        <h2>Trending</h2>
+        <div className="trending-skeleton">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="trending-skeleton-item">
+              <Skeleton width="1.5rem" height="1.5rem" />
+              <Skeleton width="60%" />
+              <Skeleton width="4rem" />
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   if (trending.length === 0) return null;
 
