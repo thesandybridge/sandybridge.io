@@ -1,7 +1,7 @@
 ---
 title: "Building Tileforge"
 date: 2026-02-16
-description: "How I built a browser-based XYZ tile slicer with Rust and WebAssembly."
+description: "How a browser-based tile slicer grew into a full-stack platform with server-side processing, PMTiles, OAuth, and Stripe billing."
 tags: ["rust", "wasm", "webdev"]
 ---
 
@@ -259,5 +259,59 @@ The CLI shares the exact same tiling engine as the browser version. If something
 **Memory matters in WASM.** The streaming pipeline was originally a "nice to have" but it turned out to be necessary. Fantasy maps can easily be 15,000+ pixels and that blows past the WASM memory ceiling fast. The row-by-row PNG decoder and pyramid builder brought peak memory down to something manageable.
 
 **The pyramid builder is the clever bit.** Instead of accessing the source image at every zoom level you only decode it once at max zoom and then build everything else by merging tiles. Four tiles become one. The code is recursive and kind of elegant once you see it working.
+
+## What Came After
+
+Everything above describes the original browser-only prototype. Since then Tileforge has grown into a full-stack platform. Here's what got added.
+
+### PMTiles Output
+
+ZIP files work but they're inconvenient to serve — you need to extract thousands of small PNGs to a file server or S3 bucket. [PMTiles](https://protomaps.com/docs/pmtiles) is a single-file archive format designed for this: a client fetches individual tiles via HTTP range requests against one file hosted on any static file server.
+
+The core crate now has both a `ZipTileWriter` and a `PmTilesTileWriter`. A `TeeTileWriter` wraps both and generates ZIP + PMTiles simultaneously in a single pass over the tiles — no second processing run needed.
+
+The tileset detail page uses PMTiles for preview. Instead of downloading the full archive, it streams only the tiles visible in the current viewport via range requests. You can pan and zoom around a tileset without downloading more than a few hundred KB.
+
+### Server-Side Processing
+
+The browser WASM pipeline works great for most images but it has limits. WASM linear memory caps out around 1.5-2 GB, and even with the streaming pipeline you're bottlenecked by the browser's single-threaded worker.
+
+Pro users can upload images to a native Rust API built on Axum. The API writes the upload to S3, enqueues a job in Redis, and a background worker picks it up. The worker runs the same core tiling engine natively — same code, no WASM overhead, no memory ceiling. Progress is pushed to Redis and polled by the frontend.
+
+The architecture now has four Rust crates:
+
+```
+crates/
+├── core/      # Tiling engine (unchanged, still platform-agnostic)
+├── wasm/      # Browser bindings (unchanged)
+├── api/       # Axum HTTP API — uploads, downloads, CRUD, auth, keys
+└── worker/    # Background job consumer — tiling, thumbnails
+```
+
+### Auth and Billing
+
+GitHub OAuth via Auth.js v5. The tricky part was sharing authentication between Next.js and the Rust API — both need to validate the same JWT. The solution was HS256 tokens with a shared secret: Next.js mints them and the Axum API verifies them on every request.
+
+Stripe handles billing. Free users get browser-only processing. Pro users get server-side processing, 5 GB of S3 storage, API keys, and notifications.
+
+### Tileset Gallery
+
+Public tilesets show up in a browseable gallery with auto-generated thumbnails. The background worker generates a 480px JPEG thumbnail for every processed tileset. Users can manage their own tilesets — rename, toggle visibility, delete — from a dashboard page.
+
+### API Keys
+
+Pro users can generate `tf_...` bearer tokens for programmatic access. This lets you build scripts or integrations that upload images and download tiles without going through the web UI.
+
+### Notifications
+
+An in-app notification system backed by Postgres. Pro users get notifications when their server-side tiling jobs complete, when thumbnails are generated, and for billing events.
+
+### What I'd Do Differently
+
+The original decision to keep `core` platform-agnostic paid off enormously. Adding server-side processing was just writing a new binary that calls the same `Tiler::process_bytes()` function. No tiling code was duplicated.
+
+The one thing I'd change is the worker architecture. Right now it polls Redis for jobs on a timer. A proper message queue (NATS, RabbitMQ) would give cleaner delivery guarantees and reduce latency between job submission and pickup.
+
+---
 
 If you want to try it out, [Tileforge](https://tileforge.sandybridge.io/) is live and the source is on [GitHub](https://github.com/thesandybridge/tileforge).
