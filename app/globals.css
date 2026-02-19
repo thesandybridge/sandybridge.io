@@ -3232,11 +3232,27 @@ html.konami-active {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    width: 100%;
     padding: 0.75rem 1rem;
+    border: none;
     border-bottom: 1px solid var(--border);
+    background: none;
     font-size: 0.85rem;
+    font-family: inherit;
     color: var(--secondary-fg);
     font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+}
+
+.nvim-explorer-header .mobile-chevron {
+    display: none;
+    margin-left: auto;
+    transition: transform 0.2s ease;
+}
+
+.nvim-explorer-header .mobile-chevron.open {
+    transform: rotate(180deg);
 }
 
 .file-tree {
@@ -3428,16 +3444,42 @@ html.konami-active {
         grid-template-columns: 1fr;
         grid-template-rows: auto 1fr;
         height: auto;
-        max-height: 80vh;
+        min-height: 500px;
     }
 
     .nvim-explorer-sidebar {
         border-right: none;
         border-bottom: 1px solid var(--border);
-        max-height: 200px;
+        overflow: visible;
+    }
+
+    .nvim-explorer-header {
+        border-bottom: none;
+    }
+
+    .nvim-explorer-header .mobile-chevron {
+        display: block;
+    }
+
+    .nvim-explorer-sidebar .file-tree {
+        display: none;
+        max-height: 250px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .nvim-explorer-sidebar .file-tree.mobile-visible {
+        display: block;
+    }
+
+    .nvim-explorer-sidebar .nvim-explorer-github {
+        display: none;
+    }
+
+    .nvim-explorer-sidebar.mobile-open .nvim-explorer-github {
+        display: flex;
     }
 
     .nvim-explorer-content {
-        min-height: 400px;
+        min-height: 350px;
     }
 }

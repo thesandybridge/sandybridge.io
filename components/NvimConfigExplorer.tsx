@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { ChevronRight, ChevronDown, File, Folder, Copy, Check, ExternalLink } from 'lucide-react';
+import { ChevronRight, ChevronDown, File, Folder, Copy, Check, ExternalLink, FolderOpen } from 'lucide-react';
 
 interface FileNode {
   name: string;
@@ -89,6 +89,7 @@ export function NvimConfigExplorer() {
   const [loadingFile, setLoadingFile] = useState(false);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mobileTreeOpen, setMobileTreeOpen] = useState(false);
 
   // Fetch file tree on mount
   useEffect(() => {
@@ -149,6 +150,11 @@ export function NvimConfigExplorer() {
     });
   }, []);
 
+  const handleFileSelect = useCallback((path: string) => {
+    setSelectedPath(path);
+    setMobileTreeOpen(false); // Close accordion on mobile when file selected
+  }, []);
+
   const handleCopy = useCallback(async () => {
     if (!fileContent) return;
     try {
@@ -178,12 +184,17 @@ export function NvimConfigExplorer() {
 
   return (
     <div className="nvim-explorer">
-      <div className="nvim-explorer-sidebar">
-        <div className="nvim-explorer-header">
-          <Folder size={14} />
+      <div className={`nvim-explorer-sidebar${mobileTreeOpen ? ' mobile-open' : ''}`}>
+        <button
+          className="nvim-explorer-header"
+          onClick={() => setMobileTreeOpen(!mobileTreeOpen)}
+          aria-expanded={mobileTreeOpen}
+        >
+          {mobileTreeOpen ? <FolderOpen size={14} /> : <Folder size={14} />}
           <span>~/.config/nvim</span>
-        </div>
-        <div className="file-tree">
+          <ChevronDown size={14} className={`mobile-chevron${mobileTreeOpen ? ' open' : ''}`} />
+        </button>
+        <div className={`file-tree${mobileTreeOpen ? ' mobile-visible' : ''}`}>
           {tree.map((node) => (
             <FileTreeNode
               key={node.path}
@@ -191,7 +202,7 @@ export function NvimConfigExplorer() {
               level={0}
               selectedPath={selectedPath}
               expandedPaths={expandedPaths}
-              onSelect={setSelectedPath}
+              onSelect={handleFileSelect}
               onToggle={handleToggle}
             />
           ))}
