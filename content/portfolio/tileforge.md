@@ -42,7 +42,7 @@ A Rust workspace with four crates and a Next.js frontend:
 | `cli` | Native CLI binary using core directly |
 | `web` | Next.js 16, Tailwind v4, shadcn/ui, Leaflet tile preview |
 
-Backed by Redis (job queue, rate limiting, progress cache), Postgres (users, tilesets, notifications, API keys), and S3 (uploads, tiles, thumbnails).
+Backed by NATS JetStream (job queue with durable delivery, retry, and DLQ — falls back to Redis if NATS is unavailable), Redis (rate limiting, progress cache), Postgres (users, tilesets, notifications, API keys), and S3 (uploads, tiles, thumbnails).
 
 ## Tech Stack
 
@@ -50,6 +50,7 @@ Backed by Redis (job queue, rate limiting, progress cache), Postgres (users, til
 - **WebAssembly** — browser runtime via wasm-bindgen + Web Worker
 - **Next.js 16** — React 19, Tailwind v4, shadcn/ui
 - **PostgreSQL** — persistence
-- **Redis** — job queue, caching, rate limiting
+- **NATS JetStream** — job queue with durable delivery, retry, DLQ (optional, falls back to Redis)
+- **Redis** — caching, rate limiting, progress tracking
 - **S3** — object storage for tiles and thumbnails
 - **Stripe** — billing integration

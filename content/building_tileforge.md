@@ -276,7 +276,9 @@ The tileset detail page uses PMTiles for preview. Instead of downloading the ful
 
 The browser WASM pipeline works great for most images but it has limits. WASM linear memory caps out around 1.5-2 GB, and even with the streaming pipeline you're bottlenecked by the browser's single-threaded worker.
 
-Pro users can upload images to a native Rust API built on Axum. The API writes the upload to S3, enqueues a job in Redis, and a background worker picks it up. The worker runs the same core tiling engine natively — same code, no WASM overhead, no memory ceiling. Progress is pushed to Redis and polled by the frontend.
+Pro users can upload images to a native Rust API built on Axum. The API writes the upload to S3 and publishes a job to NATS JetStream. A background worker subscribes via a durable pull consumer with explicit acknowledgement, picks up the job, and runs the same core tiling engine natively — same code, no WASM overhead, no memory ceiling. Progress is pushed to Redis and polled by the frontend.
+
+NATS replaced an earlier Redis-polling approach. JetStream gives proper delivery guarantees — jobs are durably stored, acknowledged explicitly, and retried with escalating backoff (30s, 2min, 5min, 10min) up to 5 times before landing in a dead-letter queue. NATS is optional: if it's not configured, the system falls back to Redis `LPUSH`/`BRPOP` for simpler deployments.
 
 The architecture now has four Rust crates:
 
@@ -310,7 +312,7 @@ An in-app notification system backed by Postgres. Pro users get notifications wh
 
 The original decision to keep `core` platform-agnostic paid off enormously. Adding server-side processing was just writing a new binary that calls the same `Tiler::process_bytes()` function. No tiling code was duplicated.
 
-The one thing I'd change is the worker architecture. Right now it polls Redis for jobs on a timer. A proper message queue (NATS, RabbitMQ) would give cleaner delivery guarantees and reduce latency between job submission and pickup.
+If I were starting over I'd reach for NATS from day one instead of building on Redis polling first. The Redis `LPUSH`/`BRPOP` approach worked but it required manual retry logic, had no dead-letter handling, and added latency from the polling interval. JetStream solved all of that with durable streams, explicit ack, and built-in retry/DLQ — and keeping Redis as a fallback means the system still works for local dev without running a NATS server.
 
 ---
 
