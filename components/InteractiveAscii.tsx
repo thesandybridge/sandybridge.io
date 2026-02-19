@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { useIsMobile } from '@/lib/use-mobile';
 
 const ASCII = `███████╗ █████╗ ███╗   ██╗██████╗ ██╗   ██╗██████╗ ██████╗ ██╗██████╗  ██████╗ ███████╗
 ██╔════╝██╔══██╗████╗  ██║██╔══██╗╚██╗ ██╔╝██╔══██╗██╔══██╗██║██╔══██╗██╔════╝ ██╔════╝
@@ -12,27 +13,21 @@ const ASCII = `███████╗ █████╗ ███╗   ██
 const GLYPHS = '░▒▓█▀▄';
 
 export function InteractiveAscii() {
-  const containerRef = useRef<HTMLPreElement>(null);
+  const preRef = useRef<HTMLPreElement>(null);
   const gridRef = useRef<{ spans: HTMLSpanElement[][]; original: string[][] }>({ spans: [], original: [] });
-  const [isDesktop, setIsDesktop] = useState(false);
+  const isMobile = useIsMobile();
 
+  // Desktop: interactive mouse effect
   useEffect(() => {
-    const desktop = window.innerWidth >= 900 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setIsDesktop(desktop);
-  }, []);
-
-  useEffect(() => {
-    if (!isDesktop) return;
-    const container = containerRef.current;
+    if (isMobile || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const container = preRef.current;
     if (!container) return;
 
-    // Build spans from the text already inside the <pre>
     const text = ASCII;
     const lines = text.split('\n');
     const spans: HTMLSpanElement[][] = [];
     const original: string[][] = [];
 
-    // Clear and rebuild with spans, keeping layout identical to plain text
     container.innerHTML = '';
 
     for (let r = 0; r < lines.length; r++) {
@@ -84,7 +79,6 @@ export function InteractiveAscii() {
       const lineH = rect.height / grid.length;
 
       for (let r = 0; r < grid.length; r++) {
-        // compute line offset — chars are centered via text-align
         const lineWidth = grid[r].length * charW;
         const lineOffsetX = (rect.width - lineWidth) / 2;
 
@@ -129,23 +123,42 @@ export function InteractiveAscii() {
       window.removeEventListener('resize', onResize);
       container.removeEventListener('mousemove', onMouseMove);
       container.removeEventListener('mouseleave', onMouseLeave);
+      // Restore original text when switching away from desktop
+      container.textContent = ASCII;
     };
-  }, [isDesktop]);
+  }, [isMobile]);
 
-  if (!isDesktop) {
-    return (
-      <pre className="ascii" aria-hidden="true">
-        {ASCII}
-      </pre>
-    );
-  }
+  // Mobile: set font-size so text fits container width
+  useEffect(() => {
+    if (!isMobile) return;
+    const pre = preRef.current;
+    if (!pre) return;
+
+    const fit = () => {
+      // measure content width at a known base size
+      pre.style.fontSize = '10px';
+      const range = document.createRange();
+      range.selectNodeContents(pre);
+      const widthAtBase = range.getBoundingClientRect().width;
+      const available = pre.clientWidth;
+      if (widthAtBase > 0 && available > 0) {
+        pre.style.fontSize = `${(available / widthAtBase) * 10}px`;
+      }
+    };
+    fit();
+    window.addEventListener('resize', fit);
+    return () => {
+      window.removeEventListener('resize', fit);
+      pre.style.fontSize = '';
+    };
+  }, [isMobile]);
 
   return (
     <pre
-      className="ascii"
+      className={`ascii${isMobile ? ' ascii-mobile' : ''}`}
       aria-hidden="true"
-      ref={containerRef}
-      style={{ display: 'block', textAlign: 'center', cursor: 'crosshair' }}
+      ref={preRef}
+      style={!isMobile ? { display: 'block', textAlign: 'center', cursor: 'crosshair' } : undefined}
     >
       {ASCII}
     </pre>

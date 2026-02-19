@@ -229,6 +229,10 @@ h6 {
     text-shadow: var(--primary-fg) 1px 0 6px;
 }
 
+.ascii-mobile {
+    display: block;
+}
+
 .ignore {
     font-size: 16px;
     line-height: 1.5;
@@ -516,6 +520,10 @@ footer {
     html, body {
         background: var(--primary-bg);
     }
+
+    pre:not(.ascii, .ignore) .copy-button {
+        display: block;
+    }
 }
 
 .back-link {
@@ -686,6 +694,7 @@ footer {
 
 .share-buttons {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 0.75rem;
     font-size: 0.85rem;
@@ -1549,7 +1558,7 @@ h4:hover .heading-anchor {
     height: 26px;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 900px) and (hover: hover) and (pointer: fine) {
     html {
         cursor: none;
     }
@@ -1633,12 +1642,42 @@ article > h1 ~ h1 {
     display: none;
 }
 
+/* Back to Top */
+.back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--secondary-bg);
+    background: var(--primary-bg);
+    color: var(--secondary-fg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99;
+    opacity: 0;
+    pointer-events: none;
+    animation: show-back-to-top linear forwards;
+    animation-timeline: scroll();
+    animation-range: 300px 400px;
+
+    &:hover {
+        border-color: var(--secondary-fg);
+    }
+}
+
+@keyframes show-back-to-top {
+    to { opacity: 1; pointer-events: auto; }
+}
+
 /* Print stylesheet */
 @media print {
     nav, footer, .palette-overlay, .palette-modal, .terminal-wrapper,
     .search-overlay, .share-buttons, .toc, .giscus-wrapper, .post-nav,
     .skip-link, .reading-progress, .series-nav, .related-posts,
-    .copy-button, .heading-anchor, .back-link,
+    .copy-button, .heading-anchor, .back-link, .back-to-top,
     .heatmap-container, .top-posts-chart, .flamegraph-container,
     .trending-section, .heat-indicator {
         display: none !important;
@@ -1695,6 +1734,14 @@ article > h1 ~ h1 {
 }
 
 @media screen and (max-width: 600px) {
+    h1 { font-size: 1.5rem; }
+    h2 { font-size: 1.25rem; }
+    h3 { font-size: 1.1rem; }
+
+    .hero-text { font-size: 1.5rem; }
+
+    pre:not(.ascii, .ignore) { font-size: 0.85rem; }
+
     .portfolio-grid {
         grid-template-columns: 1fr;
     }
@@ -1717,5 +1764,30 @@ article > h1 ~ h1 {
 
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    #main-nav > li > a {
+        padding: 0.5rem 0.25rem;
+    }
+
+    .project-links a {
+        padding: 0.5rem;
+    }
+
+    .share-buttons a, .share-copy-link {
+        padding: 0.35rem 0.5rem;
+    }
+
+    .boot-overlay {
+        padding: 1.5rem 1rem;
+    }
+
+    .boot-lines {
+        font-size: 0.75rem;
+    }
+
+    .related-posts a {
+        flex-direction: column;
+        gap: 0.25rem;
     }
 }

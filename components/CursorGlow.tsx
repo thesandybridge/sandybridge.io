@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useIsMobile } from '@/lib/use-mobile';
 
 interface Particle {
   x: number;
@@ -18,9 +19,10 @@ export function CursorGlow() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
-    if (window.innerWidth < 900) return;
+    if (isMobile) return;
 
     const glow = glowRef.current;
     const dot = dotRef.current;
@@ -189,7 +191,9 @@ export function CursorGlow() {
       document.removeEventListener('mousedown', onMouseDown);
       document.removeEventListener('mouseup', onMouseUp);
     };
-  }, []);
+  }, [isMobile]);
+
+  if (isMobile) return null;
 
   return (
     <>

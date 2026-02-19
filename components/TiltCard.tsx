@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useCallback, type ReactNode } from 'react';
+import { useIsMobile } from '@/lib/use-mobile';
 
 interface TiltCardProps {
   children: ReactNode;
@@ -43,9 +44,11 @@ export function TiltCard({ children, className }: TiltCardProps) {
     if (shine) shine.style.opacity = '0';
   }, []);
 
+  const isMobile = useIsMobile();
+
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if (window.innerWidth < 900) return;
+    if (isMobile) return;
     isDesktop.current = true;
 
     const el = containerRef.current;
@@ -59,7 +62,7 @@ export function TiltCard({ children, className }: TiltCardProps) {
       el.removeEventListener('mousemove', handleMouseMove);
       el.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [handleMouseMove, handleMouseLeave]);
+  }, [handleMouseMove, handleMouseLeave, isMobile]);
 
   return (
     <div className={`tilt-container${className ? ' ' + className : ''}`} ref={containerRef}>

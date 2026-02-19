@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { useIsMobile } from '@/lib/use-mobile';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Vector3, type Mesh, type PerspectiveCamera } from 'three';
 
@@ -113,13 +114,9 @@ function Shapes() {
 }
 
 export function Background() {
-  const [show, setShow] = useState(false);
+  const isMobile = useIsMobile();
 
-  useEffect(() => {
-    if (window.innerWidth >= 900) setShow(true);
-  }, []);
-
-  if (!show) return null;
+  if (isMobile) return null;
 
   return (
     <Canvas

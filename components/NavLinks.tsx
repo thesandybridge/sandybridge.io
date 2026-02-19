@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
+import { useIsMobile } from '@/lib/use-mobile';
 
 const links = [
   { href: '/', label: 'Home' },
@@ -13,9 +14,10 @@ const links = [
 
 export function NavLinks() {
   const pathname = usePathname();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
-    if (window.innerWidth < 900) return;
+    if (isMobile) return;
 
     const nav = document.getElementById('main-nav');
     if (!nav) return;
@@ -54,7 +56,7 @@ export function NavLinks() {
         a.style.transform = '';
       }
     };
-  }, []);
+  }, [isMobile]);
 
   return (
     <>

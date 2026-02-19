@@ -128,6 +128,11 @@ export default async function BlogPost({ params }: Props) {
           </ul>
         </nav>
       )}
+      <a href="#content" className="back-to-top" aria-label="Back to top">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M8 12V4M4 7l4-4 4 4" />
+        </svg>
+      </a>
       <CopyButton />
       <HeadingAnchors />
       <Lightbox />

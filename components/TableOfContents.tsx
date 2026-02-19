@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useCallback } from 'react';
+import { useIsMobile } from '@/lib/use-mobile';
 import type { Heading } from '@/lib/content';
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 
 export function TableOfContents({ headings }: Props) {
   const navRef = useRef<HTMLElement>(null);
+  const isMobile = useIsMobile(600);
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -56,7 +58,7 @@ export function TableOfContents({ headings }: Props) {
 
   return (
     <nav className="toc" ref={navRef} aria-label="Table of contents">
-      <details open>
+      <details open={!isMobile}>
         <summary>Table of Contents</summary>
         <ul>
           {headings.map((h) => (

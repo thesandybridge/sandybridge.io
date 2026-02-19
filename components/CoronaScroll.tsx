@@ -1,10 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useIsMobile } from '@/lib/use-mobile';
 
 export function CoronaScroll() {
+  const isMobile = useIsMobile();
+
   useEffect(() => {
-    if (window.innerWidth < 900) return;
+    if (isMobile) return;
 
     const glows = document.querySelectorAll<HTMLElement>('.corona-glow');
     if (glows.length === 0) return;
@@ -60,7 +63,7 @@ export function CoronaScroll() {
       window.removeEventListener('scroll', onScroll);
       applyOpacity(0);
     };
-  }, []);
+  }, [isMobile]);
 
   return null;
 }
