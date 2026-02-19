@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Home, Briefcase, BookOpen, Wrench, Palette, Check } from 'lucide-react';
+import { Menu, X, Home, Briefcase, BookOpen, Wrench, Palette, Check, Sun, Moon } from 'lucide-react';
 import { useTheme, THEMES } from './ThemeProvider';
 
 const navItems = [
@@ -17,7 +17,7 @@ export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
   const [showThemes, setShowThemes] = useState(false);
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, mode, toggleMode } = useTheme();
 
   const toggleMenu = useCallback(() => {
     setIsOpen((prev) => !prev);
@@ -38,6 +38,11 @@ export function MobileNav() {
     setShowThemes(false);
     setIsOpen(false);
   }, [setTheme]);
+
+  const handleModeToggle = useCallback(() => {
+    toggleMode();
+    setIsOpen(false);
+  }, [toggleMode]);
 
   return (
     <div className="mobile-nav">
@@ -91,6 +96,14 @@ export function MobileNav() {
             <button
               className="mobile-nav-pill"
               style={{ transitionDelay: `${navItems.length * 30}ms` }}
+              onClick={handleModeToggle}
+            >
+              {mode === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
+              <span>{mode === 'dark' ? 'Light' : 'Dark'}</span>
+            </button>
+            <button
+              className="mobile-nav-pill"
+              style={{ transitionDelay: `${(navItems.length + 1) * 30}ms` }}
               onClick={toggleThemes}
             >
               <Palette size={14} />

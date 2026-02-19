@@ -3,8 +3,38 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useIsMobile } from '@/lib/use-mobile';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Vector3, type Mesh, type PerspectiveCamera } from 'three';
+import { Vector3, Shape, ExtrudeGeometry, type Mesh, type PerspectiveCamera } from 'three';
 import { useTheme, THEME_COLORS, type Theme } from './ThemeProvider';
+
+// Create a bat-shaped geometry
+function createBatGeometry() {
+  const shape = new Shape();
+  const s = 0.5;
+
+  // Body center
+  shape.moveTo(0, -s * 0.3);
+
+  // Right wing
+  shape.quadraticCurveTo(s * 0.4, -s * 0.1, s * 1.2, s * 0.3);
+  shape.quadraticCurveTo(s * 0.9, s * 0.1, s * 0.7, -s * 0.1);
+  shape.quadraticCurveTo(s * 0.5, s * 0.1, s * 0.3, s * 0.2);
+
+  // Head and right ear
+  shape.quadraticCurveTo(s * 0.2, s * 0.4, s * 0.15, s * 0.6);
+  shape.lineTo(s * 0.05, s * 0.35);
+
+  // Left ear
+  shape.lineTo(-s * 0.05, s * 0.35);
+  shape.lineTo(-s * 0.15, s * 0.6);
+  shape.quadraticCurveTo(-s * 0.2, s * 0.4, -s * 0.3, s * 0.2);
+
+  // Left wing
+  shape.quadraticCurveTo(-s * 0.5, s * 0.1, -s * 0.7, -s * 0.1);
+  shape.quadraticCurveTo(-s * 0.9, s * 0.1, -s * 1.2, s * 0.3);
+  shape.quadraticCurveTo(-s * 0.4, -s * 0.1, 0, -s * 0.3);
+
+  return new ExtrudeGeometry(shape, { depth: 0.05, bevelEnabled: false });
+}
 
 interface ShapeData {
   isBox: boolean;
@@ -16,7 +46,8 @@ interface ShapeData {
   scrollFactor: number;
 }
 
-function Shapes({ accentHex }: { accentHex: number }) {
+function Shapes({ accentHex, theme }: { accentHex: number; theme: Theme }) {
+  const batGeometry = useMemo(() => theme === 'dracula' ? createBatGeometry() : null, [theme]);
   const { camera, viewport } = useThree();
   const meshRefs = useRef<(Mesh | null)[]>([]);
   const focal = useRef(new Vector3());
@@ -106,7 +137,13 @@ function Shapes({ accentHex }: { accentHex: number }) {
           position={[s.x, s.y, s.z]}
           scale={s.scale}
         >
-          {s.isBox ? <boxGeometry args={[1, 1, 1]} /> : <tetrahedronGeometry args={[1]} />}
+          {theme === 'dracula' && batGeometry ? (
+            <primitive object={batGeometry} attach="geometry" />
+          ) : s.isBox ? (
+            <boxGeometry args={[1, 1, 1]} />
+          ) : (
+            <tetrahedronGeometry args={[1]} />
+          )}
           <meshBasicMaterial color={accentHex} transparent opacity={s.opacity} wireframe />
         </mesh>
       ))}
@@ -116,7 +153,7 @@ function Shapes({ accentHex }: { accentHex: number }) {
 
 export function Background() {
   const isMobile = useIsMobile();
-  const { colors } = useTheme();
+  const { colors, theme } = useTheme();
 
   if (isMobile) return null;
 
@@ -132,7 +169,7 @@ export function Background() {
         gl.setClearColor(colors.backgroundHex);
       }}
     >
-      <Shapes accentHex={colors.accentHex} />
+      <Shapes accentHex={colors.accentHex} theme={theme} />
     </Canvas>
   );
 }

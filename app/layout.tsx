@@ -65,7 +65,7 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();`,
+            __html: `(function(){var t=localStorage.getItem('theme');var m=localStorage.getItem('mode');if(t)document.documentElement.setAttribute('data-theme',t);if(m)document.documentElement.setAttribute('data-mode',m);})();`,
           }}
         />
         <Script id="gtm" strategy="afterInteractive">

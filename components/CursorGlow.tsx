@@ -56,6 +56,7 @@ export function CursorGlow() {
     let raf = 0;
     let running = false;
     let moveCount = 0;
+    let frameCount = 0;
 
     const particles: Particle[] = [];
     const MAX_PARTICLES = 20;
@@ -164,30 +165,123 @@ export function CursorGlow() {
       ctx.restore();
     };
 
-    const drawPrism = (p: Particle, alpha: number) => {
-      // Rainbow refraction effect - multiple colored rays
+    const drawBat = (p: Particle, alpha: number) => {
+      const s = p.size * 1.2;
+      // Flapping animation based on life
+      const flapAngle = Math.sin(p.life * 0.02) * 0.3;
+
       ctx.save();
       ctx.translate(p.x, p.y);
-      ctx.rotate(p.rotation);
-      ctx.globalAlpha = alpha * 0.8;
+      ctx.rotate(p.rotation * 0.3); // Subtle rotation
+      ctx.globalAlpha = alpha * 0.85;
+      ctx.fillStyle = `rgba(${colorsRef.current.accentRgb}, 0.9)`;
 
-      // Draw a small prism shape with rainbow gradient
-      const hue = p.hue ?? 0;
-      ctx.fillStyle = `hsla(${hue}, 90%, 70%, 0.9)`;
-
-      // Diamond/prism shape
+      // Body
       ctx.beginPath();
-      ctx.moveTo(0, -p.size);
-      ctx.lineTo(p.size * 0.6, 0);
-      ctx.lineTo(0, p.size);
-      ctx.lineTo(-p.size * 0.6, 0);
-      ctx.closePath();
+      ctx.ellipse(0, 0, s * 0.3, s * 0.5, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // Add a subtle glow
-      ctx.shadowColor = `hsla(${hue}, 100%, 60%, 0.5)`;
-      ctx.shadowBlur = 4;
+      // Left wing
+      ctx.save();
+      ctx.rotate(flapAngle);
+      ctx.beginPath();
+      ctx.moveTo(-s * 0.2, -s * 0.1);
+      ctx.quadraticCurveTo(-s * 0.8, -s * 0.6, -s * 1.2, -s * 0.2);
+      ctx.quadraticCurveTo(-s * 0.9, 0, -s * 0.7, s * 0.2);
+      ctx.quadraticCurveTo(-s * 0.5, 0, -s * 0.2, s * 0.1);
       ctx.fill();
+      ctx.restore();
+
+      // Right wing
+      ctx.save();
+      ctx.rotate(-flapAngle);
+      ctx.beginPath();
+      ctx.moveTo(s * 0.2, -s * 0.1);
+      ctx.quadraticCurveTo(s * 0.8, -s * 0.6, s * 1.2, -s * 0.2);
+      ctx.quadraticCurveTo(s * 0.9, 0, s * 0.7, s * 0.2);
+      ctx.quadraticCurveTo(s * 0.5, 0, s * 0.2, s * 0.1);
+      ctx.fill();
+      ctx.restore();
+
+      // Ears
+      ctx.beginPath();
+      ctx.moveTo(-s * 0.15, -s * 0.4);
+      ctx.lineTo(-s * 0.25, -s * 0.7);
+      ctx.lineTo(-s * 0.05, -s * 0.5);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(s * 0.15, -s * 0.4);
+      ctx.lineTo(s * 0.25, -s * 0.7);
+      ctx.lineTo(s * 0.05, -s * 0.5);
+      ctx.fill();
+
+      ctx.restore();
+    };
+
+    const drawPrism = (p: Particle, alpha: number) => {
+      // Small sparkle particle for prism theme
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.globalAlpha = alpha * 0.6;
+      const hue = p.hue ?? 0;
+      ctx.fillStyle = `hsla(${hue}, 90%, 75%, 0.8)`;
+      ctx.beginPath();
+      ctx.arc(0, 0, p.size * 0.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    };
+
+    // 3D pyramid - fixed square base, cursor is the apex
+    const drawPrismRefraction = (cursorX: number, cursorY: number) => {
+      // Fixed square at page boundary (base of pyramid)
+      const basePoints = [
+        { x: 0, y: 0 },                           // top-left
+        { x: canvas.width, y: 0 },                // top-right
+        { x: canvas.width, y: canvas.height },    // bottom-right
+        { x: 0, y: canvas.height },               // bottom-left
+      ];
+
+      ctx.save();
+
+      // Draw lines from each corner to cursor (pyramid edges)
+      basePoints.forEach((point, i) => {
+        const hue = (i * 90) + 0; // Red, Yellow, Green, Cyan
+
+        const gradient = ctx.createLinearGradient(point.x, point.y, cursorX, cursorY);
+        gradient.addColorStop(0, `hsla(${hue}, 90%, 70%, 0.4)`);
+        gradient.addColorStop(0.7, `hsla(${hue}, 85%, 65%, 0.2)`);
+        gradient.addColorStop(1, `hsla(${hue}, 80%, 60%, 0.05)`);
+
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 2;
+
+        ctx.beginPath();
+        ctx.moveTo(point.x, point.y);
+        ctx.lineTo(cursorX, cursorY);
+        ctx.stroke();
+      });
+
+      // Add midpoints on each edge for more rays
+      for (let i = 0; i < basePoints.length; i++) {
+        const p1 = basePoints[i];
+        const p2 = basePoints[(i + 1) % basePoints.length];
+        const midX = (p1.x + p2.x) / 2;
+        const midY = (p1.y + p2.y) / 2;
+        const hue = (i * 90) + 45;
+
+        const gradient = ctx.createLinearGradient(midX, midY, cursorX, cursorY);
+        gradient.addColorStop(0, `hsla(${hue}, 95%, 75%, 0.3)`);
+        gradient.addColorStop(0.7, `hsla(${hue}, 90%, 65%, 0.15)`);
+        gradient.addColorStop(1, `hsla(${hue}, 85%, 60%, 0.02)`);
+
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 1.5;
+
+        ctx.beginPath();
+        ctx.moveTo(midX, midY);
+        ctx.lineTo(cursorX, cursorY);
+        ctx.stroke();
+      }
 
       ctx.restore();
     };
@@ -238,8 +332,10 @@ export function CursorGlow() {
           drawCircle(p, alpha);
           break;
         case 'catppuccin':
-        case 'dracula':
           drawDiamond(p, alpha);
+          break;
+        case 'dracula':
+          drawBat(p, alpha);
           break;
         case 'prism':
           drawPrism(p, alpha);
@@ -260,13 +356,21 @@ export function CursorGlow() {
     };
 
     const updateRing = () => {
+      frameCount++;
       ringX += (mouseX - ringX) * 0.15;
       ringY += (mouseY - ringY) * 0.15;
       ring.style.left = ringX + 'px';
       ring.style.top = ringY + 'px';
 
-      // particles
+      // Clear and draw
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw fullscreen prism refraction if theme is prism
+      if (themeRef.current === 'prism') {
+        drawPrismRefraction(mouseX, mouseY);
+      }
+
+      // Draw particles
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.x += p.vx;
@@ -279,10 +383,11 @@ export function CursorGlow() {
         drawParticle(p);
       }
 
-      // Stop loop when idle: no particles and ring has converged
+      // Stop loop when idle: no particles, ring converged, and not prism theme
       const dx = mouseX - ringX;
       const dy = mouseY - ringY;
-      if (particles.length === 0 && dx * dx + dy * dy < 1) {
+      const isPrism = themeRef.current === 'prism';
+      if (particles.length === 0 && dx * dx + dy * dy < 1 && !isPrism) {
         running = false;
         return;
       }

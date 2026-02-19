@@ -2,11 +2,11 @@
 
 import { useCallback } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { Palette, Check } from 'lucide-react';
+import { Palette, Check, Sun, Moon } from 'lucide-react';
 import { useTheme, type Theme } from './ThemeProvider';
 
 export function ThemePicker() {
-  const { theme, setTheme, themes } = useTheme();
+  const { theme, setTheme, themes, mode, toggleMode } = useTheme();
 
   const handleSelect = useCallback((e: Event) => {
     const target = e.currentTarget as HTMLElement;
@@ -21,6 +21,11 @@ export function ThemePicker() {
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content className="theme-menu" sideOffset={8} align="end">
+          <DropdownMenu.Item className="theme-item mode-toggle" onSelect={toggleMode}>
+            {mode === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
+            {mode === 'dark' ? 'Light Mode' : 'Dark Mode'}
+          </DropdownMenu.Item>
+          <DropdownMenu.Separator className="theme-separator" />
           {themes.map((t) => (
             <DropdownMenu.Item
               key={t.id}
