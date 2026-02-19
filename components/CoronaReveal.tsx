@@ -18,8 +18,9 @@ export function CoronaReveal({ children, className, as: tag = 'div', style, dela
     const el = ref.current;
     if (!el) return;
 
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) {
+    const skip = window.matchMedia('(pointer: coarse)').matches
+      || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (skip) {
       el.classList.add('revealed');
       return;
     }
