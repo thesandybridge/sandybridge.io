@@ -234,6 +234,90 @@ h6 {
     display: block;
 }
 
+/* ASCII Info Panel */
+.ascii-info-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.ascii-info-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    background: none;
+    border: 1px solid var(--secondary-bg);
+    border-radius: 20px;
+    color: var(--primary-fg);
+    font-family: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+
+    &:hover {
+        border-color: var(--secondary-fg);
+        color: var(--secondary-fg);
+    }
+
+    svg {
+        fill: none;
+        stroke: currentColor;
+    }
+}
+
+.ascii-info-panel {
+    margin-top: 1rem;
+    padding: 1.25rem;
+    border: 1px solid var(--secondary-bg);
+    border-radius: 8px;
+    background: var(--primary-bg);
+    max-width: 600px;
+    animation: info-panel-in 0.3s ease;
+}
+
+@keyframes info-panel-in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ascii-info-item {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.ascii-info-icon {
+    flex-shrink: 0;
+    color: var(--secondary-fg);
+    margin-top: 0.15rem;
+}
+
+.ascii-info-item h4 {
+    font-size: 0.9rem;
+    color: var(--secondary-fg);
+    margin: 0 0 0.35rem 0;
+}
+
+.ascii-info-item p {
+    font-size: 0.85rem;
+    color: var(--primary-fg);
+    margin: 0;
+    line-height: 1.6;
+}
+
 .ignore {
     font-size: 16px;
     line-height: 1.5;
@@ -396,63 +480,163 @@ footer {
     max-width: 680px;
     background: var(--primary-bg);
     border: 1px solid var(--secondary-bg);
-    border-radius: 5px;
+    border-radius: 8px;
     position: relative;
     box-sizing: border-box;
     color: var(--secondary-fg);
     overflow: hidden;
-    box-shadow: 0 0 8px 3px rgba(215, 153, 33, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 8px 3px rgba(215, 153, 33, 0.15);
+    transition: max-width 0.3s ease, max-height 0.3s ease;
+}
 
-    .term-messages {
-        max-height: 300px;
-        overflow-y: auto;
-        padding: 0;
+.palette-modal.minimized {
+    max-width: 300px;
+}
+
+.palette-modal.minimized .term-header {
+    cursor: pointer;
+}
+
+.palette-modal.maximized {
+    max-width: 95vw;
+    width: 95vw;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.palette-modal.maximized .term-messages {
+    flex: 1;
+    max-height: none;
+}
+
+/* Terminal header */
+.term-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--secondary-bg);
+    border-bottom: 1px solid #3c3836;
+}
+
+.term-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.term-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #3c3836;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.15s, filter 0.15s;
+
+    &:hover {
+        transform: scale(1.15);
+        filter: brightness(1.2);
     }
 
-    .msg {
-        padding: 0 1rem;
-        font-family: inherit;
-        font-size: 16px;
-        line-height: 1.5;
-        font-weight: 500;
-        font-style: normal;
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+.term-dot.red { background: #fb4934; }
+.term-dot.yellow { background: #fabd2f; }
+.term-dot.green { background: #b8bb26; }
+
+.term-title {
+    flex: 1;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--primary-fg);
+    opacity: 0.7;
+}
+
+.term-messages {
+    min-height: 200px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #1d2021;
+}
+
+.term-messages .msg {
+    font-family: inherit;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.term-messages pre.ignore {
+    margin: 0 0 0.75rem 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.cmd-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: #1d2021;
+    border-top: 1px solid #3c3836;
+}
+
+.cmd-wrapper label {
+    color: var(--alt);
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.cmd-wrapper .prompt-dir {
+    color: #83a598;
+}
+
+.cmd-wrapper input {
+    background: none;
+    border: none;
+    color: var(--secondary-fg);
+    flex: 1;
+    font-family: inherit;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-left: 0.5rem;
+
+    &:focus-visible {
+        outline: none;
     }
 
-    .cmd-wrapper {
-        display: flex;
-        padding: 1rem;
-        border-top: 1px solid var(--secondary-bg);
-    }
-
-    .cmd-wrapper input {
-        background: none;
-        border: none;
-        color: var(--secondary-fg);
-        flex: auto;
-        box-sizing: border-box;
-        position: relative;
-        font-family: inherit;
-        font-size: 16px;
-        line-height: 1.5;
-        font-weight: 500;
-        font-style: normal;
-
-        &:focus-visible {
-            border: none;
-            outline: none;
-        }
-    }
-
-    .pwd {
+    &::placeholder {
         color: var(--primary-fg);
+        opacity: 0.4;
     }
+}
 
-    .term-error { color: #fb4934; }
-    .term-info { color: var(--primary-fg); }
-    .term-cursor {
-        animation: blink 0.7s step-end infinite;
-    }
+.term-error { color: #fb4934; }
+.term-info { color: var(--primary-fg); }
+.term-success { color: var(--alt); }
+.term-highlight { color: var(--secondary-fg); }
+.term-cursor {
+    animation: blink 0.7s step-end infinite;
+}
 
+/* Help command styling */
+.term-help-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.25rem 1.5rem;
+    margin: 0.5rem 0;
+}
+
+.term-help-cmd {
+    color: var(--secondary-fg);
+}
+
+.term-help-desc {
+    color: var(--primary-fg);
 }
 
 .palette-search-input {
@@ -576,6 +760,8 @@ footer {
 
     svg {
         flex-shrink: 0;
+        fill: none;
+        stroke: currentColor;
     }
 
     kbd {

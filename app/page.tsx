@@ -10,6 +10,7 @@ import { InteractiveAscii } from '@/components/InteractiveAscii';
 import { Typewriter } from '@/components/Typewriter';
 import { StatusIndicator } from '@/components/StatusIndicator';
 import { TechStack } from '@/components/TechStack';
+import { AsciiInfo } from '@/components/AsciiInfo';
 
 export default function Home() {
   const posts = getAllPosts('blog');
@@ -21,6 +22,7 @@ export default function Home() {
     <>
       <BootSequence postCount={posts.length} projectCount={portfolioItems.length} />
       <InteractiveAscii />
+      <AsciiInfo />
       <StatusIndicator />
       <HeroText />
       <Typewriter lines={[

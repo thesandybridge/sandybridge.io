@@ -83,30 +83,110 @@ function generateAsciiArt(text: string): string {
   return lines.map(row => row.join(' ')).join('\n');
 }
 
+const COMMAND_HELP: Record<string, { usage: string; description: string; examples?: string[] }> = {
+  help: {
+    usage: 'help [command]',
+    description: 'Display help information. Use "help <command>" for detailed info on a specific command.',
+    examples: ['help', 'help cd', 'help grep'],
+  },
+  cd: {
+    usage: 'cd <directory>',
+    description: 'Navigate to another page. Use "cd .." to go up, "cd ~" or "cd home" to go to homepage.',
+    examples: ['cd blog', 'cd portfolio', 'cd ..', 'cd ~'],
+  },
+  ls: {
+    usage: 'ls',
+    description: 'List all available top-level pages on the site.',
+  },
+  pwd: {
+    usage: 'pwd',
+    description: 'Print the current working directory (your current page path).',
+  },
+  cat: {
+    usage: 'cat <filename>',
+    description: 'Display the first few lines of a blog post or portfolio item content.',
+    examples: ['cat building_tileforge', 'cat safe-route'],
+  },
+  grep: {
+    usage: 'grep <term>',
+    description: 'Search all posts by title or tags. Returns matching post paths.',
+    examples: ['grep rust', 'grep react', 'grep typescript'],
+  },
+  man: {
+    usage: 'man <slug>',
+    description: 'Display metadata for a post including title, date, tags, and location.',
+    examples: ['man building_tileforge'],
+  },
+  tree: {
+    usage: 'tree',
+    description: 'Display the full site structure as a tree diagram.',
+  },
+  history: {
+    usage: 'history',
+    description: 'Show your command history for this session.',
+  },
+  ascii: {
+    usage: 'ascii <text>',
+    description: 'Generate ASCII art from text (max 12 characters).',
+    examples: ['ascii hello', 'ascii rust'],
+  },
+  neofetch: {
+    usage: 'neofetch',
+    description: 'Display system information in the classic neofetch style.',
+  },
+  matrix: {
+    usage: 'matrix',
+    description: 'Enter the matrix. Press any key or click to exit.',
+  },
+  clear: {
+    usage: 'clear',
+    description: 'Clear the terminal screen.',
+  },
+  github: {
+    usage: 'github',
+    description: 'Open the GitHub profile in a new tab.',
+  },
+  echo: {
+    usage: 'echo <message>',
+    description: 'Echo back the provided message.',
+    examples: ['echo hello world'],
+  },
+  contact: {
+    usage: 'contact',
+    description: 'Display contact information including email, LinkedIn, and GitHub.',
+  },
+};
+
 function executeCommand(args: string[], referer: string): { response: CommandResponse; message: string } {
   const response: CommandResponse = {};
   let message = '';
 
   switch (args[0]) {
-    case 'help':
-      message = `Commands available:
-    help    - Show this help message
-    cd      - Navigate to another page
-    ls      - List available pages
-    pwd     - Print current directory
-    cat     - Display post content
-    grep    - Search posts by keyword
-    man     - Show post metadata
-    tree    - Show site structure
-    history - Show command history (client-side)
-    ascii   - Generate ASCII art text
-    neofetch - Display system info
-    matrix  - Enter the matrix
-    clear   - Clear the screen
-    github  - Open the GitHub page in a new tab
-    echo    - Echo back the input
-    contact - Show contact information`;
+    case 'help': {
+      if (args.length > 1) {
+        const cmd = args[1];
+        const help = COMMAND_HELP[cmd];
+        if (help) {
+          let helpText = `<span class="term-highlight">${cmd}</span>\n\n`;
+          helpText += `<span class="term-info">Usage:</span>    ${help.usage}\n`;
+          helpText += `<span class="term-info">About:</span>    ${help.description}`;
+          if (help.examples && help.examples.length > 0) {
+            helpText += `\n\n<span class="term-info">Examples:</span>\n${help.examples.map(e => `    $ ${e}`).join('\n')}`;
+          }
+          message = helpText;
+        } else {
+          message = `<span class="term-error">help: no help entry for '${escapeHtml(cmd)}'</span>`;
+        }
+      } else {
+        const commands = Object.entries(COMMAND_HELP);
+        message = `<span class="term-highlight">Available Commands</span>\n<span class="term-info">Type "help &lt;command&gt;" for detailed information</span>\n\n<div class="term-help-grid">${
+          commands.map(([cmd, info]) =>
+            `<span class="term-help-cmd">${cmd}</span><span class="term-help-desc">${info.description.split('.')[0]}</span>`
+          ).join('')
+        }</div>`;
+      }
       break;
+    }
 
     case 'clear':
       response.action = 'clear';
