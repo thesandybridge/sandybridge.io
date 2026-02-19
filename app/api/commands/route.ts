@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import sanitizeHtml from 'sanitize-html';
 import { getAllPosts } from '@/lib/content';
-import { THEMES, THEME_IDS } from '@/lib/themes';
+import { THEMES, THEME_LOOKUP } from '@/lib/themes';
 
 export const runtime = 'nodejs';
 
@@ -499,16 +499,18 @@ ${(() => {
 
     case 'theme': {
       if (args.length < 2) {
-        const themeList = THEMES.map(t =>
-          `  ${t.id.padEnd(12)}<span class="term-info">${t.name}${t.id === 'gruvbox' ? ' (default)' : ''}</span>`
-        ).join('\n');
-        message = `<span class="term-highlight">Available themes</span>\n\n${themeList}\n\n<span class="term-info">Usage: theme &lt;name&gt;</span>`;
+        const themeList = THEMES.map(t => {
+          const aliasStr = t.aliases.length ? ` <span class="term-comment">(${t.aliases.join(', ')})</span>` : '';
+          return `  ${t.id.padEnd(12)}<span class="term-info">${t.name}</span>${aliasStr}`;
+        }).join('\n');
+        message = `<span class="term-highlight">Available themes</span>\n\n${themeList}\n\n<span class="term-info">Usage: theme &lt;name|alias&gt;</span>`;
       } else {
         const target = args[1].toLowerCase();
-        if (THEME_IDS.includes(target as typeof THEME_IDS[number])) {
+        const resolvedTheme = THEME_LOOKUP[target];
+        if (resolvedTheme) {
           response.action = 'theme';
-          response.theme = target;
-          message = `<span class="term-info">Theme changed to ${escapeHtml(target)}</span>`;
+          response.theme = resolvedTheme;
+          message = `<span class="term-info">Theme changed to ${escapeHtml(resolvedTheme)}</span>`;
         } else {
           message = `<span class="term-error">Unknown theme: ${escapeHtml(target)}</span>\n<span class="term-info">Run 'theme' to see available options</span>`;
         }
