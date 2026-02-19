@@ -2,6 +2,7 @@ import type { MDXComponents } from 'mdx/types';
 import Link from 'next/link';
 import { Callout } from '@/components/mdx/Callout';
 import { CodeTabs } from '@/components/mdx/CodeTabs';
+import { PlaceholderImage } from '@/components/mdx/PlaceholderImage';
 
 export function getMDXComponents(): MDXComponents {
   return {
@@ -13,5 +14,8 @@ export function getMDXComponents(): MDXComponents {
       }
       return <a href={href} target="_blank" rel="noopener noreferrer" {...props}>{children}</a>;
     },
+    img: ({ src, alt, className }) => (
+      <PlaceholderImage src={src} alt={alt} className={className} />
+    ),
   };
 }
