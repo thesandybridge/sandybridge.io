@@ -3,9 +3,11 @@ import localFont from 'next/font/local';
 import Script from 'next/script';
 import { Nav } from '@/components/Nav';
 import { CommandPalette } from '@/components/CommandPalette';
-import { Background } from '@/components/Background';
+import { BackgroundLazy as Background } from '@/components/BackgroundLazy';
 import { CursorGlow } from '@/components/CursorGlow';
 import { VimBindings } from '@/components/VimBindings';
+import { TriangleBurst } from '@/components/TriangleBurst';
+import { CoronaScroll } from '@/components/CoronaScroll';
 import './globals.css';
 
 const kodeMono = localFont({
@@ -95,6 +97,7 @@ export default function RootLayout({
             <Nav />
           </header>
           <main id="content">
+            <div className="corona-glow" aria-hidden="true" />
             {children}
           </main>
           <footer>
@@ -106,8 +109,11 @@ export default function RootLayout({
             </a>
           </footer>
         </div>
+        <TriangleBurst />
         <Background />
         <CursorGlow />
+        <div className="grain-overlay" />
+        <CoronaScroll />
         <CommandPalette />
         <VimBindings />
       </body>

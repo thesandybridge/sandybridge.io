@@ -33,6 +33,7 @@ export function BootSequence({ postCount, projectCount }: BootSequenceProps) {
     timerRef.current.forEach(clearTimeout);
     timerRef.current = [];
     sessionStorage.setItem('boot-done', '1');
+    document.dispatchEvent(new CustomEvent('boot-done'));
     setFadingOut(true);
     setTimeout(() => setVisible(false), 500);
   }, []);

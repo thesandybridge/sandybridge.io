@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import Link from 'next/link';
 import { getAllPosts, getAllTags } from '@/lib/content';
+import { CoronaReveal } from '@/components/CoronaReveal';
+import { TextScramble } from '@/components/TextScramble';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -54,7 +56,6 @@ export default function StatsPage() {
   const tags = getAllTags();
   const totalWords = countWords(path.join(process.cwd(), 'content'));
   const codeLines = countLines(process.cwd(), ['.ts', '.tsx', '.css']);
-  const contentDir = path.join(process.cwd(), 'content');
 
   const tagCounts: Record<string, number> = {};
   for (const post of blogPosts) {
@@ -70,36 +71,29 @@ export default function StatsPage() {
   const newest = blogPosts[0];
   const oldest = blogPosts[blogPosts.length - 1];
 
+  const statCards = [
+    { value: blogPosts.length, label: 'Blog Posts' },
+    { value: portfolioItems.length, label: 'Projects' },
+    { value: totalWords.toLocaleString(), label: 'Words Written' },
+    { value: readTimeTotal, label: 'Min Total Read Time' },
+    { value: tags.length, label: 'Unique Tags' },
+    { value: codeLines.toLocaleString(), label: 'Lines of Code' },
+  ];
+
   return (
     <>
-      <h1>Stats</h1>
+      <TextScramble>Stats</TextScramble>
       <p>Numbers from the build at {new Date().toISOString().split('T')[0]}.</p>
 
       <div className="stats-grid">
-        <div className="stat-card">
-          <span className="stat-value">{blogPosts.length}</span>
-          <span className="stat-label">Blog Posts</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-value">{portfolioItems.length}</span>
-          <span className="stat-label">Projects</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-value">{totalWords.toLocaleString()}</span>
-          <span className="stat-label">Words Written</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-value">{readTimeTotal}</span>
-          <span className="stat-label">Min Total Read Time</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-value">{tags.length}</span>
-          <span className="stat-label">Unique Tags</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-value">{codeLines.toLocaleString()}</span>
-          <span className="stat-label">Lines of Code</span>
-        </div>
+        {statCards.map((card, i) => (
+          <CoronaReveal key={card.label} delay={i * 80}>
+            <div className="stat-card">
+              <span className="stat-value">{card.value}</span>
+              <span className="stat-label">{card.label}</span>
+            </div>
+          </CoronaReveal>
+        ))}
       </div>
 
       <h2>Tags</h2>

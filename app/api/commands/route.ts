@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import matter from 'gray-matter';
 import sanitizeHtml from 'sanitize-html';
+import { getAllPosts } from '@/lib/content';
 
 export const runtime = 'nodejs';
 
@@ -13,7 +13,6 @@ interface CommandResponse {
 }
 
 const items = ['blog', 'home', 'portfolio', 'uses'];
-const contentDir = path.join(process.cwd(), 'content');
 
 function escapeHtml(str: string): string {
   return str
@@ -25,36 +24,9 @@ function escapeHtml(str: string): string {
 }
 
 function getPostIndex(): { slug: string; title: string; date: string; tags: string[]; dir: string }[] {
-  const posts: { slug: string; title: string; date: string; tags: string[]; dir: string }[] = [];
-
-  for (const file of fs.readdirSync(contentDir).filter(f => f.endsWith('.md'))) {
-    const raw = fs.readFileSync(path.join(contentDir, file), 'utf-8');
-    const { data } = matter(raw);
-    posts.push({
-      slug: path.basename(file, '.md'),
-      title: data.title || path.basename(file, '.md'),
-      date: data.date instanceof Date ? data.date.toISOString().split('T')[0] : String(data.date || ''),
-      tags: data.tags || [],
-      dir: 'blog',
-    });
-  }
-
-  const portfolioDir = path.join(contentDir, 'portfolio');
-  if (fs.existsSync(portfolioDir)) {
-    for (const file of fs.readdirSync(portfolioDir).filter(f => f.endsWith('.md'))) {
-      const raw = fs.readFileSync(path.join(portfolioDir, file), 'utf-8');
-      const { data } = matter(raw);
-      posts.push({
-        slug: path.basename(file, '.md'),
-        title: data.title || path.basename(file, '.md'),
-        date: data.date instanceof Date ? data.date.toISOString().split('T')[0] : String(data.date || ''),
-        tags: data.tags || [],
-        dir: 'portfolio',
-      });
-    }
-  }
-
-  return posts;
+  const blogPosts = getAllPosts('blog').map(p => ({ slug: p.slug, title: p.title, date: p.date, tags: p.tags, dir: 'blog' }));
+  const portfolioPosts = getAllPosts('portfolio').map(p => ({ slug: p.slug, title: p.title, date: p.date, tags: p.tags, dir: 'portfolio' }));
+  return [...blogPosts, ...portfolioPosts];
 }
 
 const ASCII_FONTS: Record<string, string[]> = {
@@ -128,6 +100,8 @@ function executeCommand(args: string[], referer: string): { response: CommandRes
     tree    - Show site structure
     history - Show command history (client-side)
     ascii   - Generate ASCII art text
+    neofetch - Display system info
+    matrix  - Enter the matrix
     clear   - Clear the screen
     github  - Open the GitHub page in a new tab
     echo    - Echo back the input
@@ -332,6 +306,44 @@ ${(() => {
       }
       break;
     }
+
+    case 'neofetch': {
+      const posts = getPostIndex();
+      const blogCount = posts.filter(p => p.dir === 'blog').length;
+      const projectCount = posts.filter(p => p.dir === 'portfolio').length;
+      const logo = [
+        '       <span style="color:#d79921">▲</span>       ',
+        '      <span style="color:#d79921">▲ ▲</span>      ',
+        '     <span style="color:#d79921">▲   ▲</span>     ',
+        '    <span style="color:#d79921">▲ ▲ ▲ ▲</span>    ',
+        '   <span style="color:#d79921">▲       ▲</span>   ',
+        '  <span style="color:#d79921">▲ ▲ ▲ ▲ ▲ ▲</span>  ',
+        ' <span style="color:#d79921">▲▲▲▲▲▲▲▲▲▲▲▲▲</span> ',
+      ];
+      const info = [
+        `<span style="color:#d79921">you</span>@<span style="color:#d79921">sandybridge</span>`,
+        '─────────────────',
+        `<span style="color:#d79921">OS</span>: Next.js 15`,
+        `<span style="color:#d79921">Shell</span>: gruvbox-terminal`,
+        `<span style="color:#d79921">Posts</span>: ${blogCount}`,
+        `<span style="color:#d79921">Projects</span>: ${projectCount}`,
+        `<span style="color:#d79921">Theme</span>: Gruvbox Dark`,
+        `<span style="color:#d79921">Font</span>: Kode Mono`,
+      ];
+      const lines = [];
+      const maxLines = Math.max(logo.length, info.length);
+      for (let i = 0; i < maxLines; i++) {
+        const left = i < logo.length ? logo[i] : '                       ';
+        const right = i < info.length ? info[i] : '';
+        lines.push(`${left}  ${right}`);
+      }
+      message = lines.join('\n');
+      break;
+    }
+
+    case 'matrix':
+      response.action = 'matrix';
+      break;
 
     case 'stats':
       response.action = 'navigate';

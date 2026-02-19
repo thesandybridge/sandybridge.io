@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -12,7 +13,10 @@ import { getMDXComponents } from '@/lib/mdx-components';
 import { CopyButton } from '@/components/CopyButton';
 import { HeadingAnchors } from '@/components/HeadingAnchors';
 import { Lightbox } from '@/components/Lightbox';
+import { BLUR_DATA_URL } from '@/lib/blur-placeholder';
 import type { Metadata } from 'next';
+
+const getCachedPost = cache((slug: string) => getPost('portfolio', slug));
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -24,7 +28,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPost('portfolio', slug);
+  const post = await getCachedPost(slug);
   if (!post) return {};
 
   return {
@@ -40,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PortfolioItem({ params }: Props) {
   const { slug } = await params;
-  const post = await getPost('portfolio', slug);
+  const post = await getCachedPost(slug);
   if (!post) notFound();
 
   return (
@@ -72,6 +76,8 @@ export default async function PortfolioItem({ params }: Props) {
             height={450}
             className="portfolio-hero"
             priority
+            placeholder="blur"
+            blurDataURL={BLUR_DATA_URL}
             style={{ width: '100%', height: 'auto' }}
           />
         )}

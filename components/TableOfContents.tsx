@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import type { Heading } from '@/lib/content';
 
 interface Props {
@@ -9,6 +9,22 @@ interface Props {
 
 export function TableOfContents({ headings }: Props) {
   const navRef = useRef<HTMLElement>(null);
+
+  const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const href = e.currentTarget.getAttribute('href');
+    if (!href) return;
+    const id = href.slice(1);
+    const target = document.getElementById(id);
+    if (!target) return;
+
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    setTimeout(() => {
+      target.classList.add('heading-pulse');
+      setTimeout(() => target.classList.remove('heading-pulse'), 1000);
+    }, 500);
+  }, []);
 
   useEffect(() => {
     const nav = navRef.current;
@@ -45,7 +61,7 @@ export function TableOfContents({ headings }: Props) {
         <ul>
           {headings.map((h) => (
             <li key={h.id} style={{ paddingLeft: (h.level - 2) * 1 + 'rem' }}>
-              <a href={`#${h.id}`}>
+              <a href={`#${h.id}`} onClick={handleClick}>
                 {h.text}
               </a>
             </li>

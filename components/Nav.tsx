@@ -3,6 +3,7 @@ import { NavLinks } from './NavLinks';
 export function Nav() {
   return (
     <nav>
+      <div className="corona-glow" aria-hidden="true" />
       <ul id="main-nav">
         <NavLinks />
         <li className="nav-shortcuts">

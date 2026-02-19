@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import type Fuse from 'fuse.js';
 import type { SearchItem } from '@/lib/search-index';
 
-const COMMANDS = ['help', 'cd', 'ls', 'clear', 'github', 'echo', 'contact', 'cat', 'pwd', 'grep', 'man', 'tree', 'history', 'ascii'];
+const COMMANDS = ['help', 'cd', 'ls', 'clear', 'github', 'echo', 'contact', 'cat', 'pwd', 'grep', 'man', 'tree', 'history', 'ascii', 'neofetch', 'matrix'];
 const CD_TARGETS = ['home', 'blog', 'portfolio', 'uses'];
 
 function escapeHtmlClient(str: string): string {
@@ -224,6 +224,50 @@ export function CommandPalette() {
     return () => clearInterval(interval);
   }, []);
 
+  const triggerMatrix = useCallback(() => {
+    setIsVisible(false);
+    const canvas = document.createElement('canvas');
+    canvas.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#000;';
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext('2d')!;
+    const fontSize = 14;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = new Array(columns).fill(1);
+    const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+    const draw = () => {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#b8bb26';
+      ctx.font = `${fontSize}px monospace`;
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    };
+
+    const interval = setInterval(draw, 33);
+
+    const dismiss = () => {
+      clearInterval(interval);
+      canvas.remove();
+      document.removeEventListener('keydown', dismiss);
+      document.removeEventListener('click', dismiss);
+    };
+
+    setTimeout(dismiss, 8000);
+    setTimeout(() => {
+      document.addEventListener('keydown', dismiss);
+      document.addEventListener('click', dismiss);
+    }, 100);
+  }, []);
+
   const navigateSearch = useCallback((item: SearchItem) => {
     const url = item.type === 'blog' ? `/blog/${item.slug}` : `/portfolio/${item.slug}`;
     router.push(url);
@@ -271,6 +315,9 @@ export function CommandPalette() {
           case 'rm-rf':
             rmRf();
             break;
+          case 'matrix':
+            triggerMatrix();
+            break;
           case 'history': {
             const historyHtml = cmdHistory.length === 0
               ? '<span class="term-info">No history</span>'
@@ -294,7 +341,7 @@ export function CommandPalette() {
         { id: ++msgId, html: '<pre class="ignore"><span class="term-error">Error: failed to execute command</span></pre>' },
       ]);
     }
-  }, [router, close, doesSomethingDangerous, rmRf, cmdHistory]);
+  }, [router, close, doesSomethingDangerous, rmRf, triggerMatrix, cmdHistory]);
 
   const handleSubmit = useCallback((e: FormEvent) => {
     e.preventDefault();

@@ -7,9 +7,11 @@ interface CoronaRevealProps {
   className?: string;
   as?: ElementType;
   style?: CSSProperties;
+  delay?: number;
+  direction?: 'up' | 'left' | 'right';
 }
 
-export function CoronaReveal({ children, className, as: tag = 'div', style }: CoronaRevealProps) {
+export function CoronaReveal({ children, className, as: tag = 'div', style, delay = 0, direction = 'up' }: CoronaRevealProps) {
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -36,9 +38,19 @@ export function CoronaReveal({ children, className, as: tag = 'div', style }: Co
     return () => observer.disconnect();
   }, []);
 
+  const combinedStyle: CSSProperties = {
+    ...style,
+    ...(delay > 0 ? { transitionDelay: `${delay}ms` } : {}),
+  };
+
   return createElement(
     tag,
-    { ref, className: `corona-reveal${className ? ' ' + className : ''}`, style },
+    {
+      ref,
+      className: `corona-reveal${className ? ' ' + className : ''}`,
+      style: combinedStyle,
+      ...(direction !== 'up' ? { 'data-direction': direction } : {}),
+    },
     children
   );
 }

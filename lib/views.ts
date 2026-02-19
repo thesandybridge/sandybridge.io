@@ -38,10 +38,9 @@ export async function recordView(slug: string, req: Request): Promise<number | n
   const dk = dedupKey(ip, slug);
 
   // Check if already viewed in last 24h
-  const existing = await redis.get(dk);
+  const [existing, current] = await redis.mget(dk, `views:${slug}`);
   if (existing !== null) {
     // Already counted — return current total without incrementing
-    const current = await redis.get(`views:${slug}`);
     return current ? parseInt(current, 10) : 0;
   }
 

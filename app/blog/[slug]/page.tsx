@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { MDXRemote } from 'next-mdx-remote/rsc';
@@ -19,6 +20,8 @@ import { Giscus } from '@/components/Giscus';
 import { ViewCounter } from '@/components/ViewCounter';
 import type { Metadata } from 'next';
 
+const getCachedPost = cache((slug: string) => getPost('blog', slug));
+
 interface Props {
   params: Promise<{ slug: string }>;
 }
@@ -29,7 +32,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPost('blog', slug);
+  const post = await getCachedPost(slug);
   if (!post) return {};
 
   return {
@@ -45,7 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPost({ params }: Props) {
   const { slug } = await params;
-  const post = await getPost('blog', slug);
+  const post = await getCachedPost(slug);
   if (!post) notFound();
 
   const { prev, next } = getAdjacentPosts('blog', slug);
@@ -59,6 +62,7 @@ export default async function BlogPost({ params }: Props) {
       <ReadingProgress />
       <Link href="/blog" className="back-link">&larr; Back to Blog</Link>
       <article>
+        <h1 style={{ viewTransitionName: `post-${slug}` }}>{post.title}</h1>
         {post.date && <time className="post-date" dateTime={post.date}>{post.date}</time>}
         {showUpdated && <time className="post-updated" dateTime={post.lastModified}>Updated {post.lastModified}</time>}
         <div className="post-meta-line">

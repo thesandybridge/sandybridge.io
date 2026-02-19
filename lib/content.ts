@@ -105,19 +105,25 @@ function parseFrontmatter(filePath: string): PostMeta | null {
   };
 }
 
+const postsCache = new Map<string, PostMeta[]>();
+
 export function getAllPosts(dir: 'blog' | 'portfolio', limit?: number): PostMeta[] {
-  const dirPath = getDir(dir);
-  if (!fs.existsSync(dirPath)) return [];
+  let posts = postsCache.get(dir);
+  if (!posts) {
+    const dirPath = getDir(dir);
+    if (!fs.existsSync(dirPath)) return [];
 
-  const files = fs.readdirSync(dirPath).filter((f) => f.endsWith('.md') || f.endsWith('.mdx'));
-  const posts: PostMeta[] = [];
+    const files = fs.readdirSync(dirPath).filter((f) => f.endsWith('.md') || f.endsWith('.mdx'));
+    posts = [];
 
-  for (const file of files) {
-    const meta = parseFrontmatter(path.join(dirPath, file));
-    if (meta) posts.push(meta);
+    for (const file of files) {
+      const meta = parseFrontmatter(path.join(dirPath, file));
+      if (meta) posts.push(meta);
+    }
+
+    posts.sort((a, b) => (b.date > a.date ? 1 : b.date < a.date ? -1 : 0));
+    postsCache.set(dir, posts);
   }
-
-  posts.sort((a, b) => (b.date > a.date ? 1 : b.date < a.date ? -1 : 0));
 
   if (limit) return posts.slice(0, limit);
   return posts;
