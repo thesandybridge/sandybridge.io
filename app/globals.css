@@ -36,7 +36,7 @@ html, body {
 }
 
 body {
-    min-height: 100vh;
+    min-height: 100dvh;
     padding: 1rem;
 }
 
@@ -57,7 +57,7 @@ svg {
     display: flex;
     gap: 2rem;
     flex-direction: column;
-    min-height: calc(100vh - 2rem);
+    min-height: calc(100dvh - 2rem);
     position: relative;
     z-index: 1;
 }
