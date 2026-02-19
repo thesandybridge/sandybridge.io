@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { useEffect, useRef, useState, useCallback, type FormEvent, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import type Fuse from 'fuse.js';
 import type { SearchItem } from '@/lib/search-index';
@@ -12,6 +12,10 @@ const CD_TARGETS = ['home', 'blog', 'portfolio', 'uses'];
 
 function escapeHtmlClient(str: string): string {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function stopPropagation(e: MouseEvent) {
+  e.stopPropagation();
 }
 
 interface Message {
@@ -440,6 +444,40 @@ export function CommandPalette() {
     }
   }, [isTerminalMode, cmdHistory, inputValue, searchResults.length]);
 
+  const handleMinimize = useCallback(() => {
+    setIsMinimized((prev) => !prev);
+    setIsMaximized(false);
+  }, []);
+
+  const handleMaximize = useCallback(() => {
+    setIsMaximized((prev) => !prev);
+    setIsMinimized(false);
+  }, []);
+
+  const handleHeaderClick = useCallback(() => {
+    if (isMinimized) setIsMinimized(false);
+  }, [isMinimized]);
+
+  const handleTerminalInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue('>' + e.target.value);
+  }, []);
+
+  const handleSearchInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    setSelectedIndex(0);
+  }, []);
+
+  const handleResultClick = useCallback((e: MouseEvent<HTMLButtonElement>) => {
+    const index = Number(e.currentTarget.dataset.index);
+    const item = searchResults[index];
+    if (item) navigateSearch(item);
+  }, [searchResults, navigateSearch]);
+
+  const handleResultMouseEnter = useCallback((e: MouseEvent<HTMLButtonElement>) => {
+    const index = Number(e.currentTarget.dataset.index);
+    setSelectedIndex(index);
+  }, []);
+
   if (!isVisible) return null;
 
   return (
@@ -448,7 +486,7 @@ export function CommandPalette() {
       className="palette-overlay"
       onClick={close}
     >
-      <div className={`palette-modal${isMinimized ? ' minimized' : ''}${isMaximized ? ' maximized' : ''}`} onClick={(e) => e.stopPropagation()}>
+      <div className={`palette-modal${isMinimized ? ' minimized' : ''}${isMaximized ? ' maximized' : ''}`} onClick={stopPropagation}>
         {isTerminalMode ? (
           <>
             <PaletteTitlebar
@@ -456,9 +494,9 @@ export function CommandPalette() {
               isMinimized={isMinimized}
               isMaximized={isMaximized}
               onClose={close}
-              onMinimize={() => { setIsMinimized(!isMinimized); setIsMaximized(false); }}
-              onMaximize={() => { setIsMaximized(!isMaximized); setIsMinimized(false); }}
-              onHeaderClick={() => isMinimized && setIsMinimized(false)}
+              onMinimize={handleMinimize}
+              onMaximize={handleMaximize}
+              onHeaderClick={handleHeaderClick}
             />
             {!isMinimized && (
               <>
@@ -478,7 +516,7 @@ export function CommandPalette() {
                     spellCheck={false}
                     autoComplete="off"
                     value={inputValue.slice(1)}
-                    onChange={(e) => setInputValue('>' + e.target.value)}
+                    onChange={handleTerminalInputChange}
                     onKeyDown={handleKeyDown}
                     placeholder="help"
                   />
@@ -500,9 +538,9 @@ export function CommandPalette() {
               isMinimized={isMinimized}
               isMaximized={isMaximized}
               onClose={close}
-              onMinimize={() => { setIsMinimized(!isMinimized); setIsMaximized(false); }}
-              onMaximize={() => { setIsMaximized(!isMaximized); setIsMinimized(false); }}
-              onHeaderClick={() => isMinimized && setIsMinimized(false)}
+              onMinimize={handleMinimize}
+              onMaximize={handleMaximize}
+              onHeaderClick={handleHeaderClick}
             />
             {!isMinimized && (
               <>
@@ -513,10 +551,7 @@ export function CommandPalette() {
                     className="palette-search-input"
                     placeholder="Search posts... or type > for terminal"
                     value={inputValue}
-                    onChange={(e) => {
-                      setInputValue(e.target.value);
-                      setSelectedIndex(0);
-                    }}
+                    onChange={handleSearchInputChange}
                     onKeyDown={handleKeyDown}
                   />
                 </form>
@@ -525,8 +560,9 @@ export function CommandPalette() {
                     <button
                       key={`${item.type}-${item.slug}`}
                       className={`search-result${i === selectedIndex ? ' selected' : ''}`}
-                      onClick={() => navigateSearch(item)}
-                      onMouseEnter={() => setSelectedIndex(i)}
+                      data-index={i}
+                      onClick={handleResultClick}
+                      onMouseEnter={handleResultMouseEnter}
                     >
                       <span className="search-result-type">{item.type}</span>
                       <span className="search-result-title">{item.title}</span>

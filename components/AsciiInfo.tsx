@@ -1,16 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Info, X, Cpu, Sparkles } from 'lucide-react';
 
 export function AsciiInfo() {
   const [isOpen, setIsOpen] = useState(false);
 
+  const toggleOpen = useCallback(() => {
+    setIsOpen((prev) => !prev);
+  }, []);
+
   return (
     <div className="ascii-info-wrapper">
       <button
         className="ascii-info-trigger"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleOpen}
         aria-expanded={isOpen}
         aria-label={isOpen ? "Close info" : "What is Sandy Bridge?"}
       >

@@ -1,6 +1,10 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, type MouseEvent } from 'react';
+
+function stopPropagation(e: MouseEvent) {
+  e.stopPropagation();
+}
 
 export function Lightbox() {
   const [src, setSrc] = useState<string | null>(null);
@@ -50,7 +54,7 @@ export function Lightbox() {
 
   return (
     <div className="lightbox-overlay" onClick={close}>
-      <img src={src} alt={alt} className="lightbox-image" onClick={(e) => e.stopPropagation()} />
+      <img src={src} alt={alt} className="lightbox-image" onClick={stopPropagation} />
     </div>
   );
 }

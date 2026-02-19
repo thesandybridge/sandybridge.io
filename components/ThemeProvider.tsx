@@ -1,8 +1,8 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
-export type Theme = 'gruvbox' | 'dracula' | 'nord' | 'catppuccin' | 'one-dark' | 'solarized';
+export type Theme = 'gruvbox' | 'dracula' | 'nord' | 'catppuccin' | 'one-dark' | 'solarized' | 'prism' | 'oil-spill';
 
 export const THEMES: { id: Theme; name: string }[] = [
   { id: 'gruvbox', name: "Sandy's Theme" },
@@ -11,6 +11,8 @@ export const THEMES: { id: Theme; name: string }[] = [
   { id: 'catppuccin', name: 'Catppuccin' },
   { id: 'one-dark', name: 'One Dark' },
   { id: 'solarized', name: 'Solarized' },
+  { id: 'prism', name: 'Prism' },
+  { id: 'oil-spill', name: 'Oil Spill' },
 ];
 
 export interface ThemeColors {
@@ -65,9 +67,9 @@ export const THEME_COLORS: Record<Theme, ThemeColors> = {
     primaryHex: 0xabb2bf,
     background: '#282c34',
     backgroundHex: 0x282c34,
-    accent: '#c678dd',
-    accentHex: 0xc678dd,
-    accentRgb: '198, 120, 221',
+    accent: '#56b6c2',
+    accentHex: 0x56b6c2,
+    accentRgb: '86, 182, 194',
   },
   solarized: {
     primary: '#839496',
@@ -77,6 +79,24 @@ export const THEME_COLORS: Record<Theme, ThemeColors> = {
     accent: '#b58900',
     accentHex: 0xb58900,
     accentRgb: '181, 137, 0',
+  },
+  prism: {
+    primary: '#d0d0d0',
+    primaryHex: 0xd0d0d0,
+    background: '#0a0a0c',
+    backgroundHex: 0x0a0a0c,
+    accent: '#e8b4d8',
+    accentHex: 0xe8b4d8,
+    accentRgb: '232, 180, 216',
+  },
+  'oil-spill': {
+    primary: '#b0c4c8',
+    primaryHex: 0xb0c4c8,
+    background: '#08080c',
+    backgroundHex: 0x08080c,
+    accent: '#4a9ca8',
+    accentHex: 0x4a9ca8,
+    accentRgb: '74, 156, 168',
   },
 };
 
@@ -102,16 +122,21 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const setTheme = (t: Theme) => {
+  const setTheme = useCallback((t: Theme) => {
     setThemeState(t);
     localStorage.setItem('theme', t);
     document.documentElement.setAttribute('data-theme', t);
-  };
+  }, []);
 
   const colors = THEME_COLORS[theme];
 
+  const value = useMemo(
+    () => ({ theme, setTheme, themes: THEMES, colors }),
+    [theme, setTheme, colors]
+  );
+
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, themes: THEMES, colors }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );

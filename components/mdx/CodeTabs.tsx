@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, type MouseEvent } from 'react';
 
 interface CodeTabsProps {
   labels: string[];
@@ -10,6 +10,11 @@ interface CodeTabsProps {
 export function CodeTabs({ labels, children }: CodeTabsProps) {
   const [active, setActive] = useState(0);
 
+  const handleTabClick = useCallback((e: MouseEvent<HTMLButtonElement>) => {
+    const index = Number(e.currentTarget.dataset.index);
+    setActive(index);
+  }, []);
+
   return (
     <div className="code-tabs">
       <div className="code-tabs-header">
@@ -17,7 +22,8 @@ export function CodeTabs({ labels, children }: CodeTabsProps) {
           <button
             key={label}
             className={`code-tab ${i === active ? 'code-tab-active' : ''}`}
-            onClick={() => setActive(i)}
+            data-index={i}
+            onClick={handleTabClick}
           >
             {label}
           </button>

@@ -445,9 +445,9 @@ ${(() => {
       break;
 
     case 'theme': {
-      const validThemes = ['gruvbox', 'dracula', 'nord', 'catppuccin', 'one-dark', 'solarized'];
+      const validThemes = ['gruvbox', 'dracula', 'nord', 'catppuccin', 'one-dark', 'solarized', 'prism', 'oil-spill'];
       if (args.length < 2) {
-        message = `<span class="term-highlight">Available themes</span>\n\n  gruvbox     <span class="term-info">Sandy's Theme (default)</span>\n  dracula     <span class="term-info">Dracula</span>\n  nord        <span class="term-info">Nord</span>\n  catppuccin  <span class="term-info">Catppuccin Mocha</span>\n  one-dark    <span class="term-info">One Dark</span>\n  solarized   <span class="term-info">Solarized Dark</span>\n\n<span class="term-info">Usage: theme &lt;name&gt;</span>`;
+        message = `<span class="term-highlight">Available themes</span>\n\n  gruvbox     <span class="term-info">Sandy's Theme (default)</span>\n  dracula     <span class="term-info">Dracula</span>\n  nord        <span class="term-info">Nord</span>\n  catppuccin  <span class="term-info">Catppuccin Mocha</span>\n  one-dark    <span class="term-info">One Dark</span>\n  solarized   <span class="term-info">Solarized Dark</span>\n  prism       <span class="term-info">Iridescent holographic</span>\n  oil-spill   <span class="term-info">Petroleum iridescent</span>\n\n<span class="term-info">Usage: theme &lt;name&gt;</span>`;
       } else {
         const target = args[1].toLowerCase();
         if (validThemes.includes(target)) {

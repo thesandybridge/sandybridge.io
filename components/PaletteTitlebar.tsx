@@ -1,5 +1,7 @@
 'use client';
 
+import { memo, useCallback, type MouseEvent } from 'react';
+
 interface PaletteTitlebarProps {
   title: string;
   isMinimized: boolean;
@@ -10,7 +12,7 @@ interface PaletteTitlebarProps {
   onHeaderClick?: () => void;
 }
 
-export function PaletteTitlebar({
+export const PaletteTitlebar = memo(function PaletteTitlebar({
   title,
   isMinimized,
   isMaximized,
@@ -19,24 +21,39 @@ export function PaletteTitlebar({
   onMaximize,
   onHeaderClick,
 }: PaletteTitlebarProps) {
+  const handleClose = useCallback((e: MouseEvent) => {
+    e.stopPropagation();
+    onClose();
+  }, [onClose]);
+
+  const handleMinimize = useCallback((e: MouseEvent) => {
+    e.stopPropagation();
+    onMinimize();
+  }, [onMinimize]);
+
+  const handleMaximize = useCallback((e: MouseEvent) => {
+    e.stopPropagation();
+    onMaximize();
+  }, [onMaximize]);
+
   return (
     <div className="term-header" onClick={onHeaderClick}>
       <div className="term-dots">
         <button
           className="term-dot red"
-          onClick={(e) => { e.stopPropagation(); onClose(); }}
+          onClick={handleClose}
           aria-label="Close"
           title="Close"
         />
         <button
           className="term-dot yellow"
-          onClick={(e) => { e.stopPropagation(); onMinimize(); }}
+          onClick={handleMinimize}
           aria-label={isMinimized ? "Restore" : "Minimize"}
           title={isMinimized ? "Restore" : "Minimize"}
         />
         <button
           className="term-dot green"
-          onClick={(e) => { e.stopPropagation(); onMaximize(); }}
+          onClick={handleMaximize}
           aria-label={isMaximized ? "Restore" : "Maximize"}
           title={isMaximized ? "Restore" : "Maximize"}
         />
@@ -44,4 +61,4 @@ export function PaletteTitlebar({
       <span className="term-title">{title}</span>
     </div>
   );
-}
+});
