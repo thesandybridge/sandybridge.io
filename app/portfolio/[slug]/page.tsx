@@ -13,6 +13,8 @@ import { getMDXComponents } from '@/lib/mdx-components';
 import { CopyButton } from '@/components/CopyButton';
 import { HeadingAnchors } from '@/components/HeadingAnchors';
 import { Lightbox } from '@/components/Lightbox';
+import { Share } from '@/components/Share';
+import { ProjectLinks } from '@/components/ProjectLinks';
 import { BLUR_DATA_URL } from '@/lib/blur-placeholder';
 import type { Metadata } from 'next';
 
@@ -51,23 +53,7 @@ export default async function PortfolioItem({ params }: Props) {
     <>
       <Link href="/portfolio" className="back-link">&larr; Back to Portfolio</Link>
       <article>
-        <div className="project-links">
-          {post.github && (
-            <a href={post.github} target="_blank" rel="noopener">
-              <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/svg/github-light.svg" alt="GitHub" className="project-icon" />
-            </a>
-          )}
-          {post.url && (
-            <a href={post.url} target="_blank" rel="noopener">
-              <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/svg/web-check.svg" alt="Live Site" className="project-icon" />
-            </a>
-          )}
-          {post.blog && (
-            <Link href={post.blog}>
-              <img src="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/svg/blogger.svg" alt="Blog Post" className="project-icon" />
-            </Link>
-          )}
-        </div>
+        <ProjectLinks github={post.github} url={post.url} blog={post.blog} />
         {post.image && (
           <Image
             src={`/assets/portfolio/${post.image}`}
@@ -89,6 +75,7 @@ export default async function PortfolioItem({ params }: Props) {
             ))}
           </div>
         )}
+        <Share title={post.title} />
         <MDXRemote
           source={post.rawContent}
           components={getMDXComponents()}

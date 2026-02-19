@@ -10,8 +10,6 @@ interface PostInfo {
 
 interface StatsResponse {
   totals: Record<string, number>;
-  daily: Record<string, Record<string, number>>;
-  summary: { totalViews: number; viewsThisWeek: number; topPost: string };
 }
 
 export function TrendingPosts({ posts }: { posts: PostInfo[] }) {
@@ -21,26 +19,8 @@ export function TrendingPosts({ posts }: { posts: PostInfo[] }) {
     fetch('/api/views/stats')
       .then((r) => r.json())
       .then((data: StatsResponse) => {
-        const now = new Date();
-        const weekAgo = new Date(now);
-        weekAgo.setDate(weekAgo.getDate() - 7);
-        const weekStr = weekAgo.toISOString().split('T')[0];
-
-        // Sum views per slug over last 7 days
-        const recentViews: Record<string, number> = {};
-        for (const [date, slugCounts] of Object.entries(data.daily)) {
-          if (date >= weekStr) {
-            for (const [slug, count] of Object.entries(slugCounts)) {
-              recentViews[slug] = (recentViews[slug] || 0) + count;
-            }
-          }
-        }
-
-        // If no daily data, fall back to totals
-        const source = Object.keys(recentViews).length > 0 ? recentViews : data.totals;
-
         const titleMap = new Map(posts.map((p) => [p.slug, p.title]));
-        const ranked = Object.entries(source)
+        const ranked = Object.entries(data.totals)
           .filter(([slug]) => titleMap.has(slug))
           .map(([slug, views]) => ({ slug, title: titleMap.get(slug)!, views }))
           .sort((a, b) => b.views - a.views)

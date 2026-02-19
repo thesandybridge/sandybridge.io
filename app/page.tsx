@@ -8,6 +8,8 @@ import { BLUR_DATA_URL } from '@/lib/blur-placeholder';
 import { HeroText } from '@/components/HeroText';
 import { InteractiveAscii } from '@/components/InteractiveAscii';
 import { Typewriter } from '@/components/Typewriter';
+import { StatusIndicator } from '@/components/StatusIndicator';
+import { TechStack } from '@/components/TechStack';
 
 export default function Home() {
   const posts = getAllPosts('blog');
@@ -19,11 +21,16 @@ export default function Home() {
     <>
       <BootSequence postCount={posts.length} projectCount={portfolioItems.length} />
       <InteractiveAscii />
+      <StatusIndicator />
       <HeroText />
       <Typewriter lines={[
         "I'm a software engineer focused on frontend development and expanding into systems work. I started building WordPress sites, then moved into modern web applications with React and TypeScript. These days I'm learning Rust and working on CLI tools, debugging infrastructure, and understanding the systems that power the web. I deliver working software that solves actual problems.",
         "Currently working for a SaaS startup, where I've become the goto for frontend architecture and increasingly for backend and infrastructure work. I've optimized CI/CD pipelines, debugged production microservices, and built tooling that actually saves time and money. I am self taught with no degree, just consistent focus on understanding how things work and making them work better.",
       ]} />
+
+      <CoronaReveal>
+        <TechStack />
+      </CoronaReveal>
 
       {recentPosts.length > 0 && (
         <CoronaReveal>

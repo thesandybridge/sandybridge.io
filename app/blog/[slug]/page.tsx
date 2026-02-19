@@ -12,7 +12,7 @@ import { getMDXComponents } from '@/lib/mdx-components';
 import { CopyButton } from '@/components/CopyButton';
 import { HeadingAnchors } from '@/components/HeadingAnchors';
 import { Lightbox } from '@/components/Lightbox';
-import { ShareButtons } from '@/components/ShareButtons';
+import { Share } from '@/components/Share';
 import { ReadingProgress } from '@/components/ReadingProgress';
 import { TableOfContents } from '@/components/TableOfContents';
 import { SeriesNav } from '@/components/SeriesNav';
@@ -76,7 +76,7 @@ export default async function BlogPost({ params }: Props) {
             ))}
           </div>
         )}
-        <ShareButtons title={post.title} />
+        <Share title={post.title} />
         {seriesPosts.length > 1 && (
           <SeriesNav currentSlug={slug} seriesPosts={seriesPosts} seriesName={post.series!} />
         )}
