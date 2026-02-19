@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { useIsMobile } from '@/lib/use-mobile';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Vector3, type Mesh, type PerspectiveCamera } from 'three';
+import { useTheme, THEME_COLORS, type Theme } from './ThemeProvider';
 
 interface ShapeData {
   isBox: boolean;
@@ -15,7 +16,7 @@ interface ShapeData {
   scrollFactor: number;
 }
 
-function Shapes() {
+function Shapes({ accentHex }: { accentHex: number }) {
   const { camera, viewport } = useThree();
   const meshRefs = useRef<(Mesh | null)[]>([]);
   const focal = useRef(new Vector3());
@@ -106,7 +107,7 @@ function Shapes() {
           scale={s.scale}
         >
           {s.isBox ? <boxGeometry args={[1, 1, 1]} /> : <tetrahedronGeometry args={[1]} />}
-          <meshBasicMaterial color={0xd79921} transparent opacity={s.opacity} wireframe />
+          <meshBasicMaterial color={accentHex} transparent opacity={s.opacity} wireframe />
         </mesh>
       ))}
     </>
@@ -115,21 +116,23 @@ function Shapes() {
 
 export function Background() {
   const isMobile = useIsMobile();
+  const { colors } = useTheme();
 
   if (isMobile) return null;
 
   return (
     <Canvas
+      key={colors.backgroundHex}
       id="bg-canvas"
       camera={{ fov: 60, near: 0.1, far: 100, position: [0, 0, 5] }}
       gl={{ antialias: false, powerPreference: 'low-power' }}
-      style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1, pointerEvents: 'none', background: '#151515' }}
+      style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1, pointerEvents: 'none', background: colors.background }}
       dpr={1}
       onCreated={({ gl }) => {
-        gl.setClearColor(0x151515);
+        gl.setClearColor(colors.backgroundHex);
       }}
     >
-      <Shapes />
+      <Shapes accentHex={colors.accentHex} />
     </Canvas>
   );
 }

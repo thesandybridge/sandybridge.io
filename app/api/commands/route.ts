@@ -10,6 +10,7 @@ interface CommandResponse {
   action?: string;
   url?: string;
   message?: string;
+  theme?: string;
 }
 
 const items = ['blog', 'home', 'portfolio', 'uses'];
@@ -154,6 +155,11 @@ const COMMAND_HELP: Record<string, { usage: string; description: string; example
   contact: {
     usage: 'contact',
     description: 'Display contact information including email, LinkedIn, and GitHub.',
+  },
+  theme: {
+    usage: 'theme [name]',
+    description: 'Switch the site theme. Run without arguments to see available themes.',
+    examples: ['theme', 'theme dracula', 'theme nord'],
   },
 };
 
@@ -437,6 +443,23 @@ ${(() => {
     case 'malware':
       response.action = 'malware';
       break;
+
+    case 'theme': {
+      const validThemes = ['gruvbox', 'dracula', 'nord', 'catppuccin', 'one-dark', 'solarized'];
+      if (args.length < 2) {
+        message = `<span class="term-highlight">Available themes</span>\n\n  gruvbox     <span class="term-info">Sandy's Theme (default)</span>\n  dracula     <span class="term-info">Dracula</span>\n  nord        <span class="term-info">Nord</span>\n  catppuccin  <span class="term-info">Catppuccin Mocha</span>\n  one-dark    <span class="term-info">One Dark</span>\n  solarized   <span class="term-info">Solarized Dark</span>\n\n<span class="term-info">Usage: theme &lt;name&gt;</span>`;
+      } else {
+        const target = args[1].toLowerCase();
+        if (validThemes.includes(target)) {
+          response.action = 'theme';
+          response.theme = target;
+          message = `<span class="term-info">Theme changed to ${escapeHtml(target)}</span>`;
+        } else {
+          message = `<span class="term-error">Unknown theme: ${escapeHtml(target)}</span>\n<span class="term-info">Run 'theme' to see available options</span>`;
+        }
+      }
+      break;
+    }
 
     default:
       message = `<span class="term-error">${escapeHtml(args[0])}: command not found</span>`;

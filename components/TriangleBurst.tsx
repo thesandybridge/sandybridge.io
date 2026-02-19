@@ -74,7 +74,7 @@ export function TriangleBurst() {
           d={trianglePath(t.size)}
           transform={`translate(${t.cx}, ${t.cy}) rotate(${t.rotation})`}
           fill="none"
-          stroke="#d79921"
+          stroke="var(--secondary-fg)"
           strokeWidth="1.5"
           opacity={t.opacity}
           className={t.driftClass || undefined}

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useIsMobile } from '@/lib/use-mobile';
+import { useTheme } from './ThemeProvider';
 
 interface Particle {
   x: number;
@@ -20,6 +21,9 @@ export function CursorGlow() {
   const ringRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isMobile = useIsMobile();
+  const { colors } = useTheme();
+  const colorsRef = useRef(colors);
+  colorsRef.current = colors;
 
   useEffect(() => {
     if (isMobile) return;
@@ -73,7 +77,7 @@ export function CursorGlow() {
       ctx.translate(p.x, p.y);
       ctx.rotate(p.rotation);
       ctx.globalAlpha = alpha;
-      ctx.fillStyle = 'rgba(215, 153, 33, 0.8)';
+      ctx.fillStyle = `rgba(${colorsRef.current.accentRgb}, 0.8)`;
       ctx.beginPath();
       ctx.moveTo(0, -p.size);
       ctx.lineTo(-p.size * 0.866, p.size * 0.5);
@@ -213,7 +217,7 @@ export function CursorGlow() {
           width: 600,
           height: 600,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(215, 153, 33, 0.06) 0%, transparent 70%)',
+          background: `radial-gradient(circle, rgba(${colors.accentRgb}, 0.06) 0%, transparent 70%)`,
           pointerEvents: 'none',
           zIndex: 0,
           transform: 'translate(-50%, -50%)',

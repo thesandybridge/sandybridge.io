@@ -5,8 +5,9 @@ import { usePathname, useRouter } from 'next/navigation';
 import type Fuse from 'fuse.js';
 import type { SearchItem } from '@/lib/search-index';
 import { PaletteTitlebar } from './PaletteTitlebar';
+import { useTheme } from './ThemeProvider';
 
-const COMMANDS = ['help', 'cd', 'ls', 'clear', 'github', 'echo', 'contact', 'cat', 'pwd', 'grep', 'man', 'tree', 'history', 'ascii', 'neofetch', 'matrix'];
+const COMMANDS = ['help', 'cd', 'ls', 'clear', 'github', 'echo', 'contact', 'cat', 'pwd', 'grep', 'man', 'tree', 'history', 'ascii', 'neofetch', 'matrix', 'theme'];
 const CD_TARGETS = ['home', 'blog', 'portfolio', 'uses'];
 
 function escapeHtmlClient(str: string): string {
@@ -44,6 +45,7 @@ export function CommandPalette() {
   const fuseRef = useRef<Fuse<SearchItem> | null>(null);
   const pathname = usePathname();
   const router = useRouter();
+  const { colors } = useTheme();
 
   const isTerminalMode = inputValue.startsWith('>');
   const promptDir = pathname === '/' ? '~' : '~' + pathname.replace(/\/$/, '');
@@ -231,7 +233,7 @@ export function CommandPalette() {
   const triggerMatrix = useCallback(() => {
     setIsVisible(false);
     const canvas = document.createElement('canvas');
-    canvas.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#000;';
+    canvas.style.cssText = `position:fixed;inset:0;z-index:9999;background:${colors.background};`;
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     document.body.appendChild(canvas);
@@ -240,11 +242,12 @@ export function CommandPalette() {
     const columns = Math.floor(canvas.width / fontSize);
     const drops = new Array(columns).fill(1);
     const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const matrixColor = colors.accent;
 
     const draw = () => {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillStyle = `rgba(0, 0, 0, 0.05)`;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#b8bb26';
+      ctx.fillStyle = matrixColor;
       ctx.font = `${fontSize}px monospace`;
       for (let i = 0; i < drops.length; i++) {
         const text = chars[Math.floor(Math.random() * chars.length)];
@@ -270,7 +273,7 @@ export function CommandPalette() {
       document.addEventListener('keydown', dismiss);
       document.addEventListener('click', dismiss);
     }, 100);
-  }, []);
+  }, [colors]);
 
   const navigateSearch = useCallback((item: SearchItem) => {
     const url = item.type === 'blog' ? `/blog/${item.slug}` : `/portfolio/${item.slug}`;
@@ -321,6 +324,15 @@ export function CommandPalette() {
             break;
           case 'matrix':
             triggerMatrix();
+            break;
+          case 'theme':
+            if (data.theme) {
+              document.documentElement.setAttribute('data-theme', data.theme);
+              localStorage.setItem('theme', data.theme);
+            }
+            if (data.message) {
+              setMessages((prev) => [...prev, { id: ++msgId, html: `<pre class='ignore'>&gt; ${escapeHtmlClient(cmd)}\n${data.message}</pre>` }]);
+            }
             break;
           case 'history': {
             const historyHtml = cmdHistory.length === 0

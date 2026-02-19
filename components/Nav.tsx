@@ -1,5 +1,6 @@
 import { Search } from 'lucide-react';
 import { NavLinks } from './NavLinks';
+import { ThemePicker } from './ThemePicker';
 
 export function Nav() {
   return (
@@ -8,6 +9,7 @@ export function Nav() {
       <ul id="main-nav">
         <NavLinks />
         <li className="nav-shortcuts">
+          <ThemePicker />
           <button id="palette-toggle" className="nav-shortcut" aria-label="Command palette">
             <Search size={14} />
             <kbd>Ctrl+K</kbd>

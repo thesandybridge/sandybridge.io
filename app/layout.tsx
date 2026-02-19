@@ -9,6 +9,7 @@ import { VimBindings } from '@/components/VimBindings';
 import { TriangleBurst } from '@/components/TriangleBurst';
 import { CoronaScroll } from '@/components/CoronaScroll';
 import { Footer } from '@/components/Footer';
+import { ThemeProvider } from '@/components/ThemeProvider';
 import './globals.css';
 
 const kodeMono = localFont({
@@ -59,8 +60,13 @@ export default function RootLayout({
   const umamiId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
 
   return (
-    <html lang="en" className={kodeMono.variable}>
+    <html lang="en" className={kodeMono.variable} suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();`,
+          }}
+        />
         <Script id="gtm" strategy="afterInteractive">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -78,38 +84,40 @@ export default function RootLayout({
         )}
       </head>
       <body style={{ fontFamily: 'var(--font-kode-mono), monospace' }}>
-        <svg width="0" height="0" aria-hidden="true" style={{ position: 'absolute' }}>
-          <filter id="corona-filter">
-            <feTurbulence type="fractalNoise" baseFrequency="0.04 0.06" numOctaves={4} seed="3" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale={6} xChannelSelector="R" yChannelSelector="G" />
-          </filter>
-        </svg>
-        <a href="#content" className="skip-link">Skip to content</a>
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-NFSBFRPK"
-            height="0"
-            width="0"
-            style={{ display: 'none', visibility: 'hidden' }}
-          />
-        </noscript>
-        <div className="container">
-          <header>
-            <Nav />
-          </header>
-          <main id="content">
-            <div className="corona-glow" aria-hidden="true" />
-            {children}
-          </main>
-          <Footer year={year} />
-        </div>
-        <TriangleBurst />
-        <Background />
-        <CursorGlow />
-        <div className="grain-overlay" />
-        <CoronaScroll />
-        <CommandPalette />
-        <VimBindings />
+        <ThemeProvider>
+          <svg width="0" height="0" aria-hidden="true" style={{ position: 'absolute' }}>
+            <filter id="corona-filter">
+              <feTurbulence type="fractalNoise" baseFrequency="0.04 0.06" numOctaves={4} seed="3" result="noise" />
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale={6} xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+          </svg>
+          <a href="#content" className="skip-link">Skip to content</a>
+          <noscript>
+            <iframe
+              src="https://www.googletagmanager.com/ns.html?id=GTM-NFSBFRPK"
+              height="0"
+              width="0"
+              style={{ display: 'none', visibility: 'hidden' }}
+            />
+          </noscript>
+          <div className="container">
+            <header>
+              <Nav />
+            </header>
+            <main id="content">
+              <div className="corona-glow" aria-hidden="true" />
+              {children}
+            </main>
+            <Footer year={year} />
+          </div>
+          <TriangleBurst />
+          <Background />
+          <CursorGlow />
+          <div className="grain-overlay" />
+          <CoronaScroll />
+          <CommandPalette />
+          <VimBindings />
+        </ThemeProvider>
       </body>
     </html>
   );
