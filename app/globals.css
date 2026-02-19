@@ -2915,7 +2915,8 @@ article > h1 ~ h1 {
 }
 
 .mobile-nav-fab.open {
-    background: var(--error);
+    background: var(--secondary-bg);
+    color: var(--secondary-fg);
 }
 
 .mobile-nav-items {
