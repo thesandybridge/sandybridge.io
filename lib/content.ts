@@ -9,7 +9,14 @@ import remarkRehype from 'remark-rehype';
 import rehypeRaw from 'rehype-raw';
 import rehypeSlug from 'rehype-slug';
 import rehypeStringify from 'rehype-stringify';
-import { createHighlighter, type Highlighter } from 'shiki';
+import { createHighlighter, createCssVariablesTheme, type Highlighter } from 'shiki';
+
+const cssVariablesTheme = createCssVariablesTheme({
+  name: 'css-variables',
+  variablePrefix: '--shiki-',
+  variableDefaults: {},
+  fontStyle: true,
+});
 
 export interface PostMeta {
   title: string;
@@ -39,7 +46,7 @@ let highlighterPromise: Promise<Highlighter> | null = null;
 function getHighlighter() {
   if (!highlighterPromise) {
     highlighterPromise = createHighlighter({
-      themes: ['gruvbox-dark-medium'],
+      themes: [cssVariablesTheme],
       langs: [
         'javascript', 'typescript', 'bash', 'json', 'html', 'css',
         'go', 'rust', 'python', 'yaml', 'toml', 'markdown', 'sql',
@@ -156,7 +163,7 @@ async function renderMarkdown(raw: string): Promise<string> {
       try {
         return shiki.codeToHtml(decoded, {
           lang,
-          theme: 'gruvbox-dark-medium',
+          theme: 'css-variables',
         });
       } catch {
         return `<pre><code class="language-${lang}">${code}</code></pre>`;
