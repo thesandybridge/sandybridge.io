@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X, Home, Briefcase, BookOpen, Wrench, Palette, Check, Sun, Moon, Search } from 'lucide-react';
 import { useTheme, THEMES } from '../theme/ThemeProvider';
+import { haptic } from '@/lib/haptics';
 
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
@@ -20,33 +21,38 @@ export function MobileNav() {
   const { theme, setTheme, mode, toggleMode } = useTheme();
 
   const toggleMenu = useCallback(() => {
+    haptic('light');
     setIsOpen((prev) => !prev);
     setShowThemes(false);
   }, []);
 
   const toggleThemes = useCallback(() => {
+    haptic('light');
     setShowThemes((prev) => !prev);
   }, []);
 
   const handleNavClick = useCallback(() => {
+    haptic('light');
     setIsOpen(false);
     setShowThemes(false);
   }, []);
 
   const handleThemeSelect = useCallback((themeId: typeof theme) => {
+    haptic('medium');
     setTheme(themeId);
     setShowThemes(false);
     setIsOpen(false);
   }, [setTheme]);
 
   const handleModeToggle = useCallback(() => {
+    haptic('medium');
     toggleMode();
     setIsOpen(false);
   }, [toggleMode]);
 
   const handleSearchClick = useCallback(() => {
+    haptic('light');
     setIsOpen(false);
-    // Open mobile search
     window.dispatchEvent(new CustomEvent('open-mobile-search'));
   }, []);
 

@@ -86,7 +86,12 @@ export default function UsesPage() {
         <li><strong>React Three Fiber</strong> — 3D wireframe background animation.</li>
         <li><strong>Shiki</strong> — syntax highlighting with theme support.</li>
         <li><strong>Railway</strong> — hosted on Railway with Redis for caching.</li>
-        <li><strong>Multi-theme</strong> — Gruvbox, Dracula, Nord, Catppuccin, and more.</li>
+        <li>
+          <strong>Multi-theme</strong> — Gruvbox, Dracula, Nord, Catppuccin, and more.
+          <p style={{ marginTop: '0.5rem' }}>
+            <Link href="/uses/theme" className="config-link">Customize theme settings →</Link>
+          </p>
+        </li>
       </ul>
     </>
   );

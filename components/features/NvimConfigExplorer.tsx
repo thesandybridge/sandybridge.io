@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { ChevronRight, ChevronDown, File, Folder, Copy, Check, ExternalLink, FolderOpen } from 'lucide-react';
+import { Skeleton } from '../ui/Skeleton';
 
 interface FileNode {
   name: string;
@@ -175,7 +176,35 @@ export function NvimConfigExplorer() {
   }, [fileContent]);
 
   if (loading) {
-    return <div className="nvim-explorer-loading">Loading config...</div>;
+    return (
+      <div className="nvim-explorer nvim-explorer-skeleton">
+        <div className="nvim-explorer-sidebar">
+          <div className="nvim-explorer-header">
+            <Folder size={14} />
+            <span>~/.config/nvim</span>
+          </div>
+          <div className="file-tree" style={{ padding: '0.5rem' }}>
+            {[...Array(8)].map((_, i) => (
+              <div key={i} style={{ marginBottom: '0.5rem' }}>
+                <Skeleton height="1.5rem" />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="nvim-explorer-content">
+          <div className="nvim-explorer-file-header">
+            <Skeleton width="40%" height="1rem" />
+          </div>
+          <div className="nvim-explorer-code" style={{ padding: '1rem' }}>
+            {[...Array(15)].map((_, i) => (
+              <div key={i} style={{ marginBottom: '0.5rem' }}>
+                <Skeleton width={`${60 + (i * 7) % 40}%`} height="1rem" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
@@ -234,7 +263,13 @@ export function NvimConfigExplorer() {
         )}
         <div className="nvim-explorer-code">
           {loadingFile ? (
-            <div className="nvim-explorer-loading">Loading file...</div>
+            <div style={{ padding: '1rem' }}>
+              {[...Array(20)].map((_, i) => (
+                <div key={i} style={{ marginBottom: '0.5rem' }}>
+                  <Skeleton width={`${40 + (i * 11) % 50}%`} height="1rem" />
+                </div>
+              ))}
+            </div>
           ) : fileContent ? (
             <div
               className="nvim-explorer-highlighted"

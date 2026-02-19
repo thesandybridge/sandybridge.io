@@ -8,8 +8,10 @@ import { PaletteTitlebar } from './PaletteTitlebar';
 import { useTheme, type ParticleDensity } from '../theme/ThemeProvider';
 import { useIsMobile } from '@/lib/use-mobile';
 
-const COMMANDS = ['help', 'cd', 'ls', 'clear', 'github', 'echo', 'contact', 'cat', 'pwd', 'grep', 'man', 'tree', 'history', 'ascii', 'neofetch', 'matrix', 'theme'];
+const COMMANDS = ['help', 'cd', 'ls', 'clear', 'github', 'x', 'whoami', 'echo', 'contact', 'cat', 'pwd', 'grep', 'man', 'tree', 'history', 'ascii', 'neofetch', 'matrix', 'theme'];
 const CD_TARGETS = ['home', 'blog', 'portfolio', 'uses'];
+const HISTORY_KEY = 'terminal-history';
+const MAX_HISTORY = 100;
 
 function escapeHtmlClient(str: string): string {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -71,6 +73,32 @@ export function CommandPalette() {
       });
     });
   }, [isVisible, searchIndex]);
+
+  // Load terminal history from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(HISTORY_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setCmdHistory(parsed.slice(-MAX_HISTORY));
+        }
+      }
+    } catch {
+      // Ignore parse errors
+    }
+  }, []);
+
+  // Save terminal history to localStorage when it changes
+  useEffect(() => {
+    if (cmdHistory.length > 0) {
+      try {
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(cmdHistory.slice(-MAX_HISTORY)));
+      } catch {
+        // Ignore storage errors
+      }
+    }
+  }, [cmdHistory]);
 
   // Search when in search mode
   useEffect(() => {

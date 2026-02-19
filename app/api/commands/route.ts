@@ -165,6 +165,14 @@ const COMMAND_HELP: Record<string, { usage: string; description: string; example
     usage: 'github',
     description: 'Open the GitHub profile in a new tab.',
   },
+  x: {
+    usage: 'x',
+    description: 'Open the X (Twitter) profile in a new tab.',
+  },
+  whoami: {
+    usage: 'whoami',
+    description: 'Display information about the site author.',
+  },
   echo: {
     usage: 'echo <message>',
     description: 'Echo back the provided message.',
@@ -228,6 +236,23 @@ function executeCommand(args: string[], referer: string): { response: CommandRes
     case 'github':
       response.action = 'open-url';
       response.url = 'https://github.com/thesandybridge';
+      break;
+
+    case 'x':
+      response.action = 'open-url';
+      response.url = 'https://x.com/sandybridge__';
+      break;
+
+    case 'whoami':
+      message = `<span class="term-highlight">Matt Miller</span> <span class="term-info">@sandybridge__</span>
+
+Software engineer focused on frontend development and expanding into systems work.
+Building with TypeScript, React, Rust, and Go.
+
+Currently tinkering with Neovim configs, Hyprland setups, and side projects.
+Based in the terminal. Powered by mass amounts of caffeine.
+
+<span class="term-info">Run 'contact' for links or 'github' to see my code.</span>`;
       break;
 
     case 'echo':

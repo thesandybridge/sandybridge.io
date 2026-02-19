@@ -2,7 +2,8 @@
 
 import { useCallback, useRef } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { Palette, Check, Sun, Moon } from 'lucide-react';
+import { Palette, Check, Sun, Moon, Settings } from 'lucide-react';
+import Link from 'next/link';
 import { useTheme, type Theme } from './ThemeProvider';
 
 export function ThemePicker() {
@@ -56,6 +57,13 @@ export function ThemePicker() {
               {theme === t.id && <Check size={14} />}
             </DropdownMenu.Item>
           ))}
+          <DropdownMenu.Separator className="theme-separator" />
+          <DropdownMenu.Item className="theme-item" asChild>
+            <Link href="/uses/theme">
+              <Settings size={14} />
+              More Settings
+            </Link>
+          </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>

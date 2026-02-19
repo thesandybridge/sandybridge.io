@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { X, Search, FileText, Briefcase } from 'lucide-react';
 import { useSearch } from '@/lib/use-search';
 import { CONTENT_TYPES, getContentUrl, type ContentType } from '@/lib/constants';
+import { haptic } from '@/lib/haptics';
 
 export function MobileSearch() {
   const [isOpen, setIsOpen] = useState(false);
@@ -42,11 +43,13 @@ export function MobileSearch() {
   }, [isOpen]);
 
   const handleClose = useCallback(() => {
+    haptic('light');
     setIsOpen(false);
     setQuery('');
   }, [setQuery]);
 
   const handleResultClick = useCallback((url: string) => {
+    haptic('light');
     router.push(url);
     handleClose();
   }, [router, handleClose]);

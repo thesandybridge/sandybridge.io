@@ -217,6 +217,8 @@ const ThemeContext = createContext<{
   particleDensity: ParticleDensity;
   setParticleDensity: (d: ParticleDensity) => void;
   particleMultiplier: number;
+  cursorTrail: boolean;
+  setCursorTrail: (enabled: boolean) => void;
 }>({
   theme: 'gruvbox',
   setTheme: () => {},
@@ -228,12 +230,15 @@ const ThemeContext = createContext<{
   particleDensity: 'medium',
   setParticleDensity: () => {},
   particleMultiplier: 1,
+  cursorTrail: false,
+  setCursorTrail: () => {},
 });
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('gruvbox');
   const [mode, setModeState] = useState<Mode>('dark');
   const [particleDensity, setParticleDensityState] = useState<ParticleDensity>('medium');
+  const [cursorTrail, setCursorTrailState] = useState(false);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as Theme | null;
@@ -259,6 +264,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     // Load particle density
     if (savedDensity && PARTICLE_DENSITIES.some((d) => d.id === savedDensity)) {
       setParticleDensityState(savedDensity);
+    }
+
+    // Load cursor trail preference
+    const savedCursorTrail = localStorage.getItem('cursorTrail');
+    if (savedCursorTrail !== null) {
+      setCursorTrailState(savedCursorTrail === 'true');
     }
   }, []);
 
@@ -301,13 +312,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('particleDensity', d);
   }, []);
 
+  const setCursorTrail = useCallback((enabled: boolean) => {
+    setCursorTrailState(enabled);
+    localStorage.setItem('cursorTrail', String(enabled));
+  }, []);
+
   const particleMultiplier = PARTICLE_DENSITIES.find((d) => d.id === particleDensity)?.multiplier ?? 1;
 
   const colors = THEME_COLORS[theme][mode];
 
   const value = useMemo(
-    () => ({ theme, setTheme, mode, setMode, toggleMode, themes: THEMES, colors, particleDensity, setParticleDensity, particleMultiplier }),
-    [theme, setTheme, mode, setMode, toggleMode, colors, particleDensity, setParticleDensity, particleMultiplier]
+    () => ({ theme, setTheme, mode, setMode, toggleMode, themes: THEMES, colors, particleDensity, setParticleDensity, particleMultiplier, cursorTrail, setCursorTrail }),
+    [theme, setTheme, mode, setMode, toggleMode, colors, particleDensity, setParticleDensity, particleMultiplier, cursorTrail, setCursorTrail]
   );
 
   return (
