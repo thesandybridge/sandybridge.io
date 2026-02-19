@@ -85,7 +85,7 @@ export default function UsesPage() {
         <li><strong>Next.js 16</strong> — App Router with React Server Components.</li>
         <li><strong>React Three Fiber</strong> — 3D wireframe background animation.</li>
         <li><strong>Shiki</strong> — syntax highlighting with theme support.</li>
-        <li><strong>Self-hosted</strong> — running on a home server, deployed with rsync.</li>
+        <li><strong>Railway</strong> — hosted on Railway with Redis for caching.</li>
         <li><strong>Multi-theme</strong> — Gruvbox, Dracula, Nord, Catppuccin, and more.</li>
       </ul>
     </>

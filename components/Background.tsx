@@ -47,7 +47,7 @@ interface ShapeData {
 }
 
 function Shapes({ accentHex, theme }: { accentHex: number; theme: Theme }) {
-  const batGeometry = useMemo(() => theme === 'dracula' ? createBatGeometry() : null, [theme]);
+  const batGeometry = useMemo(() => (theme === 'dracula' || theme === 'alucard') ? createBatGeometry() : null, [theme]);
   const { camera, viewport } = useThree();
   const meshRefs = useRef<(Mesh | null)[]>([]);
   const focal = useRef(new Vector3());
@@ -137,7 +137,7 @@ function Shapes({ accentHex, theme }: { accentHex: number; theme: Theme }) {
           position={[s.x, s.y, s.z]}
           scale={s.scale}
         >
-          {theme === 'dracula' && batGeometry ? (
+          {(theme === 'dracula' || theme === 'alucard') && batGeometry ? (
             <primitive object={batGeometry} attach="geometry" />
           ) : s.isBox ? (
             <boxGeometry args={[1, 1, 1]} />

@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
-export type Theme = 'gruvbox' | 'dracula' | 'nord' | 'catppuccin' | 'one-dark' | 'solarized' | 'prism' | 'oil-spill';
+export type Theme = 'gruvbox' | 'dracula' | 'alucard' | 'nord' | 'catppuccin' | 'one-dark' | 'solarized' | 'prism' | 'oil-spill';
 export type Mode = 'light' | 'dark';
 export type ParticleDensity = 'off' | 'low' | 'medium' | 'high';
 
@@ -16,6 +16,7 @@ export const PARTICLE_DENSITIES: { id: ParticleDensity; name: string; multiplier
 export const THEMES: { id: Theme; name: string }[] = [
   { id: 'gruvbox', name: "Sandy's Theme" },
   { id: 'dracula', name: 'Dracula' },
+  { id: 'alucard', name: 'Alucard' },
   { id: 'nord', name: 'Nord' },
   { id: 'catppuccin', name: 'Catppuccin' },
   { id: 'one-dark', name: 'One Dark' },
@@ -73,6 +74,26 @@ export const THEME_COLORS: Record<Theme, Record<Mode, ThemeColors>> = {
       accent: '#9d6dd0',
       accentHex: 0x9d6dd0,
       accentRgb: '157, 109, 208',
+    },
+  },
+  alucard: {
+    dark: {
+      primary: '#e8e8e8',
+      primaryHex: 0xe8e8e8,
+      background: '#0a0a0f',
+      backgroundHex: 0x0a0a0f,
+      accent: '#dc143c',
+      accentHex: 0xdc143c,
+      accentRgb: '220, 20, 60',
+    },
+    light: {
+      primary: '#1a1a24',
+      primaryHex: 0x1a1a24,
+      background: '#f8f8f2',
+      backgroundHex: 0xf8f8f2,
+      accent: '#b01030',
+      accentHex: 0xb01030,
+      accentRgb: '176, 16, 48',
     },
   },
   nord: {

@@ -520,6 +520,7 @@ export function CursorGlow() {
           drawPawPrint(p, alpha);
           break;
         case 'dracula':
+        case 'alucard':
           drawBat(p, alpha);
           break;
         case 'prism':
