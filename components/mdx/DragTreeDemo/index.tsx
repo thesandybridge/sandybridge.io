@@ -127,6 +127,7 @@ export function DragTreeDemo() {
           initialExpanded="all"
           showDropPreview
           activationDistance={8}
+          previewDebounce={200}
           className="drag-tree"
           dropZoneClassName="drop-indicator"
           dropZoneActiveClassName="drop-indicator-active"

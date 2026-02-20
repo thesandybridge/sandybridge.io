@@ -2164,7 +2164,8 @@ nav li time {
     border-radius: 6px;
     border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
     background: color-mix(in srgb, var(--primary-bg) 50%, transparent);
-    transition: opacity 0.2s, transform 0.2s;
+    transition: opacity 0.15s, transform 0.15s;
+    will-change: transform, opacity;
     min-width: 0;
 }
 
@@ -2214,7 +2215,8 @@ nav li time {
     border: 1px solid color-mix(in srgb, var(--border) 30%, transparent);
     background: color-mix(in srgb, var(--primary-bg) 50%, transparent);
     cursor: grab;
-    transition: background 0.15s, opacity 0.2s, transform 0.2s;
+    transition: background 0.15s, opacity 0.15s, transform 0.15s;
+    will-change: transform, opacity;
     min-width: 0;
 }
 
@@ -2302,7 +2304,7 @@ nav li time {
 .drop-indicator {
     height: 2px;
     border-radius: 2px;
-    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: height 0.1s ease, background 0.1s ease;
     background: transparent;
 }
 
