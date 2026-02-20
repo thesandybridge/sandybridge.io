@@ -4,12 +4,13 @@ import { useCallback } from 'react';
 import {
   DndContext,
   DragOverlay,
-  MouseSensor,
+  PointerSensor,
   TouchSensor,
   useSensor,
   useSensors,
   type DragStartEvent,
   type DragEndEvent,
+  type CollisionDetection,
 } from '@dnd-kit/core';
 import { Folder, FileText, Plus, RotateCcw } from 'lucide-react';
 import { DragTreeProvider, useDragTree } from './context';
@@ -18,6 +19,37 @@ import { MiniMap } from './MiniMap';
 import type { Block } from './types';
 
 const MAX_BLOCKS = 20;
+
+// Custom collision detection using edge distance with bottom bias
+// Much better for thin horizontal drop zones than rectIntersection or closestCenter
+const weightedVerticalCollision: CollisionDetection = ({ droppableContainers, collisionRect }) => {
+  if (!collisionRect) return [];
+
+  const pointerY = collisionRect.top + collisionRect.height / 2;
+
+  const candidates = droppableContainers
+    .map((container) => {
+      const rect = container.rect.current;
+      if (!rect) return null;
+
+      const distanceToTop = Math.abs(pointerY - rect.top);
+      const distanceToBottom = Math.abs(pointerY - rect.bottom);
+      const edgeDistance = Math.min(distanceToTop, distanceToBottom);
+
+      // Bias toward bottom edge when pointer is below center
+      const isBelowCenter = pointerY > rect.top + rect.height / 2;
+      const bias = isBelowCenter ? -5 : 0;
+
+      return {
+        id: container.id,
+        data: { droppableContainer: container, value: edgeDistance + bias },
+      };
+    })
+    .filter(Boolean) as { id: string | number; data: { droppableContainer: unknown; value: number } }[];
+
+  candidates.sort((a, b) => a.data.value - b.data.value);
+  return candidates.slice(0, 1);
+};
 
 const INITIAL_BLOCKS: Block[] = [
   // Level 1: Root sections
@@ -50,33 +82,32 @@ export function DragTreeDemo() {
 }
 
 function DragTreeInner() {
-  const { setActiveId, activeId, hoverZone, handleHover, moveItem, addItem, reset, blocks, blockCount } = useDragTree();
+  const { startDrag, endDrag, activeId, hoverZone, handleHover, moveItem, addItem, reset, blocks, blockCount } = useDragTree();
   const canAdd = blockCount < MAX_BLOCKS;
 
-  const mouseSensor = useSensor(MouseSensor, {
-    activationConstraint: { distance: 5 },
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: { distance: 8 },
   });
   const touchSensor = useSensor(TouchSensor, {
-    activationConstraint: { delay: 200, tolerance: 5 },
+    activationConstraint: { distance: 8 },
   });
-  const sensors = useSensors(mouseSensor, touchSensor);
+  const sensors = useSensors(pointerSensor, touchSensor);
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
-    setActiveId(String(event.active.id));
-  }, [setActiveId]);
+    startDrag(String(event.active.id));
+  }, [startDrag]);
 
   const handleDragEnd = useCallback((event: DragEndEvent) => {
-    if (hoverZone && activeId) {
-      moveItem(activeId, hoverZone);
+    const dropZone = hoverZone ?? (event.over?.id ? String(event.over.id) : null);
+    if (dropZone && activeId) {
+      moveItem(activeId, dropZone);
     }
-    setActiveId(null);
-    handleHover(null);
-  }, [hoverZone, activeId, moveItem, setActiveId, handleHover]);
+    endDrag();
+  }, [hoverZone, activeId, moveItem, endDrag]);
 
   const handleDragCancel = useCallback(() => {
-    setActiveId(null);
-    handleHover(null);
-  }, [setActiveId, handleHover]);
+    endDrag();
+  }, [endDrag]);
 
   const activeBlock = activeId ? blocks.find(b => b.id === activeId) : null;
 
@@ -113,6 +144,7 @@ function DragTreeInner() {
         </div>
         <DndContext
           sensors={sensors}
+          collisionDetection={weightedVerticalCollision}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onDragCancel={handleDragCancel}

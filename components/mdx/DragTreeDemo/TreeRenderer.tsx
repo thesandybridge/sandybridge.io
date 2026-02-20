@@ -22,17 +22,20 @@ export function TreeRenderer({ parentId, depth = 0 }: TreeRendererProps) {
 
   return (
     <>
-      {children.map((block, index) => (
-        <Fragment key={block.id}>
-          {index === 0 && <DropZone id={`before-${block.id}`} />}
-          {block.type === 'section' ? (
-            <SectionNode block={block} depth={depth} />
-          ) : (
-            <ItemNode block={block} depth={depth} />
-          )}
-          <DropZone id={`after-${block.id}`} />
-        </Fragment>
-      ))}
+      {children.map((block, index) => {
+        const isActiveBlock = block.id === activeId;
+        return (
+          <Fragment key={block.id}>
+            {index === 0 && !isActiveBlock && <DropZone id={`before-${block.id}`} />}
+            {block.type === 'section' ? (
+              <SectionNode block={block} depth={depth} />
+            ) : (
+              <ItemNode block={block} depth={depth} />
+            )}
+            {!isActiveBlock && <DropZone id={`after-${block.id}`} />}
+          </Fragment>
+        );
+      })}
     </>
   );
 }

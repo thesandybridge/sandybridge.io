@@ -7,16 +7,20 @@ import {
   useState,
   useCallback,
   useMemo,
+  useRef,
+  useEffect,
   type ReactNode,
 } from 'react';
 import type { Block, BlockIndex } from './types';
 import { blockReducer, createInitialState } from './reducer';
+import { reparentBlockIndex, cloneMap, cloneParentMap } from './utils';
 
 interface DragTreeContextType {
   blocks: Block[];
   blocksByParent: Map<string | null, Block[]>;
   activeId: string | null;
-  setActiveId: (id: string | null) => void;
+  startDrag: (id: string) => void;
+  endDrag: () => void;
   hoverZone: string | null;
   handleHover: (zone: string | null) => void;
   moveItem: (activeId: string, zone: string) => void;
@@ -46,6 +50,7 @@ export function DragTreeProvider({ initialBlocks, children }: DragTreeProviderPr
   const [state, dispatch] = useReducer(blockReducer, initialBlocks, createInitialState);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [hoverZone, setHoverZone] = useState<string | null>(null);
+  const [virtualState, setVirtualState] = useState<BlockIndex | null>(null);
   const [expandedMap, setExpandedMap] = useState<Record<string, boolean>>(() => {
     const map: Record<string, boolean> = {};
     for (const block of initialBlocks) {
@@ -56,12 +61,19 @@ export function DragTreeProvider({ initialBlocks, children }: DragTreeProviderPr
     return map;
   });
 
+  // Snapshot of state when drag starts - all computations use this
+  const initialStateRef = useRef<BlockIndex | null>(null);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Use virtual state during drag, actual state otherwise
+  const effectiveState = virtualState ?? state;
+
   const blocks = useMemo(() => {
     const result: Block[] = [];
     const walk = (parentId: string | null) => {
-      const children = state.byParent.get(parentId) ?? [];
+      const children = effectiveState.byParent.get(parentId) ?? [];
       for (const id of children) {
-        const block = state.byId.get(id);
+        const block = effectiveState.byId.get(id);
         if (block) {
           result.push(block);
           if (block.type === 'section') {
@@ -72,22 +84,53 @@ export function DragTreeProvider({ initialBlocks, children }: DragTreeProviderPr
     };
     walk(null);
     return result;
-  }, [state]);
+  }, [effectiveState]);
 
   const blocksByParent = useMemo(() => {
     const map = new Map<string | null, Block[]>();
-    for (const [parentId, ids] of state.byParent.entries()) {
+    for (const [parentId, ids] of effectiveState.byParent.entries()) {
       const blockList = ids
-        .map(id => state.byId.get(id))
+        .map(id => effectiveState.byId.get(id))
         .filter((b): b is Block => b !== undefined);
       map.set(parentId, blockList);
     }
     return map;
+  }, [effectiveState]);
+
+  const startDrag = useCallback((id: string) => {
+    // Snapshot current state for all drag computations
+    initialStateRef.current = {
+      byId: cloneMap(state.byId),
+      byParent: cloneParentMap(state.byParent),
+    };
+    setActiveId(id);
   }, [state]);
+
+  const endDrag = useCallback(() => {
+    setActiveId(null);
+    setHoverZone(null);
+    setVirtualState(null);
+    initialStateRef.current = null;
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+      debounceRef.current = null;
+    }
+  }, []);
 
   const handleHover = useCallback((zone: string | null) => {
     setHoverZone(zone);
-  }, []);
+
+    // Compute virtual preview from initial snapshot (debounced)
+    if (zone && activeId && initialStateRef.current) {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+
+      debounceRef.current = setTimeout(() => {
+        if (!initialStateRef.current || !activeId) return;
+        const newState = reparentBlockIndex(initialStateRef.current, activeId, zone);
+        setVirtualState(newState);
+      }, 150);
+    }
+  }, [activeId]);
 
   const moveItem = useCallback((activeId: string, zone: string) => {
     dispatch({ type: 'MOVE_ITEM', payload: { activeId, zone } });
@@ -133,7 +176,8 @@ export function DragTreeProvider({ initialBlocks, children }: DragTreeProviderPr
       blocks,
       blocksByParent,
       activeId,
-      setActiveId,
+      startDrag,
+      endDrag,
       hoverZone,
       handleHover,
       moveItem,
@@ -145,7 +189,7 @@ export function DragTreeProvider({ initialBlocks, children }: DragTreeProviderPr
       blockCount,
       isDragging,
     }),
-    [blocks, blocksByParent, activeId, hoverZone, handleHover, moveItem, addItem, deleteItem, reset, expandedMap, toggleExpand, blockCount, isDragging]
+    [blocks, blocksByParent, activeId, startDrag, endDrag, hoverZone, handleHover, moveItem, addItem, deleteItem, reset, expandedMap, toggleExpand, blockCount, isDragging]
   );
 
   return (
