@@ -1,16 +1,15 @@
 'use client';
 
 import { useRef, useEffect, useMemo } from 'react';
-import { useDragTree } from './context';
 import { diffBlocks, buildTree, flattenTree } from './utils';
 import type { Block, BlockChange, TreeNode } from './types';
 
 interface MiniMapProps {
+  blocks: Block[];
   initialBlocks: Block[];
 }
 
-export function MiniMap({ initialBlocks }: MiniMapProps) {
-  const { blocks } = useDragTree();
+export function MiniMap({ blocks, initialBlocks }: MiniMapProps) {
   const prevBlocksRef = useRef<Block[]>(initialBlocks);
 
   const { changes, tree } = useMemo(() => {
@@ -20,12 +19,10 @@ export function MiniMap({ initialBlocks }: MiniMapProps) {
       changeMap.set(change.block.id, change.type);
     }
 
-    // Get removed blocks to include in tree
     const removedBlocks = changeList
       .filter(c => c.type === 'removed')
       .map(c => c.block);
 
-    // Build tree from current blocks + removed blocks (for display)
     const allBlocks = [...blocks, ...removedBlocks];
     const treeNodes = buildTree(allBlocks);
     const flat = flattenTree(treeNodes);
@@ -36,7 +33,6 @@ export function MiniMap({ initialBlocks }: MiniMapProps) {
     };
   }, [blocks]);
 
-  // Update prev ref after render
   useEffect(() => {
     const timeout = setTimeout(() => {
       prevBlocksRef.current = [...blocks];

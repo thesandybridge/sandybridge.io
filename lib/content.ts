@@ -27,6 +27,7 @@ export interface PostMeta {
   github?: string;
   url?: string;
   blog?: string;
+  npm?: string;
   slug: string;
   readTime: number;
   lastModified?: string;
@@ -105,6 +106,7 @@ function parseFrontmatter(filePath: string): PostMeta | null {
     github: data.github,
     url: data.url,
     blog: data.blog,
+    npm: data.npm,
     slug,
     readTime,
     lastModified,
@@ -204,6 +206,7 @@ export async function getPost(dir: ContentDir, slug: string): Promise<Post | nul
     github: data.github,
     url: data.url,
     blog: data.blog,
+    npm: data.npm,
     slug,
     readTime,
     lastModified,

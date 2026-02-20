@@ -1,86 +1,6 @@
-import type { Block, BlockChange, BlockIndex, TreeNode } from './types';
-
-export function extractUUID(zone: string): string {
-  if (zone.startsWith('before-')) return zone.slice(7);
-  if (zone.startsWith('after-')) return zone.slice(6);
-  if (zone.startsWith('into-')) return zone.slice(5);
-  return zone;
-}
-
-export function cloneMap<K, V>(map: Map<K, V>): Map<K, V> {
-  return new Map(map);
-}
-
-export function cloneParentMap(map: Map<string | null, string[]>): Map<string | null, string[]> {
-  const newMap = new Map<string | null, string[]>();
-  for (const [k, v] of map.entries()) {
-    newMap.set(k, [...v]);
-  }
-  return newMap;
-}
-
-export function reparentBlockIndex(
-  state: BlockIndex,
-  activeId: string,
-  hoverZone: string
-): BlockIndex {
-  const byId = cloneMap(state.byId);
-  const byParent = cloneParentMap(state.byParent);
-
-  const dragged = byId.get(activeId);
-  if (!dragged) return state;
-
-  const zoneTargetId = extractUUID(hoverZone);
-  const isAfter = hoverZone.startsWith('after-');
-  const isInto = hoverZone.startsWith('into-');
-  const target = byId.get(zoneTargetId);
-
-  const oldParentId = dragged.parentId ?? null;
-  const newParentId = isInto ? zoneTargetId : target?.parentId ?? null;
-
-  // Sections can be nested now (unlike original which restricted to root)
-  if (dragged.id === zoneTargetId) return state;
-
-  // Prevent dropping into own descendants
-  let checkId: string | null = newParentId;
-  while (checkId) {
-    if (checkId === dragged.id) return state;
-    checkId = byId.get(checkId)?.parentId ?? null;
-  }
-
-  // Remove dragged from old parent
-  const oldList = byParent.get(oldParentId) ?? [];
-  const filtered = oldList.filter(id => id !== dragged.id);
-  byParent.set(oldParentId, filtered);
-
-  // Insert dragged into new parent
-  const newList = [...(byParent.get(newParentId) ?? [])];
-  let insertIndex = newList.length;
-
-  if (!isInto) {
-    const idx = newList.indexOf(zoneTargetId);
-    insertIndex = idx === -1 ? newList.length : isAfter ? idx + 1 : idx;
-  }
-
-  // Filter out the dragged id if it's already in the new list (same parent reorder)
-  const cleanList = newList.filter(id => id !== dragged.id);
-  cleanList.splice(insertIndex, 0, dragged.id);
-  byParent.set(newParentId, cleanList);
-
-  byId.set(dragged.id, {
-    ...dragged,
-    parentId: newParentId,
-  });
-
-  return { byId, byParent };
-}
+import type { Block, BlockChange, TreeNode } from './types';
 
 export function diffBlocks(prev: Block[], next: Block[]): BlockChange[] {
-  // Build position maps: id -> { parentId, index }
-  const prevPositions = new Map<string, { parentId: string | null; index: number }>();
-  const nextPositions = new Map<string, { parentId: string | null; index: number }>();
-
-  // Group by parent and track indices
   const prevByParent = new Map<string | null, string[]>();
   const nextByParent = new Map<string | null, string[]>();
 
@@ -96,7 +16,9 @@ export function diffBlocks(prev: Block[], next: Block[]): BlockChange[] {
     nextByParent.set(block.parentId, list);
   }
 
-  // Build position maps from grouped data
+  const prevPositions = new Map<string, { parentId: string | null; index: number }>();
+  const nextPositions = new Map<string, { parentId: string | null; index: number }>();
+
   for (const [parentId, ids] of prevByParent.entries()) {
     ids.forEach((id, index) => {
       prevPositions.set(id, { parentId, index });
@@ -144,7 +66,6 @@ export function buildTree(blocks: Block[]): TreeNode[] {
   const roots: TreeNode[] = [];
   const childrenOrder = new Map<string, string[]>();
 
-  // First pass: create nodes and track insertion order per parent
   for (const block of blocks) {
     map.set(block.id, { ...block, children: [], depth: 0 });
 
@@ -154,7 +75,6 @@ export function buildTree(blocks: Block[]): TreeNode[] {
     childrenOrder.set(parentKey, order);
   }
 
-  // Second pass: build tree structure preserving array order
   for (const block of blocks) {
     const node = map.get(block.id)!;
     if (node.parentId && map.has(node.parentId)) {
@@ -163,7 +83,6 @@ export function buildTree(blocks: Block[]): TreeNode[] {
     }
   }
 
-  // Build children arrays in correct order
   for (const [parentKey, ids] of childrenOrder.entries()) {
     if (parentKey === '__root__') {
       for (const id of ids) {
@@ -181,7 +100,6 @@ export function buildTree(blocks: Block[]): TreeNode[] {
     }
   }
 
-  // Calculate depths after tree is built
   function setDepths(nodes: TreeNode[], depth: number) {
     for (const node of nodes) {
       node.depth = depth;

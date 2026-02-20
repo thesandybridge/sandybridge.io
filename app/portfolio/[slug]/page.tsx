@@ -51,7 +51,7 @@ export default async function PortfolioItem({ params }: Props) {
     <>
       <Link href="/portfolio" className="back-link">&larr; Back to Portfolio</Link>
       <article>
-        <ProjectLinks github={post.github} url={post.url} blog={post.blog} />
+        <ProjectLinks github={post.github} url={post.url} blog={post.blog} npm={post.npm} />
         <StatusBadges github={post.github} />
         {post.image && (
           <Image

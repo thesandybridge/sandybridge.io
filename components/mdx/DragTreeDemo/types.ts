@@ -1,21 +1,9 @@
-export interface Block {
-  id: string;
+import type { BaseBlock } from 'dnd-block-tree';
+
+export interface Block extends BaseBlock {
   type: 'section' | 'item';
-  parentId: string | null;
-  order: number;
   title: string;
 }
-
-export interface BlockIndex {
-  byId: Map<string, Block>;
-  byParent: Map<string | null, string[]>;
-}
-
-export type BlockAction =
-  | { type: 'MOVE_ITEM'; payload: { activeId: string; zone: string } }
-  | { type: 'SET_ALL'; payload: Block[] }
-  | { type: 'ADD_ITEM'; payload: Block }
-  | { type: 'DELETE_ITEM'; payload: { id: string } };
 
 export interface TreeNode extends Block {
   children: TreeNode[];

@@ -1,115 +1,92 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import {
-  DndContext,
-  DragOverlay,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  type DragStartEvent,
-  type DragEndEvent,
-  type CollisionDetection,
-} from '@dnd-kit/core';
-import { Folder, FileText, Plus, RotateCcw, GripVertical } from 'lucide-react';
-import { DragTreeProvider, useDragTree } from './context';
-import { TreeRenderer } from './TreeRenderer';
+  BlockTree,
+  type ContainerRendererProps,
+  type BlockRendererProps,
+} from 'dnd-block-tree';
+import { ChevronRight, Folder, FolderOpen, FileText, Plus, RotateCcw, GripVertical } from 'lucide-react';
 import { MiniMap } from './MiniMap';
 import type { Block } from './types';
 
 const MAX_BLOCKS = 20;
 
-// Custom collision detection using edge distance with bottom bias
-// Much better for thin horizontal drop zones than rectIntersection or closestCenter
-const weightedVerticalCollision: CollisionDetection = ({ droppableContainers, collisionRect }) => {
-  if (!collisionRect) return [];
-
-  const pointerY = collisionRect.top + collisionRect.height / 2;
-
-  const candidates = droppableContainers
-    .map((container) => {
-      const rect = container.rect.current;
-      if (!rect) return null;
-
-      const distanceToTop = Math.abs(pointerY - rect.top);
-      const distanceToBottom = Math.abs(pointerY - rect.bottom);
-      const edgeDistance = Math.min(distanceToTop, distanceToBottom);
-
-      // Bias toward bottom edge when pointer is below center
-      const isBelowCenter = pointerY > rect.top + rect.height / 2;
-      const bias = isBelowCenter ? -5 : 0;
-
-      return {
-        id: container.id,
-        data: { droppableContainer: container, value: edgeDistance + bias },
-      };
-    })
-    .filter(Boolean) as { id: string | number; data: { droppableContainer: unknown; value: number } }[];
-
-  candidates.sort((a, b) => a.data.value - b.data.value);
-  return candidates.slice(0, 1);
-};
-
 const INITIAL_BLOCKS: Block[] = [
-  // Level 1: Root sections
   { id: 's1', type: 'section', parentId: null, order: 0, title: 'Frontend' },
-
-  // Level 2: Nested sections
   { id: 's1-1', type: 'section', parentId: 's1', order: 0, title: 'Components' },
   { id: 'i1', type: 'item', parentId: 's1-1', order: 0, title: 'Button' },
   { id: 'i2', type: 'item', parentId: 's1-1', order: 1, title: 'Modal' },
-
   { id: 's1-2', type: 'section', parentId: 's1', order: 1, title: 'Hooks' },
   { id: 'i3', type: 'item', parentId: 's1-2', order: 0, title: 'useAuth' },
-
-  // Level 1: Another root
   { id: 's2', type: 'section', parentId: null, order: 1, title: 'Backend' },
   { id: 's2-1', type: 'section', parentId: 's2', order: 0, title: 'API Routes' },
   { id: 'i4', type: 'item', parentId: 's2-1', order: 0, title: '/users' },
   { id: 'i5', type: 'item', parentId: 's2-1', order: 1, title: '/posts' },
-
   { id: 's3', type: 'section', parentId: null, order: 2, title: 'Infrastructure' },
   { id: 'i6', type: 'item', parentId: 's3', order: 0, title: 'Docker setup' },
 ];
 
-export function DragTreeDemo() {
+const CONTAINER_TYPES = ['section'] as const;
+
+function SectionRenderer({ block, children, isDragging, isExpanded, onToggleExpand }: ContainerRendererProps<Block>) {
+  const Icon = isExpanded ? FolderOpen : Folder;
+
   return (
-    <DragTreeProvider initialBlocks={INITIAL_BLOCKS}>
-      <DragTreeInner />
-    </DragTreeProvider>
+    <div className={`drag-section${isDragging ? ' drag-dragging' : ''}`}>
+      <div className="drag-node drag-node-section">
+        <GripVertical size={14} className="drag-grip" />
+        <button
+          className="expand-toggle"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleExpand();
+          }}
+          aria-label={isExpanded ? 'Collapse' : 'Expand'}
+        >
+          <ChevronRight size={14} className={`expand-chevron${isExpanded ? ' expanded' : ''}`} />
+        </button>
+        <Icon size={14} className={`node-icon${isExpanded ? ' node-icon-active' : ''}`} />
+        <span className="node-title">{block.title}</span>
+      </div>
+      {isExpanded && children && (
+        <div className="section-children">
+          {children}
+        </div>
+      )}
+    </div>
   );
 }
 
-function DragTreeInner() {
-  const { startDrag, endDrag, activeId, hoverZone, handleHover, moveItem, addItem, reset, blocks, blockCount } = useDragTree();
+function ItemRenderer({ block, isDragging }: BlockRendererProps<Block>) {
+  return (
+    <div className={`drag-node drag-node-item${isDragging ? ' drag-dragging' : ''}`}>
+      <GripVertical size={14} className="drag-grip" />
+      <FileText size={14} className="node-icon" />
+      <span className="node-title">{block.title}</span>
+    </div>
+  );
+}
+
+const renderers = {
+  section: SectionRenderer,
+  item: ItemRenderer,
+};
+
+export function DragTreeDemo() {
+  const [blocks, setBlocks] = useState<Block[]>(INITIAL_BLOCKS);
+  const blockCount = blocks.length;
   const canAdd = blockCount < MAX_BLOCKS;
 
-  const pointerSensor = useSensor(PointerSensor, {
-    activationConstraint: { distance: 8 },
-  });
-  const touchSensor = useSensor(TouchSensor, {
-    activationConstraint: { distance: 8 },
-  });
-  const sensors = useSensors(pointerSensor, touchSensor);
+  const addItem = useCallback((type: Block['type']) => {
+    const id = `${type[0]}${Date.now()}`;
+    const title = type === 'section' ? 'New Section' : 'New Item';
+    setBlocks(prev => [...prev, { id, type, parentId: null, order: prev.length, title }]);
+  }, []);
 
-  const handleDragStart = useCallback((event: DragStartEvent) => {
-    startDrag(String(event.active.id));
-  }, [startDrag]);
-
-  const handleDragEnd = useCallback((event: DragEndEvent) => {
-    const dropZone = hoverZone ?? (event.over?.id ? String(event.over.id) : null);
-    if (dropZone && activeId) {
-      moveItem(activeId, dropZone);
-    }
-    endDrag();
-  }, [hoverZone, activeId, moveItem, endDrag]);
-
-  const handleDragCancel = useCallback(() => {
-    endDrag();
-  }, [endDrag]);
-
-  const activeBlock = activeId ? blocks.find(b => b.id === activeId) : null;
+  const reset = useCallback(() => {
+    setBlocks(INITIAL_BLOCKS);
+  }, []);
 
   return (
     <div className="drag-tree-demo">
@@ -117,7 +94,7 @@ function DragTreeInner() {
         <div className="drag-tree-controls">
           <button
             className="drag-tree-btn"
-            onClick={() => addItem('section', null)}
+            onClick={() => addItem('section')}
             disabled={!canAdd}
             title="Add section"
           >
@@ -126,7 +103,7 @@ function DragTreeInner() {
           </button>
           <button
             className="drag-tree-btn"
-            onClick={() => addItem('item', null)}
+            onClick={() => addItem('item')}
             disabled={!canAdd}
             title="Add item"
           >
@@ -142,32 +119,32 @@ function DragTreeInner() {
           </button>
           <span className="drag-tree-count">{blockCount}/{MAX_BLOCKS}</span>
         </div>
-        <DndContext
-          sensors={sensors}
-          collisionDetection={weightedVerticalCollision}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-          onDragCancel={handleDragCancel}
-        >
-          <div className="drag-tree">
-            <TreeRenderer parentId={null} />
-          </div>
-          <DragOverlay dropAnimation={null} adjustScale={false}>
-            {activeBlock && (
-              <div className="drag-overlay-item">
-                <GripVertical size={14} className="drag-overlay-grip" />
-                {activeBlock.type === 'section' ? (
-                  <Folder size={14} />
-                ) : (
-                  <FileText size={14} />
-                )}
-                <span className="drag-overlay-title">{activeBlock.title}</span>
-              </div>
-            )}
-          </DragOverlay>
-        </DndContext>
+        <BlockTree<Block, typeof CONTAINER_TYPES>
+          blocks={blocks}
+          renderers={renderers}
+          containerTypes={CONTAINER_TYPES}
+          onChange={setBlocks}
+          initialExpanded="all"
+          showDropPreview
+          activationDistance={8}
+          className="drag-tree"
+          dropZoneClassName="drop-indicator"
+          dropZoneActiveClassName="drop-indicator-active"
+          indentClassName="tree-indent"
+          dragOverlay={(block) => (
+            <div className="drag-overlay-item">
+              <GripVertical size={14} className="drag-overlay-grip" />
+              {block.type === 'section' ? (
+                <Folder size={14} />
+              ) : (
+                <FileText size={14} />
+              )}
+              <span className="drag-overlay-title">{block.title}</span>
+            </div>
+          )}
+        />
       </div>
-      <MiniMap initialBlocks={INITIAL_BLOCKS} />
+      <MiniMap blocks={blocks} initialBlocks={INITIAL_BLOCKS} />
     </div>
   );
 }
