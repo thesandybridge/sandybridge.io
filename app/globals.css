@@ -3583,77 +3583,98 @@ html.konami-active {
     100% { filter: hue-rotate(360deg); }
 }
 
-/* Docs layout */
+/* Docs layout — widen container to fit sidebar */
+.container:has(.docs-layout) {
+    max-width: 1100px;
+}
+
 .docs-layout {
     display: flex;
+    flex: 1;
     width: 100%;
-    gap: 0;
 }
 
 .docs-sidebar {
     display: none;
     width: 14rem;
     flex-shrink: 0;
-    border-right: 1px solid var(--secondary-bg);
-    padding: 1.5rem 1rem;
+    border-right: 1px solid color-mix(in srgb, var(--secondary-bg) 50%, transparent);
+    padding: 1.5rem;
     position: sticky;
-    top: 3.5rem;
+    top: 1rem;
     align-self: flex-start;
-    max-height: calc(100dvh - 3.5rem);
+    height: calc(100vh - 2rem);
     overflow-y: auto;
 
-    @media (min-width: 768px) {
+    @media (min-width: 1024px) {
         display: block;
     }
+}
+
+.docs-sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
 }
 
 .docs-content {
     flex: 1;
     min-width: 0;
-    padding: 1.5rem 0 2rem 2rem;
+    padding: 1.5rem;
+
+    @media (min-width: 640px) {
+        padding: 2rem 1.5rem;
+    }
 }
 
 .docs-sidebar-link {
-    display: block;
-    padding: 0.375rem 0.75rem;
-    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
     color: var(--primary-fg);
-    border-radius: 4px;
+    border-radius: 6px;
     transition: color 0.2s ease, background-color 0.2s ease;
 
     &:hover {
-        color: var(--secondary-fg);
-        background-color: color-mix(in srgb, var(--secondary-bg) 50%, transparent);
+        color: var(--fg, #ebdbb2);
+        background-color: color-mix(in srgb, var(--secondary-bg) 40%, transparent);
     }
 
     &.active {
-        color: var(--secondary-fg);
-        font-weight: 700;
+        color: var(--fg, #ebdbb2);
+        background-color: color-mix(in srgb, var(--secondary-bg) 40%, transparent);
+        font-weight: 500;
     }
 }
 
 .docs-sidebar-headings {
     padding-left: 1rem;
     margin: 0.125rem 0 0.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
 }
 
 .docs-sidebar-heading {
-    display: block;
-    padding: 0.25rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.75rem;
     font-size: 0.8rem;
     color: var(--primary-fg);
-    opacity: 0.7;
     border-left: 2px solid transparent;
-    transition: color 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
+    border-radius: 0 4px 4px 0;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 
     &:hover {
-        color: var(--secondary-fg);
-        opacity: 1;
+        color: var(--fg, #ebdbb2);
+        background-color: color-mix(in srgb, var(--secondary-bg) 30%, transparent);
     }
 
     &.active {
         color: var(--secondary-fg);
-        opacity: 1;
         border-left-color: var(--secondary-fg);
     }
 }
@@ -3666,27 +3687,32 @@ html.konami-active {
 .docs-grid {
     display: grid;
     gap: 1rem;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: 1fr;
+
+    @media (min-width: 640px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 .docs-card {
     display: block;
-    padding: 1.25rem;
+    padding: 1rem;
     border: 1px solid var(--secondary-bg);
-    border-radius: 6px;
-    transition: border-color 0.2s ease;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
 
     &:hover {
-        border-color: var(--secondary-fg);
+        background-color: color-mix(in srgb, var(--secondary-bg) 30%, transparent);
     }
 
     & h2 {
-        font-size: 1.1rem;
+        font-size: 1rem;
+        font-weight: 600;
         margin: 0 0 0.25rem;
     }
 
     & p {
-        font-size: 0.85rem;
+        font-size: 0.875rem;
         color: var(--primary-fg);
         margin: 0;
     }

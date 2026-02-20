@@ -26,7 +26,7 @@ export function DocsSidebar({ docs }: { docs: DocLink[] }) {
   const updateActiveHeading = useCallback(() => {
     if (!activeDoc || activeDoc.headings.length === 0) return;
 
-    const scrollY = window.scrollY + 120;
+    const scrollY = window.scrollY + 100;
     let current: string | null = null;
 
     for (const heading of activeDoc.headings) {
