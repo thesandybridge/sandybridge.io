@@ -19,7 +19,7 @@
     "@shikijs/transformers": "^3.22.0",
     "@thesandybridge/themes": "^1.5.0",
     "@types/three": "^0.182.0",
-    "dnd-block-tree": "^0.2.0",
+    "dnd-block-tree": "^0.3.0",
     "fuse.js": "^7.1.0",
     "gray-matter": "^4.0.3",
     "ioredis": "^5.9.3",
