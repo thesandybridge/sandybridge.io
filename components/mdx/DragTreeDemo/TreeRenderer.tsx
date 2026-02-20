@@ -24,9 +24,14 @@ export function TreeRenderer({ parentId, depth = 0 }: TreeRendererProps) {
     <>
       {children.map((block, index) => {
         const isActiveBlock = block.id === activeId;
+        const prevBlock = index > 0 ? children[index - 1] : null;
+        const prevIsActive = prevBlock?.id === activeId;
+        // Show before zone for: first item OR item after the dragged item
+        // This prevents zone flickering when virtual preview changes order
+        const showBefore = (index === 0 || prevIsActive) && !isActiveBlock;
         return (
           <Fragment key={block.id}>
-            {index === 0 && !isActiveBlock && <DropZone id={`before-${block.id}`} />}
+            {showBefore && <DropZone id={`before-${block.id}`} />}
             {block.type === 'section' ? (
               <SectionNode block={block} depth={depth} />
             ) : (
