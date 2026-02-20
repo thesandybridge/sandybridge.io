@@ -82,7 +82,7 @@ export default async function PortfolioItem({ params }: Props) {
             mdxOptions: {
               remarkPlugins: [remarkGfm],
               rehypePlugins: [
-                rehypeRaw,
+                [rehypeRaw, { passThrough: ['mdxJsxFlowElement', 'mdxJsxTextElement', 'mdxFlowExpression', 'mdxTextExpression'] }],
                 rehypeSlug,
                 [rehypeShiki, shikiConfig],
               ],

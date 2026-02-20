@@ -560,8 +560,12 @@ body {
     transition: background-color 0.6s ease, color 0.6s ease;
 }
 
-svg {
+svg:not(.lucide) {
     fill: var(--primary-fg);
+}
+
+svg.lucide {
+    fill: none;
 }
 
 .center {
@@ -2360,6 +2364,348 @@ nav li time {
 .code-tabs-body pre {
     margin: 0;
     border-radius: 0;
+}
+
+/* Drag Tree Demo */
+.drag-tree-demo {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    align-items: stretch;
+}
+
+@media (max-width: 768px) {
+    .drag-tree-demo {
+        grid-template-columns: 1fr;
+    }
+}
+
+.drag-tree {
+    background: var(--secondary-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 250px;
+}
+
+.drag-section {
+    margin-left: calc(var(--depth, 0) * 1rem);
+}
+
+.section-children {
+    margin-top: 2px;
+}
+
+.drag-node {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.5rem;
+    margin: 2px 0;
+    border-radius: 4px;
+    background: var(--primary-bg);
+    border: 1px solid var(--border);
+    font-size: 0.85rem;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.drag-node-item {
+    margin-left: calc(var(--depth, 0) * 1rem);
+}
+
+.drag-node:hover {
+    border-color: var(--secondary-fg);
+}
+
+.drag-node-section {
+    background: var(--code-bg);
+    font-weight: 500;
+}
+
+.drag-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.15rem;
+    border: none;
+    background: transparent;
+    color: var(--primary-fg);
+    cursor: grab;
+    border-radius: 3px;
+    transition: background 0.15s, color 0.15s;
+}
+
+.drag-handle:hover {
+    background: var(--secondary-bg);
+    color: var(--secondary-fg);
+}
+
+.drag-handle:active,
+.drag-handle-active {
+    cursor: grabbing;
+    color: var(--secondary-fg);
+}
+
+.expand-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.1rem;
+    border: none;
+    background: transparent;
+    color: var(--primary-fg);
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.expand-toggle:hover {
+    color: var(--secondary-fg);
+}
+
+.node-icon {
+    color: var(--primary-fg);
+    flex-shrink: 0;
+}
+
+.node-title {
+    color: var(--text-bright);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.drop-zone {
+    height: 2px;
+    margin: 1px 0;
+    border-radius: 2px;
+    transition: background 0.15s, opacity 0.15s;
+    opacity: 0;
+}
+
+.drop-zone-visible {
+    opacity: 1;
+    background: var(--border);
+}
+
+.drop-zone-active {
+    background: var(--secondary-fg);
+}
+
+.drop-zone-empty,
+.drop-zone-collapsed {
+    height: 24px;
+    margin: 4px 0 4px calc(var(--depth, 0) * 1rem + 1rem);
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+}
+
+.drop-zone-empty.drop-zone-active,
+.drop-zone-collapsed.drop-zone-active {
+    border-color: var(--secondary-fg);
+    background: rgba(var(--secondary-fg-rgb), 0.1);
+}
+
+.drag-overlay-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.75rem;
+    background: var(--secondary-bg);
+    border: 1px solid var(--secondary-fg);
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: var(--text-bright);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    opacity: 0.95;
+}
+
+.drag-tree-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-height: 300px;
+}
+
+.drag-tree-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.drag-tree-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--secondary-bg);
+    color: var(--primary-fg);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.drag-tree-btn:hover:not(:disabled) {
+    border-color: var(--secondary-fg);
+    color: var(--secondary-fg);
+}
+
+.drag-tree-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.drag-tree-count {
+    font-size: 0.7rem;
+    color: var(--primary-fg);
+    margin-left: auto;
+}
+
+.delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.15rem;
+    border: none;
+    background: transparent;
+    color: var(--primary-fg);
+    cursor: pointer;
+    border-radius: 3px;
+    opacity: 0;
+    margin-left: auto;
+    transition: opacity 0.15s, color 0.15s, background 0.15s;
+}
+
+.drag-node:hover .delete-btn {
+    opacity: 1;
+}
+
+.delete-btn:hover {
+    color: var(--error);
+    background: rgba(var(--error-rgb, 251, 73, 52), 0.15);
+}
+
+/* MiniMap */
+.drag-tree-minimap {
+    background: var(--primary-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem;
+    font-size: 0.75rem;
+    overflow-y: auto;
+    min-height: 300px;
+    align-self: stretch;
+}
+
+.minimap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.minimap-title {
+    font-weight: 600;
+    color: var(--text-bright);
+}
+
+.minimap-badge {
+    padding: 0.15rem 0.4rem;
+    background: var(--secondary-fg);
+    color: var(--primary-bg);
+    border-radius: 10px;
+    font-size: 0.65rem;
+    font-weight: 600;
+}
+
+.minimap-tree {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.minimap-node {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.2rem 0.35rem;
+    padding-left: calc(var(--depth, 0) * 0.75rem + 0.35rem);
+    border-radius: 3px;
+    color: var(--primary-fg);
+    transition: background 0.15s;
+}
+
+.minimap-node.diff-added {
+    background: rgba(var(--success-rgb, 184, 187, 38), 0.2);
+    color: var(--success);
+}
+
+.minimap-node.diff-removed {
+    background: rgba(var(--error-rgb, 251, 73, 52), 0.2);
+    color: var(--error);
+    text-decoration: line-through;
+}
+
+.minimap-node.diff-changed {
+    background: rgba(var(--warning-rgb, 250, 189, 47), 0.2);
+    color: var(--warning);
+}
+
+.minimap-indicator {
+    font-weight: 700;
+    width: 0.75rem;
+    text-align: center;
+}
+
+.minimap-type {
+    color: var(--primary-fg);
+    opacity: 0.6;
+}
+
+.minimap-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.minimap-legend {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.65rem;
+    color: var(--primary-fg);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+}
+
+.legend-dot.diff-changed {
+    background: var(--warning);
+}
+
+.legend-dot.diff-added {
+    background: var(--success);
+}
+
+.legend-dot.diff-removed {
+    background: var(--error);
 }
 
 /* Footnotes */

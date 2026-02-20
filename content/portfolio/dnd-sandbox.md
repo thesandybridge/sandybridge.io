@@ -11,6 +11,12 @@ url: "https://dnd-sandbox-swart.vercel.app"
 
 A drag-and-drop tree editor built on @dnd-kit with a strict separation between block structure and content. The architecture is generic — block management and tree rendering are fully decoupled from whatever data you put inside, so the same system can power an agenda builder, a page editor, or any nested sortable UI.
 
+## Live Demo
+
+<DragTreeDemo />
+
+Drag items to reorder or reparent. Sections can be nested inside other sections. The minimap on the right shows a live diff of structural changes — yellow indicates moved items.
+
 ## Architecture
 
 Two factory-based providers form the core:

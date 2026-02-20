@@ -2,12 +2,14 @@ import type { MDXComponents } from 'mdx/types';
 import Link from 'next/link';
 import { Callout } from '@/components/mdx/Callout';
 import { CodeTabs } from '@/components/mdx/CodeTabs';
+import { DragTreeDemo } from '@/components/mdx/DragTreeDemo';
 import { PlaceholderImage } from '@/components/mdx/PlaceholderImage';
 
 export function getMDXComponents(): MDXComponents {
   return {
     Callout,
     CodeTabs,
+    DragTreeDemo,
     a: ({ href, children, ...props }) => {
       if (href?.startsWith('/')) {
         return <Link href={href} {...props}>{children}</Link>;
