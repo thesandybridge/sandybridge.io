@@ -1062,6 +1062,41 @@ footer {
     }
 }
 
+/* Presence Indicator */
+.presence-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.6rem;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: var(--primary-fg);
+    margin-bottom: 0.75rem;
+}
+
+.presence-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--success);
+    border-radius: 50%;
+    animation: presencePulse 2s ease-in-out infinite;
+}
+
+@keyframes presencePulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.presence-count {
+    color: var(--alt);
+}
+
 /* Command Palette */
 .palette-overlay {
     position: fixed;
@@ -1752,6 +1787,121 @@ a.tag {
     }
 }
 
+/* TIL Section */
+.til-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.til-list li {
+    border-bottom: 1px solid var(--border);
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.til-list li a {
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem 0;
+    text-decoration: none;
+
+    h3 {
+        margin: 0;
+        font-size: 1rem;
+        color: var(--text-bright);
+    }
+
+    &:hover h3 {
+        color: var(--secondary-fg);
+    }
+}
+
+.til-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+    color: var(--primary-fg);
+    margin-top: 0.25rem;
+}
+
+.til-tags {
+    display: flex;
+    gap: 0.35rem;
+}
+
+.til-tag {
+    padding: 0.1rem 0.35rem;
+    background: var(--secondary-bg);
+    border-radius: 3px;
+    font-size: 0.7rem;
+    color: var(--secondary-fg);
+}
+
+.til-desc {
+    display: none;
+}
+
+.til-article {
+    max-width: 65ch;
+}
+
+.empty-state {
+    color: var(--primary-fg);
+    opacity: 0.6;
+    font-style: italic;
+}
+
+/* Changelog */
+.changelog {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.changelog-day {
+    border-left: 2px solid var(--border);
+    padding-left: 1rem;
+}
+
+.changelog-date {
+    font-size: 0.9rem;
+    color: var(--secondary-fg);
+    margin: 0 0 0.5rem;
+}
+
+.changelog-entries {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.changelog-entry {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+}
+
+.changelog-hash {
+    font-size: 0.75rem;
+    color: var(--alt);
+    background: var(--code-bg);
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.changelog-message {
+    color: var(--primary-fg);
+}
+
 .skip-link {
     position: absolute;
     left: -9999px;
@@ -1932,6 +2082,60 @@ nav li time {
     flex-shrink: 0;
 }
 
+.status-badges {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.2s;
+
+    &:hover {
+        opacity: 0.8;
+    }
+
+    svg {
+        flex-shrink: 0;
+    }
+}
+
+.status-success {
+    background: rgba(var(--success-rgb, 184, 187, 38), 0.15);
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+
+.status-failure {
+    background: rgba(var(--error-rgb, 251, 73, 52), 0.15);
+    color: var(--error);
+    border: 1px solid var(--error);
+}
+
+.status-pending,
+.status-in_progress {
+    background: rgba(var(--warning-rgb, 250, 189, 47), 0.15);
+    color: var(--warning);
+    border: 1px solid var(--warning);
+}
+
+.status-in_progress svg {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 .toc {
     margin-bottom: 2rem;
     font-size: 0.85rem;
@@ -2032,6 +2236,60 @@ nav li time {
     color: var(--primary-fg);
     text-transform: uppercase;
     letter-spacing: 0.05em;
+}
+
+/* GitHub Contributions */
+.github-contributions {
+    margin: 1.5rem 0 2rem;
+    padding: 1rem;
+    background: var(--secondary-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.contributions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+}
+
+.contributions-total {
+    color: var(--primary-fg);
+}
+
+.contributions-link {
+    color: var(--secondary-fg);
+}
+
+.contributions-graph {
+    display: flex;
+    gap: 3px;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+}
+
+.contributions-week {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.contributions-day {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+}
+
+.contributions-legend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: flex-end;
+    font-size: 0.7rem;
+    color: var(--primary-fg);
+    margin-top: 0.5rem;
 }
 
 /* MDX Callout */

@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Home, Briefcase, BookOpen, Wrench, Palette, Check, Sun, Moon, Search } from 'lucide-react';
+import { Menu, X, Home, Briefcase, BookOpen, Wrench, Palette, Check, Sun, Moon, Search, Lightbulb } from 'lucide-react';
 import { useTheme, THEMES } from '../theme/ThemeProvider';
 import { haptic } from '@/lib/haptics';
 
@@ -11,6 +11,7 @@ const navItems = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/portfolio', label: 'Portfolio', icon: Briefcase },
   { href: '/blog', label: 'Blog', icon: BookOpen },
+  { href: '/til', label: 'TIL', icon: Lightbulb },
   { href: '/uses', label: 'Uses', icon: Wrench },
 ];
 

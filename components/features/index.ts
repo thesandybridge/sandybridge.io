@@ -1,7 +1,10 @@
 export { CachedPages } from './CachedPages';
 export { Footer } from './Footer';
+export { GitHubContributions } from './GitHubContributions';
 export { KonamiCode } from './KonamiCode';
 export { NotFoundPath } from './NotFoundPath';
 export { NvimConfigExplorer } from './NvimConfigExplorer';
+export { PresenceIndicator } from './PresenceIndicator';
 export { ProjectLinks } from './ProjectLinks';
+export { StatusBadges } from './StatusBadges';
 export { VimBindings } from './VimBindings';

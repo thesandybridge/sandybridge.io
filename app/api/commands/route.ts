@@ -110,9 +110,9 @@ const COMMAND_HELP: Record<string, { usage: string; description: string; example
     examples: ['cat building_tileforge', 'cat safe-route'],
   },
   grep: {
-    usage: 'grep <term>',
-    description: 'Search all posts by title or tags. Returns matching post paths.',
-    examples: ['grep rust', 'grep react', 'grep typescript'],
+    usage: 'grep [-C n] [-b] <term>',
+    description: 'Search posts. Use -b for body content search, -C n for context lines.',
+    examples: ['grep rust', 'grep -b redis', 'grep -b -C 3 async'],
   },
   man: {
     usage: 'man <slug>',
@@ -194,7 +194,7 @@ const COMMAND_HELP: Record<string, { usage: string; description: string; example
   },
 };
 
-function executeCommand(args: string[], referer: string): { response: CommandResponse; message: string } {
+async function executeCommand(args: string[], referer: string): Promise<{ response: CommandResponse; message: string }> {
   const response: CommandResponse = {};
   let message = '';
 
@@ -367,21 +367,84 @@ Based in the terminal. Powered by mass amounts of caffeine.
 
     case 'grep': {
       if (args.length < 2) {
-        message = '<span class="term-error">grep: search term required</span>';
+        message = `<span class="term-error">grep: search term required</span>
+<span class="term-info">Usage: grep [-C n] [-b] &lt;term&gt;</span>
+<span class="term-info">  -C n  Show n lines of context (default: 2)</span>
+<span class="term-info">  -b    Search body content (default: titles/tags only)</span>`;
       } else {
-        const term = args.slice(1).join(' ').toLowerCase();
-        const posts = getPostIndex();
-        const matches = posts.filter(p =>
-          p.title.toLowerCase().includes(term) ||
-          p.tags.some(t => t.toLowerCase().includes(term))
-        );
+        // Parse flags
+        let contextLines = 2;
+        let searchBody = false;
+        let searchTerm = '';
+        const remainingArgs = args.slice(1);
 
-        if (matches.length === 0) {
-          message = `<span class="term-info">No results for "${escapeHtml(term)}"</span>`;
+        for (let i = 0; i < remainingArgs.length; i++) {
+          if (remainingArgs[i] === '-C' && remainingArgs[i + 1]) {
+            contextLines = parseInt(remainingArgs[i + 1], 10) || 2;
+            i++;
+          } else if (remainingArgs[i] === '-b') {
+            searchBody = true;
+          } else {
+            searchTerm = remainingArgs.slice(i).join(' ');
+            break;
+          }
+        }
+
+        if (!searchTerm) {
+          message = '<span class="term-error">grep: search term required</span>';
+        } else if (searchBody) {
+          // Full-body search using the grep API
+          try {
+            const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+            const grepUrl = `${baseUrl}/api/grep?q=${encodeURIComponent(searchTerm)}&context=${contextLines}`;
+            const res = await fetch(grepUrl);
+            const data = await res.json();
+
+            if (data.results.length === 0) {
+              message = `<span class="term-info">No matches for "${escapeHtml(searchTerm)}"</span>`;
+            } else {
+              const lines: string[] = [];
+              for (const result of data.results) {
+                lines.push(`<span class="term-highlight">${escapeHtml(result.type)}/${escapeHtml(result.slug)}</span>  ${escapeHtml(result.title)}`);
+                for (const match of result.matches.slice(0, 3)) {
+                  if (contextLines > 0 && match.before.length > 0) {
+                    for (const ctx of match.before) {
+                      lines.push(`<span class="term-muted">  ${match.lineNumber - match.before.indexOf(ctx) - 1}: ${escapeHtml(ctx)}</span>`);
+                    }
+                  }
+                  lines.push(`<span class="term-success">  ${match.lineNumber}: ${escapeHtml(match.content)}</span>`);
+                  if (contextLines > 0 && match.after.length > 0) {
+                    for (let j = 0; j < match.after.length; j++) {
+                      lines.push(`<span class="term-muted">  ${match.lineNumber + j + 1}: ${escapeHtml(match.after[j])}</span>`);
+                    }
+                  }
+                }
+                if (result.matches.length > 3) {
+                  lines.push(`<span class="term-info">  ... and ${result.matches.length - 3} more matches</span>`);
+                }
+              }
+              message = lines.join('\n');
+            }
+          } catch {
+            message = '<span class="term-error">grep: failed to search content</span>';
+          }
         } else {
-          message = matches.map(p =>
-            `<span class="term-info">${escapeHtml(p.dir)}/${escapeHtml(p.slug)}</span>  ${escapeHtml(p.title)}`
-          ).join('\n');
+          // Quick title/tag search (original behavior)
+          const term = searchTerm.toLowerCase();
+          const posts = getPostIndex();
+          const matches = posts.filter(p =>
+            p.title.toLowerCase().includes(term) ||
+            p.tags.some(t => t.toLowerCase().includes(term))
+          );
+
+          if (matches.length === 0) {
+            message = `<span class="term-info">No results for "${escapeHtml(searchTerm)}"</span>
+<span class="term-muted">Tip: Use -b flag to search body content</span>`;
+          } else {
+            message = matches.map(p =>
+              `<span class="term-info">${escapeHtml(p.dir)}/${escapeHtml(p.slug)}</span>  ${escapeHtml(p.title)}`
+            ).join('\n');
+          }
         }
       }
       break;
@@ -586,7 +649,7 @@ export async function POST(req: NextRequest) {
     return new NextResponse('', { headers: { 'Content-Type': 'text/html' } });
   }
 
-  let { response, message } = executeCommand(firstArgs, referer);
+  let { response, message } = await executeCommand(firstArgs, referer);
 
   // If there's an action (JSON response), pipes don't apply
   if (response.action) {

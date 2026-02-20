@@ -6,7 +6,7 @@ export interface SearchItem {
   description: string;
   tags: string[];
   date: string;
-  type: 'blog' | 'portfolio';
+  type: 'blog' | 'portfolio' | 'til';
 }
 
 export function generateSearchIndex(): SearchItem[] {
@@ -28,5 +28,14 @@ export function generateSearchIndex(): SearchItem[] {
     type: 'portfolio' as const,
   }));
 
-  return [...blogs, ...portfolio];
+  const til = getAllPosts('til').map((p) => ({
+    slug: p.slug,
+    title: p.title,
+    description: p.description,
+    tags: p.tags,
+    date: p.date,
+    type: 'til' as const,
+  }));
+
+  return [...blogs, ...portfolio, ...til];
 }

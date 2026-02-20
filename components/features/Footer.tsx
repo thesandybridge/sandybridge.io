@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Github, Linkedin, Twitter, Rss, Mail, FileText, Briefcase } from 'lucide-react';
+import { PresenceIndicator } from './PresenceIndicator';
 
 interface FooterProps {
   year: number;
@@ -8,6 +9,7 @@ interface FooterProps {
 export function Footer({ year }: FooterProps) {
   return (
     <footer>
+      <PresenceIndicator />
       <div className="footer-links">
         <Link href="/blog">
           <FileText size={16} />

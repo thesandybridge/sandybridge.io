@@ -71,10 +71,11 @@ function getLastModified(filePath: string): string | undefined {
   }
 }
 
-function getDir(dir: 'blog' | 'portfolio'): string {
-  return dir === 'blog'
-    ? contentDir
-    : path.join(contentDir, 'portfolio');
+export type ContentDir = 'blog' | 'portfolio' | 'til';
+
+function getDir(dir: ContentDir): string {
+  if (dir === 'blog') return contentDir;
+  return path.join(contentDir, dir);
 }
 
 function getExtension(filePath: string): string {
@@ -114,7 +115,7 @@ function parseFrontmatter(filePath: string): PostMeta | null {
 
 const postsCache = new Map<string, PostMeta[]>();
 
-export function getAllPosts(dir: 'blog' | 'portfolio', limit?: number): PostMeta[] {
+export function getAllPosts(dir: ContentDir, limit?: number): PostMeta[] {
   let posts = postsCache.get(dir);
   if (!posts) {
     const dirPath = getDir(dir);
@@ -182,7 +183,7 @@ function resolveFile(dir: string, slug: string): string | null {
   return null;
 }
 
-export async function getPost(dir: 'blog' | 'portfolio', slug: string): Promise<Post | null> {
+export async function getPost(dir: ContentDir, slug: string): Promise<Post | null> {
   const filePath = resolveFile(getDir(dir), slug);
   if (!filePath) return null;
 
@@ -230,7 +231,7 @@ export function getAllTags(): string[] {
   return Array.from(tags);
 }
 
-export function getAdjacentPosts(dir: 'blog' | 'portfolio', slug: string): { prev: PostMeta | null; next: PostMeta | null } {
+export function getAdjacentPosts(dir: ContentDir, slug: string): { prev: PostMeta | null; next: PostMeta | null } {
   const posts = getAllPosts(dir);
   const idx = posts.findIndex((p) => p.slug === slug);
   return {

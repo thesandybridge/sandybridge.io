@@ -3,6 +3,7 @@ import path from 'path';
 import Link from 'next/link';
 import { getAllPosts, getAllTags } from '@/lib/content';
 import { CoronaReveal } from '@/components/effects';
+import { GitHubContributions } from '@/components/features';
 import { TextScramble } from '@/components/home';
 import type { Metadata } from 'next';
 
@@ -50,7 +51,7 @@ function countWords(dir: string): number {
   return total;
 }
 
-export default function StatsPage() {
+export default async function StatsPage() {
   const blogPosts = getAllPosts('blog');
   const portfolioItems = getAllPosts('portfolio');
   const tags = getAllTags();
@@ -102,6 +103,9 @@ export default function StatsPage() {
           <span key={tag} className="tag">{tag} ({count})</span>
         ))}
       </div>
+
+      <h2>GitHub Activity</h2>
+      <GitHubContributions username="sandypockets" />
 
       {newest && oldest && (
         <>
