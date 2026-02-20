@@ -1,0 +1,56 @@
+---
+title: Getting Started
+description: Learn how to get started with this project
+order: 1
+---
+
+## Installation
+
+First, install the dependencies:
+
+```bash
+npm install
+```
+
+## Development
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Project Structure
+
+```
+├── app/              # Next.js App Router pages
+├── components/       # React components
+├── lib/              # Utility functions
+├── content/          # MDX content files
+│   └── docs/         # Documentation MDX files
+└── public/           # Static assets
+```
+
+## Hello World
+
+A minimal example to verify everything works:
+
+```tsx
+export default function HelloWorld() {
+  const greeting = "Hello, world!";
+
+  return (
+    <main>
+      <h1>{greeting}</h1>
+      <p>If you can see this, you're all set.</p>
+    </main>
+  );
+}
+```
+
+## Learn More
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [MDX](https://mdxjs.com)
