@@ -18,6 +18,7 @@ import { reparentBlockIndex, cloneMap, cloneParentMap } from './utils';
 interface DragTreeContextType {
   blocks: Block[];
   blocksByParent: Map<string | null, Block[]>;
+  dragStartByParent: Map<string | null, Block[]> | null;
   activeId: string | null;
   startDrag: (id: string) => void;
   endDrag: () => void;
@@ -51,6 +52,7 @@ export function DragTreeProvider({ initialBlocks, children }: DragTreeProviderPr
   const [activeId, setActiveId] = useState<string | null>(null);
   const [hoverZone, setHoverZone] = useState<string | null>(null);
   const [virtualState, setVirtualState] = useState<BlockIndex | null>(null);
+  const [dragStartByParent, setDragStartByParent] = useState<Map<string | null, Block[]> | null>(null);
   const [expandedMap, setExpandedMap] = useState<Record<string, boolean>>(() => {
     const map: Record<string, boolean> = {};
     for (const block of initialBlocks) {
@@ -103,6 +105,15 @@ export function DragTreeProvider({ initialBlocks, children }: DragTreeProviderPr
       byId: cloneMap(state.byId),
       byParent: cloneParentMap(state.byParent),
     };
+    // Also snapshot blocksByParent for stable zone visibility
+    const snapshot = new Map<string | null, Block[]>();
+    for (const [parentId, ids] of state.byParent.entries()) {
+      const blockList = ids
+        .map(id => state.byId.get(id))
+        .filter((b): b is Block => b !== undefined);
+      snapshot.set(parentId, blockList);
+    }
+    setDragStartByParent(snapshot);
     setActiveId(id);
   }, [state]);
 
@@ -110,6 +121,7 @@ export function DragTreeProvider({ initialBlocks, children }: DragTreeProviderPr
     setActiveId(null);
     setHoverZone(null);
     setVirtualState(null);
+    setDragStartByParent(null);
     initialStateRef.current = null;
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
@@ -175,6 +187,7 @@ export function DragTreeProvider({ initialBlocks, children }: DragTreeProviderPr
     () => ({
       blocks,
       blocksByParent,
+      dragStartByParent,
       activeId,
       startDrag,
       endDrag,
@@ -189,7 +202,7 @@ export function DragTreeProvider({ initialBlocks, children }: DragTreeProviderPr
       blockCount,
       isDragging,
     }),
-    [blocks, blocksByParent, activeId, startDrag, endDrag, hoverZone, handleHover, moveItem, addItem, deleteItem, reset, expandedMap, toggleExpand, blockCount, isDragging]
+    [blocks, blocksByParent, dragStartByParent, activeId, startDrag, endDrag, hoverZone, handleHover, moveItem, addItem, deleteItem, reset, expandedMap, toggleExpand, blockCount, isDragging]
   );
 
   return (

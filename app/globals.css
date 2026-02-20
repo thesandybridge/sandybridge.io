@@ -2479,47 +2479,65 @@ nav li time {
 
 .drop-zone {
     height: 2px;
-    margin: 1px 0;
+    margin: 0;
     border-radius: 2px;
-    transition: background 0.15s, opacity 0.15s;
-    opacity: 0;
+    transition: height 0.1s, background 0.1s, margin 0.1s;
+    background: transparent;
 }
 
 .drop-zone-visible {
-    opacity: 1;
-    background: var(--border);
+    height: 4px;
+    margin: 2px 0;
 }
 
 .drop-zone-active {
+    height: 4px;
+    margin: 2px 0;
     background: var(--secondary-fg);
 }
 
 .drop-zone-empty,
-.drop-zone-collapsed {
-    height: 24px;
-    margin: 4px 0 4px calc(var(--depth, 0) * 1rem + 1rem);
-    border: 1px dashed var(--border);
-    border-radius: 4px;
+.drop-zone-collapsed,
+.drop-zone-section-end {
+    height: 4px;
+    margin: 2px 0;
+    border-radius: 2px;
+}
+
+.drop-zone-section-end {
+    margin-left: 0;
 }
 
 .drop-zone-empty.drop-zone-active,
-.drop-zone-collapsed.drop-zone-active {
-    border-color: var(--secondary-fg);
-    background: rgba(var(--secondary-fg-rgb), 0.1);
+.drop-zone-collapsed.drop-zone-active,
+.drop-zone-section-end.drop-zone-active {
+    height: 6px;
+    background: var(--secondary-fg);
 }
 
 .drag-overlay-item {
     display: flex;
     align-items: center;
     gap: 0.35rem;
-    padding: 0.4rem 0.75rem;
-    background: var(--secondary-bg);
+    padding: 0.5rem 0.75rem;
+    min-width: 180px;
+    background: var(--primary-bg);
     border: 1px solid var(--secondary-fg);
     border-radius: 4px;
     font-size: 0.85rem;
     color: var(--text-bright);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    opacity: 0.95;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    opacity: 0.7;
+    backdrop-filter: blur(4px);
+}
+
+.drag-overlay-grip {
+    color: var(--secondary-fg);
+    opacity: 0.6;
+}
+
+.drag-overlay-title {
+    flex: 1;
 }
 
 .drag-tree-panel {

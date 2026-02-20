@@ -12,7 +12,7 @@ import {
   type DragEndEvent,
   type CollisionDetection,
 } from '@dnd-kit/core';
-import { Folder, FileText, Plus, RotateCcw } from 'lucide-react';
+import { Folder, FileText, Plus, RotateCcw, GripVertical } from 'lucide-react';
 import { DragTreeProvider, useDragTree } from './context';
 import { TreeRenderer } from './TreeRenderer';
 import { MiniMap } from './MiniMap';
@@ -155,12 +155,13 @@ function DragTreeInner() {
           <DragOverlay dropAnimation={null} adjustScale={false}>
             {activeBlock && (
               <div className="drag-overlay-item">
+                <GripVertical size={14} className="drag-overlay-grip" />
                 {activeBlock.type === 'section' ? (
                   <Folder size={14} />
                 ) : (
                   <FileText size={14} />
                 )}
-                <span>{activeBlock.title}</span>
+                <span className="drag-overlay-title">{activeBlock.title}</span>
               </div>
             )}
           </DragOverlay>

@@ -13,22 +13,29 @@ interface TreeRendererProps {
 }
 
 export function TreeRenderer({ parentId, depth = 0 }: TreeRendererProps) {
-  const { blocksByParent, activeId } = useDragTree();
+  const { blocksByParent, dragStartByParent, activeId } = useDragTree();
   const children = blocksByParent.get(parentId) ?? [];
+  // Use original state for zone visibility to prevent flickering
+  const originalChildren = dragStartByParent?.get(parentId) ?? children;
+  const isRoot = parentId === null;
 
   if (children.length === 0 && parentId !== null) {
     return activeId ? <DropZone id={`into-${parentId}`} className="drop-zone-empty" /> : null;
   }
 
+  // Determine which block was last in the ORIGINAL order (before drag started)
+  const originalLastId = originalChildren.length > 0
+    ? originalChildren[originalChildren.length - 1].id
+    : null;
+
   return (
     <>
-      {children.map((block, index) => {
+      {children.map((block) => {
         const isActiveBlock = block.id === activeId;
-        const prevBlock = index > 0 ? children[index - 1] : null;
-        const prevIsActive = prevBlock?.id === activeId;
-        // Show before zone for: first item OR item after the dragged item
-        // This prevents zone flickering when virtual preview changes order
-        const showBefore = (index === 0 || prevIsActive) && !isActiveBlock;
+        const wasOriginallyLast = block.id === originalLastId;
+        const showBefore = !isActiveBlock;
+        // Only show after zone at root level to avoid competing with into-{section} zones
+        const showAfter = isRoot && wasOriginallyLast && !isActiveBlock;
         return (
           <Fragment key={block.id}>
             {showBefore && <DropZone id={`before-${block.id}`} />}
@@ -37,7 +44,7 @@ export function TreeRenderer({ parentId, depth = 0 }: TreeRendererProps) {
             ) : (
               <ItemNode block={block} depth={depth} />
             )}
-            {!isActiveBlock && <DropZone id={`after-${block.id}`} />}
+            {showAfter && <DropZone id={`after-${block.id}`} />}
           </Fragment>
         );
       })}
@@ -53,6 +60,7 @@ interface NodeProps {
 function SectionNode({ block, depth }: NodeProps) {
   const { expandedMap, toggleExpand, activeId, blocksByParent, deleteItem } = useDragTree();
   const isExpanded = expandedMap[block.id] ?? true;
+  const hasChildren = (blocksByParent.get(block.id) ?? []).length > 0;
 
   return (
     <div className="drag-section" style={{ '--depth': depth } as React.CSSProperties}>
@@ -78,6 +86,9 @@ function SectionNode({ block, depth }: NodeProps) {
       {isExpanded ? (
         <div className="section-children">
           <TreeRenderer parentId={block.id} depth={depth + 1} />
+          {activeId && hasChildren && (
+            <DropZone id={`into-${block.id}`} className="drop-zone-section-end" />
+          )}
         </div>
       ) : (
         activeId && <DropZone id={`into-${block.id}`} className="drop-zone-collapsed" />
