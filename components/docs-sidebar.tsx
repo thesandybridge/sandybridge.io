@@ -16,7 +16,7 @@ export function DocsSidebar({ docs }: { docs: DocLink[] }) {
   const [activeHeadingId, setActiveHeadingId] = useState<string | null>(null);
 
   const activeSlug = pathname.startsWith('/docs/')
-    ? pathname.replace('/docs/', '')
+    ? pathname.slice('/docs/'.length).replace(/\/$/, '')
     : null;
 
   const activeDoc = activeSlug
