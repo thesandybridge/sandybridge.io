@@ -17,7 +17,7 @@
     "@react-three/fiber": "^9.5.0",
     "@shikijs/rehype": "^3.22.0",
     "@shikijs/transformers": "^3.22.0",
-    "@thesandybridge/themes": "^1.0.0",
+    "@thesandybridge/themes": "latest",
     "@types/three": "^0.182.0",
     "fuse.js": "^7.1.0",
     "gray-matter": "^4.0.3",
