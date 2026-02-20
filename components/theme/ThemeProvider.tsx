@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { THEMES, type Theme, type Mode } from '@/lib/themes';
+import { getCookie, setCookie } from '@/lib/cookies';
 
 export { THEMES, type Theme, type Mode };
 export type ParticleDensity = 'off' | 'low' | 'medium' | 'high';
@@ -241,8 +242,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [cursorTrail, setCursorTrailState] = useState(false);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme | null;
-    const savedMode = localStorage.getItem('mode') as Mode | null;
+    // Check cookies first (cross-subdomain), then localStorage
+    const savedTheme = (getCookie('theme') || localStorage.getItem('theme')) as Theme | null;
+    const savedMode = (getCookie('mode') || localStorage.getItem('mode')) as Mode | null;
     const savedDensity = localStorage.getItem('particleDensity') as ParticleDensity | null;
 
     if (savedTheme && THEMES.some((t) => t.id === savedTheme)) {
@@ -294,12 +296,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const setTheme = useCallback((t: Theme) => {
     setThemeState(t);
     localStorage.setItem('theme', t);
+    setCookie('theme', t);
     document.documentElement.setAttribute('data-theme', t);
   }, []);
 
   const setMode = useCallback((m: Mode) => {
     setModeState(m);
     localStorage.setItem('mode', m);
+    setCookie('mode', m);
     document.documentElement.setAttribute('data-mode', m);
   }, []);
 

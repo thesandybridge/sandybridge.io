@@ -42,11 +42,13 @@ export const THEME_BACKGROUNDS: Record<Theme, Record<Mode, string>> = {
 };
 
 // Generate inline script for initial theme (prevents flash)
+// Reads from cookies first (for cross-subdomain sharing), falls back to localStorage
 export function generateThemeScript(): string {
   const bgJson = JSON.stringify(THEME_BACKGROUNDS);
   return `(function(){
-    var t=localStorage.getItem('theme')||'gruvbox';
-    var m=localStorage.getItem('mode');
+    function gc(n){var m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?decodeURIComponent(m[2]):null;}
+    var t=gc('theme')||localStorage.getItem('theme')||'gruvbox';
+    var m=gc('mode')||localStorage.getItem('mode');
     if(!m){m=window.matchMedia&&window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark';}
     document.documentElement.setAttribute('data-theme',t);
     document.documentElement.setAttribute('data-mode',m);
