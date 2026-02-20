@@ -59,6 +59,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={kodeMono.variable} suppressHydrationWarning>
       <head>
+        <meta name="darkreader-lock" />
         <script
           dangerouslySetInnerHTML={{ __html: generateThemeScript() }}
         />
