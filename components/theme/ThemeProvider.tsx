@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { THEMES, type Theme, type Mode } from '@/lib/themes';
-import { getCookie, setCookie } from '@/lib/cookies';
+import { getCookie, setCookie } from '@thesandybridge/themes';
 
 export { THEMES, type Theme, type Mode };
 export type ParticleDensity = 'off' | 'low' | 'medium' | 'high';
