@@ -4615,3 +4615,202 @@ html.konami-active {
     color: var(--secondary-fg);
     word-break: break-all;
 }
+
+/* ── Raft Demo ──────────────────────────────────────────────────────────────── */
+
+.raft-demo {
+    border: 1px solid var(--secondary-bg);
+    border-radius: 4px;
+    padding: 1rem;
+    background: var(--secondary-bg);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+}
+
+.raft-demo--loading {
+    color: var(--primary-fg);
+    font-size: 0.85rem;
+    padding: 2rem;
+    text-align: center;
+}
+
+.raft-demo-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.raft-demo-speeds {
+    display: flex;
+    gap: 2px;
+}
+
+.raft-demo-speed-btn {
+    background: var(--primary-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--primary-fg);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color 0.15s, color 0.15s;
+
+    &:hover {
+        border-color: var(--secondary-fg);
+        color: var(--text-bright);
+    }
+
+    &.raft-demo-speed-btn--active {
+        border-color: var(--secondary-fg);
+        color: var(--secondary-fg);
+    }
+}
+
+.raft-demo-btn {
+    background: var(--primary-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--primary-fg);
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color 0.15s, color 0.15s;
+
+    &:hover:not(:disabled) {
+        border-color: var(--secondary-fg);
+        color: var(--text-bright);
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: default;
+    }
+
+    &.raft-demo-btn--active {
+        border-color: var(--secondary-fg);
+        color: var(--secondary-fg);
+    }
+}
+
+.raft-demo-hint {
+    font-size: 0.8rem;
+    color: var(--secondary-fg);
+    font-style: italic;
+}
+
+.raft-demo-svg {
+    display: block;
+    background: var(--primary-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+}
+
+.raft-demo-cmd {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.raft-demo-input {
+    flex: 1;
+    background: var(--primary-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text-bright);
+    padding: 0.4rem 0.6rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
+
+    &:focus {
+        border-color: var(--secondary-fg);
+    }
+}
+
+.raft-demo-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+
+    @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.raft-demo-events,
+.raft-demo-applied {
+    background: var(--primary-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.5rem 0.75rem;
+    min-height: 6rem;
+}
+
+.raft-demo-info-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--primary-fg);
+    margin-bottom: 0.35rem;
+}
+
+.raft-demo-event-list,
+.raft-demo-applied-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+
+    li {
+        font-size: 0.75rem;
+        color: var(--primary-fg);
+        font-family: monospace;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+.raft-demo-applied-list li {
+    color: var(--secondary-fg);
+}
+
+.raft-demo-legend {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    color: var(--primary-fg);
+}
+
+.raft-demo-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+
+    &::before {
+        content: '';
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--dot);
+        border: 1px solid #504945;
+    }
+}
+
+.raft-demo-legend-sep {
+    color: var(--border);
+}
+
+.raft-demo-legend-note {
+    color: var(--primary-fg);
+    opacity: 0.7;
+}

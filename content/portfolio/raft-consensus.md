@@ -10,6 +10,10 @@ github: "https://github.com/thesandybridge/raft-consensus"
 
 An implementation of the Raft distributed consensus protocol in Rust, built by working through [the original paper](https://raft.github.io/raft.pdf). A learning project for understanding distributed systems from first principles.
 
+<RaftDemo />
+
+The simulation above runs a live 5-node Raft cluster compiled to WASM. Click any node to kill or revive it. Use **Partition** to introduce a network split between two nodes. Type a command and hit **Submit** to send it to the current leader — watch it replicate across the cluster.
+
 ## What's Implemented
 
 - **Leader election** — randomized timeouts, vote counting, term-based ordering

@@ -4,6 +4,7 @@ import { Callout } from '@/components/mdx/Callout';
 import { CodeTabs } from '@/components/mdx/CodeTabs';
 import { DragTreeDemoLazy } from '@/components/mdx/DragTreeDemo/lazy';
 import { Sha3DemoLazy } from '@/components/mdx/Sha3Demo/lazy';
+import { RaftDemoLazy } from '@/components/mdx/RaftDemo/lazy';
 import { PlaceholderImage } from '@/components/mdx/PlaceholderImage';
 
 export function getMDXComponents(): MDXComponents {
@@ -12,6 +13,7 @@ export function getMDXComponents(): MDXComponents {
     CodeTabs,
     DragTreeDemo: DragTreeDemoLazy,
     Sha3Demo: Sha3DemoLazy,
+    RaftDemo: RaftDemoLazy,
     a: ({ href, children, ...props }) => {
       if (href?.startsWith('/')) {
         return <Link href={href} {...props}>{children}</Link>;
