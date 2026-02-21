@@ -4,6 +4,7 @@ date: 2025-10-31
 description: "A minimal CLI diff utility built in Rust."
 tags: ["rust", "cli", "tooling"]
 github: "https://github.com/thesandybridge/diffy"
+category: "cli"
 ---
 
 # diffy

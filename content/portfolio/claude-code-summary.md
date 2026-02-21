@@ -4,6 +4,7 @@ date: 2026-02-20
 description: "A Rust CLI that summarizes Claude Code sessions over a date range and generates an HTML report with charts."
 tags: ["rust", "cli", "anthropic", "tooling"]
 github: "https://github.com/thesandybridge/claude-code-summary"
+category: "cli"
 ---
 
 # claude-code-summary

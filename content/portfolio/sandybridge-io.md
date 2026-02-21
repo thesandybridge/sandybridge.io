@@ -6,6 +6,8 @@ tags: ["nextjs", "typescript", "react", "threejs"]
 image: "sandybridge-io.png"
 github: "https://github.com/thesandybridge/sandybridge.io"
 url: "https://sandybridge.io"
+category: "web"
+featured: true
 ---
 
 # sandybridge.io

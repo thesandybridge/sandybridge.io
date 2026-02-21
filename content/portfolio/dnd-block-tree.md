@@ -5,7 +5,9 @@ description: "A headless React library for building hierarchical drag-and-drop i
 tags: ["typescript", "react", "dnd-kit", "library", "npm"]
 github: "https://github.com/thesandybridge/dnd-block-tree"
 npm: "https://www.npmjs.com/package/dnd-block-tree"
-url: "https://dnd-block-tree.vercel.app"
+url: "https://blocktree.sandybridge.io"
+category: "library"
+featured: true
 ---
 
 # dnd-block-tree

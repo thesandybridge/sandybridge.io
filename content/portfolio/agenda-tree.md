@@ -5,6 +5,7 @@ description: "A real-time collaborative agenda editor with drag-and-drop reorder
 tags: ["typescript", "react", "dnd-kit", "real-time", "ably"]
 image: "agenda-tree.png"
 github: "https://github.com/thesandybridge/dnd-sandbox"
+category: "web"
 ---
 
 # Agenda Tree

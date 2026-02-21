@@ -1,4 +1,6 @@
 export { CachedPages } from './CachedPages';
+export { PortfolioGrid } from './PortfolioGrid';
+export { DesktopSpeedDial } from './DesktopSpeedDial';
 export { Footer } from './Footer';
 export { GitHubContributions } from './GitHubContributions';
 export { KonamiCode } from './KonamiCode';

@@ -4,6 +4,7 @@ date: 2025-10-01
 description: "A real-time network topology visualizer that aggregates UniFi and Proxmox devices into an interactive hierarchical graph."
 tags: ["rust", "axum", "nextjs", "react", "typescript"]
 github: "https://github.com/thesandybridge/network-topology"
+category: "systems"
 ---
 
 # Network Topology Monitor

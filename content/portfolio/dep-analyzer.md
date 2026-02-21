@@ -4,6 +4,7 @@ date: 2025-10-23
 description: "A Rust CLI for analyzing TypeScript/JavaScript import dependencies and finding legacy code usage."
 tags: ["rust", "cli", "typescript", "tooling"]
 github: "https://github.com/thesandybridge/dep-analyzer"
+category: "cli"
 ---
 
 # dep-analyzer

@@ -4,6 +4,8 @@ date: 2025-12-01
 description: "An implementation of the Raft distributed consensus protocol in Rust, built from the original paper."
 tags: ["rust", "distributed-systems", "algorithms"]
 github: "https://github.com/thesandybridge/raft-consensus"
+category: "systems"
+featured: true
 ---
 
 # Raft Consensus

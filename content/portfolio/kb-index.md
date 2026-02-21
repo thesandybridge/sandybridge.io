@@ -4,6 +4,7 @@ date: 2025-05-10
 description: "A Rust CLI for indexing and semantically searching local code using OpenAI embeddings and ChromaDB."
 tags: ["rust", "cli", "ai", "search"]
 github: "https://github.com/thesandybridge/kb_index"
+category: "cli"
 ---
 
 # KB-Index

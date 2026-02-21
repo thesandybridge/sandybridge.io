@@ -4,6 +4,7 @@ date: 2024-08-15
 description: "A notification center with infinite scroll, optimistic cache updates, and cost-conscious polling for Leadr's meeting platform."
 tags: ["typescript", "react", "react-query", "performance"]
 image: "notification-center.png"
+category: "web"
 ---
 
 # Notification Center

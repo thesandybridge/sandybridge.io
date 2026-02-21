@@ -5,6 +5,7 @@ description: "An AI-powered crossword puzzle generator and player that creates N
 tags: ["typescript", "nextjs", "ai", "prisma"]
 github: "https://github.com/thesandybridge/crosswords"
 url: "https://crosswords-eight.vercel.app"
+category: "web"
 ---
 
 # Crosswords

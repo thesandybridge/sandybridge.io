@@ -33,6 +33,8 @@ export interface PostMeta {
   lastModified?: string;
   series?: string;
   seriesOrder?: number;
+  category?: string;
+  featured?: boolean;
 }
 
 export interface Post extends PostMeta {
@@ -112,6 +114,8 @@ function parseFrontmatter(filePath: string): PostMeta | null {
     lastModified,
     series: data.series,
     seriesOrder: data.seriesOrder,
+    category: data.category,
+    featured: data.featured || false,
   };
 }
 
@@ -212,6 +216,8 @@ export async function getPost(dir: ContentDir, slug: string): Promise<Post | nul
     lastModified,
     series: data.series,
     seriesOrder: data.seriesOrder,
+    category: data.category,
+    featured: data.featured || false,
     content: html,
     rawContent: content,
   };

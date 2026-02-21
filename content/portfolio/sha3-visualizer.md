@@ -4,6 +4,7 @@ date: 2025-08-21
 description: "A real-time 3D visualization of the SHA-3 (Keccak) hash function, built with Rust and Bevy."
 tags: ["rust", "bevy", "cryptography", "visualization"]
 github: "https://github.com/thesandybridge/sha3-visualizer"
+category: "visualization"
 ---
 
 # SHA-3 Visualizer

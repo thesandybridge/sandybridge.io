@@ -4,6 +4,7 @@ date: 2024-06-10
 description: "An integrated solution for managing local WordPress development environments with Docker."
 tags: ["rust", "docker", "wordpress", "devops"]
 github: "https://github.com/thesandybridge/wpdev"
+category: "cli"
 ---
 
 # wpdev

@@ -4,6 +4,7 @@ date: 2025-08-10
 description: "A custom weekly calendar view for Leadr's meeting platform with overlap detection, timezone handling, and prefetched navigation."
 tags: ["typescript", "react", "calendar", "performance"]
 image: "workweek-calendar.png"
+category: "web"
 ---
 
 # Workweek Calendar

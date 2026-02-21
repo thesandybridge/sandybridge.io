@@ -4,6 +4,7 @@ date: 2025-09-24
 description: "A cross-platform note-taking app built with Svelte and Tauri, with graph-based note linking."
 tags: ["svelte", "tauri", "rust", "desktop"]
 github: "https://github.com/thesandybridge/prism"
+category: "web"
 ---
 
 # Prism

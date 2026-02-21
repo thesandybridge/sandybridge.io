@@ -5,6 +5,7 @@ description: "A Rust CLI for managing WP Engine sites, installs, and deployments
 tags: ["rust", "cli", "wordpress", "devops"]
 github: "https://github.com/thesandybridge/wpengine-cli"
 url: "https://crates.io/crates/wpe"
+category: "cli"
 ---
 
 # WP Engine CLI

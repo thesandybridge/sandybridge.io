@@ -5,6 +5,7 @@ description: "A web-based toolset for Dungeons & Dragons with maps, character ma
 tags: ["typescript", "nextjs", "react", "prisma"]
 github: "https://github.com/thesandybridge/dnd-tools"
 url: "https://dungeonsyndrome.sandybridge.io"
+category: "web"
 ---
 
 # DnD Tools

@@ -4,6 +4,7 @@ date: 2026-01-15
 description: "A weather-adaptive road risk assessment system that combines crash data, weather, and road geometry to score segment-level danger."
 tags: ["rust", "postgresql", "geospatial", "nextjs"]
 github: "https://github.com/thesandybridge/safe-route"
+category: "systems"
 ---
 
 # Safe Route Intelligence
