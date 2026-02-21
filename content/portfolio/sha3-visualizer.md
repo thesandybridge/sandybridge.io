@@ -10,6 +10,8 @@ github: "https://github.com/thesandybridge/sha3-visualizer"
 
 A real-time 3D visualization of the SHA-3 (Keccak) cryptographic hash function with step-by-step execution, built with Rust and Bevy. The internal 1600-bit state is rendered as a 5x5x64 matrix of cubes, with each transformation step color-coded across 24 rounds.
 
+<Sha3Demo />
+
 ## Visual Elements
 
 - **Red** — Theta (column mixing)
