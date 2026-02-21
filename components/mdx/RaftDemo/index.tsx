@@ -97,7 +97,7 @@ function loadExternalModule(url: string): Promise<Record<string, unknown>> {
   return (Function('u', 'return import(u)') as (u: string) => Promise<Record<string, unknown>>)(url);
 }
 
-const SPEEDS = [0.5, 1, 2, 5] as const;
+const SPEEDS = [0.05, 0.1, 0.25, 1, 5] as const;
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -105,7 +105,7 @@ export function RaftDemo() {
   const [wasmReady, setWasmReady]       = useState(false);
   const [state, setState]               = useState<ClusterState | null>(null);
   const [running, setRunning]           = useState(true);
-  const [speed, setSpeed]               = useState<number>(1);
+  const [speed, setSpeed]               = useState<number>(0.1);
   const [partitionMode, setPartitionMode] = useState(false);
   const [partitionFrom, setPartitionFrom] = useState<number | null>(null);
   const [cmdInput, setCmdInput]         = useState('');
