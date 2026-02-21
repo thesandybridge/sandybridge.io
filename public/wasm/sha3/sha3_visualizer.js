@@ -18,6 +18,11 @@ function getStringFromWasm0(ptr, len) {
     return cachedTextDecoder.decode(getUint8ArrayMemory0().subarray(ptr, ptr + len));
 }
 
+function getArrayU8FromWasm0(ptr, len) {
+    ptr = ptr >>> 0;
+    return getUint8ArrayMemory0().subarray(ptr / 1, ptr / 1 + len);
+}
+
 let WASM_VECTOR_LEN = 0;
 
 const cachedTextEncoder = (typeof TextEncoder !== 'undefined' ? new TextEncoder('utf-8') : { encode: () => { throw Error('TextEncoder not available') } } );
@@ -74,11 +79,6 @@ function passStringToWasm0(arg, malloc, realloc) {
     return ptr;
 }
 
-function getArrayU8FromWasm0(ptr, len) {
-    ptr = ptr >>> 0;
-    return getUint8ArrayMemory0().subarray(ptr / 1, ptr / 1 + len);
-}
-
 const Sha3WasmStateFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
     : new FinalizationRegistry(ptr => wasm.__wbg_sha3wasmstate_free(ptr >>> 0, 1));
@@ -96,23 +96,6 @@ export class Sha3WasmState {
         const ptr = this.__destroy_into_raw();
         wasm.__wbg_sha3wasmstate_free(ptr, 0);
     }
-    constructor() {
-        const ret = wasm.sha3wasmstate_new();
-        this.__wbg_ptr = ret >>> 0;
-        Sha3WasmStateFinalization.register(this, this.__wbg_ptr, this);
-        return this;
-    }
-    /**
-     * @param {string} input
-     */
-    set_input(input) {
-        const ptr0 = passStringToWasm0(input, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        const len0 = WASM_VECTOR_LEN;
-        wasm.sha3wasmstate_set_input(this.__wbg_ptr, ptr0, len0);
-    }
-    step() {
-        wasm.sha3wasmstate_step(this.__wbg_ptr);
-    }
     /**
      * @returns {boolean}
      */
@@ -121,11 +104,19 @@ export class Sha3WasmState {
         return ret !== 0;
     }
     /**
-     * @returns {number}
+     * @returns {string}
      */
-    get_round() {
-        const ret = wasm.sha3wasmstate_get_round(this.__wbg_ptr);
-        return ret >>> 0;
+    get_output_hex() {
+        let deferred1_0;
+        let deferred1_1;
+        try {
+            const ret = wasm.sha3wasmstate_get_output_hex(this.__wbg_ptr);
+            deferred1_0 = ret[0];
+            deferred1_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
     }
     /**
      * @returns {number}
@@ -133,6 +124,17 @@ export class Sha3WasmState {
     get_step_index() {
         const ret = wasm.sha3wasmstate_get_step_index(this.__wbg_ptr);
         return ret >>> 0;
+    }
+    /**
+     * Returns the full 1600-bit state as 200 bytes (25 lanes × 8 bytes, little-endian).
+     * Efficient for bulk transfer to JS for visualization.
+     * @returns {Uint8Array}
+     */
+    get_state_as_bytes() {
+        const ret = wasm.sha3wasmstate_get_state_as_bytes(this.__wbg_ptr);
+        var v1 = getArrayU8FromWasm0(ret[0], ret[1]).slice();
+        wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
+        return v1;
     }
     /**
      * @returns {string}
@@ -149,6 +151,15 @@ export class Sha3WasmState {
             wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
         }
     }
+    constructor() {
+        const ret = wasm.sha3wasmstate_new();
+        this.__wbg_ptr = ret >>> 0;
+        Sha3WasmStateFinalization.register(this, this.__wbg_ptr, this);
+        return this;
+    }
+    step() {
+        wasm.sha3wasmstate_step(this.__wbg_ptr);
+    }
     /**
      * Returns the lane value at (x, z) as f64. Precision is limited for large u64 values,
      * but sufficient for visual density calculations.
@@ -161,30 +172,19 @@ export class Sha3WasmState {
         return ret;
     }
     /**
-     * Returns the full 1600-bit state as 200 bytes (25 lanes × 8 bytes, little-endian).
-     * Efficient for bulk transfer to JS for visualization.
-     * @returns {Uint8Array}
+     * @returns {number}
      */
-    get_state_as_bytes() {
-        const ret = wasm.sha3wasmstate_get_state_as_bytes(this.__wbg_ptr);
-        var v1 = getArrayU8FromWasm0(ret[0], ret[1]).slice();
-        wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
-        return v1;
+    get_round() {
+        const ret = wasm.sha3wasmstate_get_round(this.__wbg_ptr);
+        return ret >>> 0;
     }
     /**
-     * @returns {string}
+     * @param {string} input
      */
-    get_output_hex() {
-        let deferred1_0;
-        let deferred1_1;
-        try {
-            const ret = wasm.sha3wasmstate_get_output_hex(this.__wbg_ptr);
-            deferred1_0 = ret[0];
-            deferred1_1 = ret[1];
-            return getStringFromWasm0(ret[0], ret[1]);
-        } finally {
-            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
-        }
+    set_input(input) {
+        const ptr0 = passStringToWasm0(input, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        wasm.sha3wasmstate_set_input(this.__wbg_ptr, ptr0, len0);
     }
 }
 
