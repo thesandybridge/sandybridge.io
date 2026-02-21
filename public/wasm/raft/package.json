@@ -1,0 +1,15 @@
+{
+  "name": "raft",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "raft_bg.wasm",
+    "raft.js",
+    "raft.d.ts"
+  ],
+  "main": "raft.js",
+  "types": "raft.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
