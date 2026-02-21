@@ -1,0 +1,57 @@
+name: Build WASM Artifacts
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [sha3-visualizer-updated]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout sha3-visualizer
+        uses: actions/checkout@v4
+        with:
+          repository: thesandybridge/sha3-visualizer
+          path: sha3-visualizer
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            sha3-visualizer/target/wasm32-unknown-unknown
+          key: ${{ runner.os }}-cargo-wasm-${{ hashFiles('sha3-visualizer/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-wasm-
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Build WASM
+        run: |
+          wasm-pack build sha3-visualizer \
+            --target web \
+            --out-dir ${{ github.workspace }}/public/wasm/sha3 \
+            --release
+          rm -f public/wasm/sha3/.gitignore
+
+      - name: Commit updated artifacts
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -f public/wasm/sha3/
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: rebuild sha3 wasm artifacts [skip ci]"
+            git push
+          else
+            echo "wasm artifacts unchanged, skipping commit"
+          fi
