@@ -4,5 +4,7 @@ export { CursorGlow } from './CursorGlow';
 export { CursorTrail } from './CursorTrail';
 export { CoronaReveal } from './CoronaReveal';
 export { CoronaScroll } from './CoronaScroll';
+export { MagneticLinks } from './MagneticLinks';
+export { SoundEffects } from './SoundEffects';
 export { TriangleBurst } from './TriangleBurst';
 export { TiltCard } from './TiltCard';

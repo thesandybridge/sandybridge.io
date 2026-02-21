@@ -2,8 +2,6 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
-import { useIsMobile } from '@/lib/use-mobile';
 
 const links = [
   { href: '/', label: 'Home' },
@@ -15,49 +13,6 @@ const links = [
 
 export function NavLinks() {
   const pathname = usePathname();
-  const isMobile = useIsMobile();
-
-  useEffect(() => {
-    if (isMobile) return;
-
-    const nav = document.getElementById('main-nav');
-    if (!nav) return;
-
-    const anchors = nav.querySelectorAll<HTMLAnchorElement>('li > a');
-
-    const onMouseMove = (e: MouseEvent) => {
-      for (const a of anchors) {
-        const rect = a.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-        const dx = e.clientX - cx;
-        const dy = e.clientY - cy;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist < 60) {
-          a.style.transform = `translate(${dx * 0.3}px, ${dy * 0.3}px)`;
-        }
-      }
-    };
-
-    const onMouseLeave = (e: Event) => {
-      const a = e.currentTarget as HTMLAnchorElement;
-      a.style.transform = 'translate(0, 0)';
-    };
-
-    document.addEventListener('mousemove', onMouseMove, { passive: true });
-    for (const a of anchors) {
-      a.addEventListener('mouseleave', onMouseLeave);
-    }
-
-    return () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      for (const a of anchors) {
-        a.removeEventListener('mouseleave', onMouseLeave);
-        a.style.transform = '';
-      }
-    };
-  }, [isMobile]);
 
   return (
     <>

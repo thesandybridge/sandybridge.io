@@ -3,8 +3,8 @@ import localFont from 'next/font/local';
 import Script from 'next/script';
 import { Nav, MobileNav } from '@/components/nav';
 import { CommandPalette, MobileSearch } from '@/components/search';
-import { BackgroundLazy as Background, CursorGlow, CursorTrail, TriangleBurst, CoronaScroll } from '@/components/effects';
-import { VimBindings, KonamiCode, Footer } from '@/components/features';
+import { BackgroundLazy as Background, CursorGlow, CursorTrail, MagneticLinks, SoundEffects, TriangleBurst, CoronaScroll } from '@/components/effects';
+import { DesktopSpeedDial, VimBindings, KonamiCode, Footer } from '@/components/features';
 import { DynamicFavicon, ThemeProvider } from '@/components/theme';
 import { generateThemeScript } from '@/lib/themes';
 import './globals.css';
@@ -112,10 +112,13 @@ export default function RootLayout({
           <CursorTrail />
           <div className="grain-overlay" />
           <CoronaScroll />
+          <SoundEffects />
+          <MagneticLinks />
           <CommandPalette />
           <VimBindings />
           <MobileNav />
           <MobileSearch />
+          <DesktopSpeedDial />
           <KonamiCode />
           <DynamicFavicon />
         </ThemeProvider>
