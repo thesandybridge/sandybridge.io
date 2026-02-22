@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Share2, Twitter, Linkedin, MessageSquare, Link2, Check } from 'lucide-react';
+import s from './Share.module.css';
 
 interface ShareProps {
   title: string;
@@ -42,29 +43,29 @@ export function Share({ title }: ShareProps) {
   return (
     <DropdownMenu.Root modal={false}>
       <DropdownMenu.Trigger asChild>
-        <button className="share-trigger" aria-label="Share">
+        <button className={s.shareTrigger} aria-label="Share">
           <Share2 size={16} />
           <span>Share</span>
         </button>
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Portal>
-        <DropdownMenu.Content className="share-dropdown" sideOffset={8} align="start">
+        <DropdownMenu.Content className={s.shareDropdown} sideOffset={8} align="start">
           {shareLinks.map((link) => (
             <DropdownMenu.Item key={link.name} asChild>
               <a
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="share-dropdown-item"
+                className={s.shareDropdownItem}
               >
                 <link.icon size={16} />
                 <span>{link.name}</span>
               </a>
             </DropdownMenu.Item>
           ))}
-          <DropdownMenu.Separator className="share-dropdown-separator" />
-          <DropdownMenu.Item className="share-dropdown-item" onSelect={handleCopy}>
+          <DropdownMenu.Separator className={s.shareDropdownSeparator} />
+          <DropdownMenu.Item className={s.shareDropdownItem} onSelect={handleCopy}>
             {copied ? <Check size={16} /> : <Link2 size={16} />}
             <span>{copied ? 'Copied!' : 'Copy link'}</span>
           </DropdownMenu.Item>

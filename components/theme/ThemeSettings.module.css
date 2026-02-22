@@ -1,0 +1,104 @@
+/* Extracted from globals.css lines 3892-3995 */
+.themeSettings {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 1.5rem;
+}
+
+.themeSettingsSection {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+}
+
+.themeSettingsSection h2 {
+    font-size: 1rem;
+    color: var(--secondary-fg);
+    margin: 0 0 0.25rem;
+}
+
+.themeSettingsSection p {
+    font-size: 0.85rem;
+    color: var(--primary-fg);
+    margin: 0 0 1rem;
+    opacity: 0.8;
+}
+
+.themeSettingsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.5rem;
+}
+
+.themeSettingsOption {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--primary-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--primary-fg);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.themeSettingsOption:hover {
+    border-color: var(--secondary-fg);
+}
+
+.active.themeSettingsOption {
+    border-color: var(--secondary-fg);
+    background: var(--secondary-bg);
+    color: var(--secondary-fg);
+}
+
+.themeSettingsOptionName {
+    flex: 1;
+    text-align: left;
+}
+
+.themeSettingsRow {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.themeSettingsToggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: var(--primary-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--primary-fg);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.themeSettingsToggle:hover {
+    border-color: var(--secondary-fg);
+}
+
+.active.themeSettingsToggle {
+    border-color: var(--secondary-fg);
+    background: var(--secondary-bg);
+    color: var(--secondary-fg);
+}
+
+@media (max-width: 768px) {
+    .themeSettingsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .themeSettingsToggle {
+        flex: 1;
+        justify-content: center;
+    }
+}

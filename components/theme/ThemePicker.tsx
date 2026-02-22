@@ -5,6 +5,8 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Palette, Check, Sun, Moon, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useTheme, type Theme } from './ThemeProvider';
+import { cx } from '@/lib/cx';
+import s from './ThemePicker.module.css';
 
 export function ThemePicker() {
   const { theme, setTheme, themes, mode, toggleMode } = useTheme();
@@ -34,20 +36,20 @@ export function ThemePicker() {
 
   return (
     <DropdownMenu.Root modal={false} onOpenChange={(open) => !open && handleMenuClose()}>
-      <DropdownMenu.Trigger className="theme-trigger" aria-label="Select theme">
+      <DropdownMenu.Trigger className={s.themeTrigger} aria-label="Select theme">
         <Palette size={16} />
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
-        <DropdownMenu.Content className="theme-menu" sideOffset={8} align="end">
-          <DropdownMenu.Item className="theme-item mode-toggle" onSelect={toggleMode}>
+        <DropdownMenu.Content className={s.themeMenu} sideOffset={8} align="end">
+          <DropdownMenu.Item className={cx(s.themeItem, s.modeToggle)} onSelect={toggleMode}>
             {mode === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
             {mode === 'dark' ? 'Light Mode' : 'Dark Mode'}
           </DropdownMenu.Item>
-          <DropdownMenu.Separator className="theme-separator" />
+          <DropdownMenu.Separator className={s.themeSeparator} />
           {themes.map((t) => (
             <DropdownMenu.Item
               key={t.id}
-              className="theme-item"
+              className={s.themeItem}
               data-theme={t.id}
               onSelect={handleSelect}
               onMouseEnter={() => handlePreviewEnter(t.id)}
@@ -57,8 +59,8 @@ export function ThemePicker() {
               {theme === t.id && <Check size={14} />}
             </DropdownMenu.Item>
           ))}
-          <DropdownMenu.Separator className="theme-separator" />
-          <DropdownMenu.Item className="theme-item" asChild>
+          <DropdownMenu.Separator className={s.themeSeparator} />
+          <DropdownMenu.Item className={s.themeItem} asChild>
             <Link href="/uses/theme">
               <Settings size={14} />
               More Settings
