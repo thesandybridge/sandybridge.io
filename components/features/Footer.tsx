@@ -47,7 +47,7 @@ export function Footer({ year }: FooterProps) {
           <Linkedin size={18} />
         </a>
         <a
-          href="https://x.com/thesandybridge"
+          href="https://x.com/sandybridge__"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="X"
