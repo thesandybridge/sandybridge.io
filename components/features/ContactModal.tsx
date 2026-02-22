@@ -22,6 +22,13 @@ interface ContactModalProps {
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
 
+const CATEGORIES = [
+  'General',
+  'Work inquiry',
+  'Bug report',
+  'Feedback',
+] as const;
+
 export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [status, setStatus] = useState<Status>('idle');
   const [apiError, setApiError] = useState('');
@@ -31,7 +38,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   const form = useForm({
-    defaultValues: { name: '', email: '', message: '' },
+    defaultValues: { name: '', email: '', category: 'General' as string, message: '' },
     validators: {
       onSubmit: ({ value }) => {
         const errors: Record<string, string> = {};
@@ -193,6 +200,24 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   {field.state.meta.errors.length > 0 && (
                     <div className={s.fieldError}>{field.state.meta.errors.join(', ')}</div>
                   )}
+                </div>
+              )}
+            </form.Field>
+
+            <form.Field name="category">
+              {(field) => (
+                <div className={s.field}>
+                  <label htmlFor="contact-category">Subject</label>
+                  <select
+                    id="contact-category"
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    className={s.select}
+                  >
+                    {CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
                 </div>
               )}
             </form.Field>

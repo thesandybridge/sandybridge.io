@@ -3,9 +3,12 @@ import nodemailer from 'nodemailer';
 import { getClientIP } from '@/lib/views';
 import { rateLimit } from '@/lib/rate-limit';
 
+const VALID_CATEGORIES = ['General', 'Work inquiry', 'Bug report', 'Feedback'];
+
 interface ContactBody {
   name: string;
   email: string;
+  category: string;
   message: string;
   turnstileToken?: string;
 }
@@ -22,6 +25,9 @@ function validate(body: ContactBody): string | null {
   }
   if (body.message.length > 2000) {
     return 'Message must be under 2000 characters';
+  }
+  if (!body.category || !VALID_CATEGORIES.includes(body.category)) {
+    return 'Invalid category';
   }
   return null;
 }
@@ -89,13 +95,47 @@ export async function POST(req: Request) {
     socketTimeout: 10_000,
   });
 
+  const name = body.name.trim();
+  const email = body.email.trim();
+  const message = body.message.trim();
+  const category = body.category;
+  const prefix = category.toUpperCase().replace(/\s+/g, '_');
+  const timestamp = new Date().toLocaleString('en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    timeZone: 'America/New_York',
+  });
+
+  const text = [
+    `Category: ${category}`,
+    `From: ${name} <${email}>`,
+    `Date: ${timestamp}`,
+    '',
+    message,
+  ].join('\n');
+
+  const html = `
+<div style="font-family: -apple-system, system-ui, sans-serif; max-width: 600px; margin: 0 auto;">
+  <div style="border-bottom: 2px solid #d79921; padding-bottom: 12px; margin-bottom: 16px;">
+    <span style="font-size: 12px; letter-spacing: 1px; color: #928374; text-transform: uppercase;">${category}</span>
+    <h2 style="margin: 4px 0 0; font-size: 18px; color: #ebdbb2;">Message from ${name}</h2>
+  </div>
+  <table style="font-size: 14px; color: #a89984; margin-bottom: 16px;">
+    <tr><td style="padding: 2px 12px 2px 0; color: #928374;">From</td><td>${name} &lt;${email}&gt;</td></tr>
+    <tr><td style="padding: 2px 12px 2px 0; color: #928374;">Date</td><td>${timestamp}</td></tr>
+  </table>
+  <div style="background: #1d2021; border-left: 3px solid #d79921; padding: 16px; border-radius: 0 4px 4px 0; white-space: pre-wrap; font-size: 14px; line-height: 1.6; color: #ebdbb2;">${message.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+  <p style="font-size: 11px; color: #665c54; margin-top: 16px;">Sent via sandybridge.io contact form</p>
+</div>`;
+
   try {
     await transporter.sendMail({
       from: user,
       to: user,
-      replyTo: body.email,
-      subject: `Contact from ${body.name.trim()}`,
-      text: `Name: ${body.name.trim()}\nEmail: ${body.email.trim()}\n\n${body.message.trim()}`,
+      replyTo: email,
+      subject: `${prefix}: ${name}`,
+      text,
+      html,
     });
   } catch (err) {
     console.error('Failed to send email:', err);
