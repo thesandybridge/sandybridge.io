@@ -1,9 +1,17 @@
 'use client';
 
+import { useState, useEffect, useCallback } from 'react';
 import { useTheme, THEMES, PARTICLE_DENSITIES } from './ThemeProvider';
-import { Check, Sun, Moon, Sparkles } from 'lucide-react';
+import { Check, Sun, Moon, Sparkles, Volume2, Volume1, VolumeX } from 'lucide-react';
+import { getVolume, setVolume, setMuted, isMuted, playSound } from '@/lib/audio';
 import { cx } from '@/lib/cx';
 import s from './ThemeSettings.module.css';
+
+function VolumeIcon({ volume }: { volume: number }) {
+  if (volume === 0) return <VolumeX size={16} />;
+  if (volume < 0.5) return <Volume1 size={16} />;
+  return <Volume2 size={16} />;
+}
 
 export function ThemeSettings() {
   const {
@@ -16,6 +24,29 @@ export function ThemeSettings() {
     cursorTrail,
     setCursorTrail,
   } = useTheme();
+
+  const [vol, setVol] = useState(0.5);
+
+  useEffect(() => {
+    setVol(getVolume());
+  }, []);
+
+  const handleVolumeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = parseFloat(e.target.value) / 100;
+    setVolume(v);
+    setVol(v);
+  }, []);
+
+  const handleMuteToggle = useCallback(() => {
+    if (isMuted()) {
+      setMuted(false);
+      setVol(getVolume());
+      playSound('click');
+    } else {
+      setMuted(true);
+      setVol(0);
+    }
+  }, []);
 
   return (
     <div className={s.themeSettings}>
@@ -91,6 +122,31 @@ export function ThemeSettings() {
           >
             <span>On</span>
           </button>
+        </div>
+      </section>
+
+      <section className={s.themeSettingsSection}>
+        <h2>Sound Effects</h2>
+        <p>Adjust UI sound volume.</p>
+        <div className={s.volumeControl}>
+          <button
+            className={s.volumeIcon}
+            onClick={handleMuteToggle}
+            title={vol === 0 ? 'Unmute' : 'Mute'}
+            aria-label={vol === 0 ? 'Unmute' : 'Mute'}
+          >
+            <VolumeIcon volume={vol} />
+          </button>
+          <input
+            type="range"
+            className={s.volumeSlider}
+            min={0}
+            max={100}
+            value={Math.round(vol * 100)}
+            onChange={handleVolumeChange}
+            aria-label="Volume"
+          />
+          <span className={s.volumeValue}>{Math.round(vol * 100)}%</span>
         </div>
       </section>
     </div>

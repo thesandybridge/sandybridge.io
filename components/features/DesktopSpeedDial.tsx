@@ -73,17 +73,20 @@ export function DesktopSpeedDial() {
 
   const handlePreviewEnter = useCallback((t: Theme) => {
     clearTimeout(previewTimeoutRef.current);
+    document.documentElement.classList.add('theme-previewing');
     document.documentElement.setAttribute('data-theme', t);
   }, []);
 
   const handlePreviewLeave = useCallback(() => {
     previewTimeoutRef.current = setTimeout(() => {
+      document.documentElement.classList.remove('theme-previewing');
       document.documentElement.setAttribute('data-theme', theme);
-    }, 50);
+    }, 100);
   }, [theme]);
 
   const handleClose = useCallback(() => {
     clearTimeout(previewTimeoutRef.current);
+    document.documentElement.classList.remove('theme-previewing');
     document.documentElement.setAttribute('data-theme', theme);
     setOpen(false);
   }, [theme]);

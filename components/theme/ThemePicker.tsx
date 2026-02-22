@@ -20,17 +20,20 @@ export function ThemePicker() {
 
   const handlePreviewEnter = useCallback((previewTheme: Theme) => {
     clearTimeout(previewTimeoutRef.current);
+    document.documentElement.classList.add('theme-previewing');
     document.documentElement.setAttribute('data-theme', previewTheme);
   }, []);
 
   const handlePreviewLeave = useCallback(() => {
     previewTimeoutRef.current = setTimeout(() => {
+      document.documentElement.classList.remove('theme-previewing');
       document.documentElement.setAttribute('data-theme', theme);
-    }, 50);
+    }, 100);
   }, [theme]);
 
   const handleMenuClose = useCallback(() => {
     clearTimeout(previewTimeoutRef.current);
+    document.documentElement.classList.remove('theme-previewing');
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 

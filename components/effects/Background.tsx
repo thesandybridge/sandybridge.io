@@ -46,6 +46,17 @@ interface ShapeData {
   scrollFactor: number;
 }
 
+function SceneUpdater({ backgroundHex, background }: { backgroundHex: number; background: string }) {
+  const { gl } = useThree();
+
+  useEffect(() => {
+    gl.setClearColor(backgroundHex);
+    gl.domElement.parentElement!.style.background = background;
+  }, [gl, backgroundHex, background]);
+
+  return null;
+}
+
 function Shapes({ accentHex, theme }: { accentHex: number; theme: Theme }) {
   const batGeometry = useMemo(() => (theme === 'dracula' || theme === 'alucard') ? createBatGeometry() : null, [theme]);
   const { camera, viewport } = useThree();
@@ -159,7 +170,6 @@ export function Background() {
 
   return (
     <Canvas
-      key={colors.backgroundHex}
       id="bg-canvas"
       camera={{ fov: 60, near: 0.1, far: 100, position: [0, 0, 5] }}
       gl={{ antialias: false, powerPreference: 'low-power' }}
@@ -169,6 +179,7 @@ export function Background() {
         gl.setClearColor(colors.backgroundHex);
       }}
     >
+      <SceneUpdater backgroundHex={colors.backgroundHex} background={colors.background} />
       <Shapes accentHex={colors.accentHex} theme={theme} />
     </Canvas>
   );
