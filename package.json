@@ -22,6 +22,7 @@
     "dnd-block-tree": "^0.3.0",
     "fuse.js": "^7.1.0",
     "gray-matter": "^4.0.3",
+    "howler": "^2.2.4",
     "ioredis": "^5.9.3",
     "lucide-react": "^0.575.0",
     "next": "16.1.6",
@@ -41,6 +42,7 @@
     "unified": "^11.0.5"
   },
   "devDependencies": {
+    "@types/howler": "^2.2.12",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
