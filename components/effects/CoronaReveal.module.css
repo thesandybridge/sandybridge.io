@@ -1,0 +1,27 @@
+/* Extracted from globals.css lines 2920-2938 */
+.coronaReveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.coronaReveal[data-direction="left"] {
+    transform: translateX(-20px);
+}
+
+.coronaReveal[data-direction="right"] {
+    transform: translateX(20px);
+}
+
+.revealed {
+    opacity: 1;
+    transform: translate(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .coronaReveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}

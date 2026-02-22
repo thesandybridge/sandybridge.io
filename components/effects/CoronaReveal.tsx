@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, createElement, type ReactNode, type CSSProperties, type ElementType } from 'react';
+import s from './CoronaReveal.module.css';
 
 interface CoronaRevealProps {
   children: ReactNode;
@@ -21,14 +22,14 @@ export function CoronaReveal({ children, className, as: tag = 'div', style, dela
     const skip = window.matchMedia('(pointer: coarse)').matches
       || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (skip) {
-      el.classList.add('revealed');
+      el.classList.add(s.revealed);
       return;
     }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          el.classList.add('revealed');
+          el.classList.add(s.revealed);
           observer.disconnect();
         }
       },
@@ -48,7 +49,7 @@ export function CoronaReveal({ children, className, as: tag = 'div', style, dela
     tag,
     {
       ref,
-      className: `corona-reveal${className ? ' ' + className : ''}`,
+      className: s.coronaReveal + (className ? ' ' + className : ''),
       style: combinedStyle,
       ...(direction !== 'up' ? { 'data-direction': direction } : {}),
     },

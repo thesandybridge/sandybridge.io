@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import s from './TechStack.module.css';
 
 const technologies = [
   { name: 'TypeScript', color: '#3178c6' },
@@ -24,20 +25,20 @@ export function TechStack() {
     const container = containerRef.current;
     if (!container) return;
 
-    const items = container.querySelectorAll('.tech-item');
+    const items = container.querySelectorAll('.' + s.techItem);
     items.forEach((item, i) => {
       (item as HTMLElement).style.animationDelay = `${i * 0.1}s`;
     });
   }, []);
 
   return (
-    <div className="tech-stack" ref={containerRef}>
-      <span className="tech-label">Tech I work with</span>
-      <div className="tech-items">
+    <div className={s.techStack} ref={containerRef}>
+      <span className={s.techLabel}>Tech I work with</span>
+      <div className={s.techItems}>
         {technologies.map((tech) => (
           <span
             key={tech.name}
-            className="tech-item"
+            className={s.techItem}
             style={{ '--tech-color': tech.color } as React.CSSProperties}
           >
             {tech.name}

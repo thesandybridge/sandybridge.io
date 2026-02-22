@@ -1,0 +1,42 @@
+/* Extracted from globals.css lines 2877-2918 */
+.bootOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 998;
+    background: var(--primary-bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem 3rem;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+.fadeOut {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.bootLines {
+    max-width: 600px;
+    font-size: 0.85rem;
+}
+
+.bootLine {
+    margin-bottom: 0.15rem;
+    white-space: pre;
+}
+
+.bootLineOk {
+    color: var(--alt);
+}
+
+.bootSkip {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: var(--primary-fg);
+    opacity: 0.4;
+}

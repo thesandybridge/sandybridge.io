@@ -1,0 +1,45 @@
+/* Extracted from globals.css lines 3131-3175 */
+.techStack {
+    margin: 2rem 0;
+}
+
+.techLabel {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--primary-fg);
+    opacity: 0.6;
+    margin-bottom: 0.75rem;
+}
+
+.techItems {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.techItem {
+    padding: 0.35rem 0.7rem;
+    border: 1px solid var(--secondary-bg);
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: var(--primary-fg);
+    transition: border-color 0.2s, color 0.2s, transform 0.2s;
+    animation: tech-fade-in 0.4s ease backwards;
+
+    &:hover {
+        border-color: var(--tech-color, var(--secondary-fg));
+        color: var(--tech-color, var(--secondary-fg));
+        transform: translateY(-2px);
+    }
+}
+
+@keyframes tech-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

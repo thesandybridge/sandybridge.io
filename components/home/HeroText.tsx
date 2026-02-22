@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import s from './HeroText.module.css';
 
 const TEXT = "Hey, I'm Matt.";
 
@@ -13,26 +14,24 @@ export function HeroText() {
 
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReduced) {
-      el.querySelectorAll('.hero-char').forEach((s) => s.classList.add('visible'));
+      el.querySelectorAll('.' + s.heroChar).forEach((span) => span.classList.add(s.visible));
       return;
     }
 
     const reveal = () => {
-      const spans = el.querySelectorAll('.hero-char');
+      const spans = el.querySelectorAll('.' + s.heroChar);
       spans.forEach((span, i) => {
-        setTimeout(() => span.classList.add('visible'), i * 30);
+        setTimeout(() => span.classList.add(s.visible), i * 30);
       });
     };
 
-    // If boot already done, reveal immediately
     if (sessionStorage.getItem('boot-done')) {
       reveal();
       return;
     }
 
-    // Otherwise wait for boot-done event
     const onBoot = () => {
-      setTimeout(reveal, 400); // small gap after boot fades
+      setTimeout(reveal, 400);
     };
 
     document.addEventListener('boot-done', onBoot);
@@ -40,9 +39,9 @@ export function HeroText() {
   }, []);
 
   return (
-    <h1 ref={ref} className="hero-text">
+    <h1 ref={ref} className={s.heroText}>
       {TEXT.split('').map((char, i) => (
-        <span key={i} className="hero-char">
+        <span key={i} className={s.heroChar}>
           {char === ' ' ? '\u00A0' : char}
         </span>
       ))}

@@ -66,7 +66,7 @@ export function TiltCard({ children, className }: TiltCardProps) {
   }, [handleMouseMove, handleMouseLeave, isMobile]);
 
   return (
-    <div className={s.tiltContainer + (className ? ' ' + className : '')} ref={containerRef}>
+    <div className={s.tiltContainer + (className ? ' ' + className : '')} ref={containerRef} data-tilt>
       {children}
       <div className={s.tiltShine} ref={shineRef} />
     </div>

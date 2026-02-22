@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from 'react';
+import { cx } from '@/lib/cx';
+import s from './BootSequence.module.css';
 
 interface BootSequenceProps {
   postCount: number;
@@ -83,18 +85,18 @@ export function BootSequence({ postCount, projectCount }: BootSequenceProps) {
   if (!visible) return null;
 
   return (
-    <div className={`boot-overlay${fadingOut ? ' fade-out' : ''}`}>
-      <div className="boot-lines">
+    <div className={cx(s.bootOverlay, fadingOut && s.fadeOut)}>
+      <div className={s.bootLines}>
         {lines.map((line, i) => (
-          <div key={i} className="boot-line">
+          <div key={i} className={s.bootLine}>
             {line.includes('OK') || line.includes('UP') || line.startsWith('System ready')
-              ? <><span className="boot-line-ok">[OK]</span> {line}</>
-              : <><span className="boot-line-ok">[&nbsp;&nbsp;]</span> {line}</>
+              ? <><span className={s.bootLineOk}>[OK]</span> {line}</>
+              : <><span className={s.bootLineOk}>[&nbsp;&nbsp;]</span> {line}</>
             }
           </div>
         ))}
       </div>
-      <div className="boot-skip">click or press any key to skip</div>
+      <div className={s.bootSkip}>click or press any key to skip</div>
     </div>
   );
 }

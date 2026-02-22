@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import s from './ResumeReading.module.css';
 
 const STORAGE_KEY = 'reading-progress';
 const MIN_PROGRESS = 5;
@@ -103,10 +104,10 @@ export function ResumeReading({ slug }: { slug: string }) {
   if (!showPrompt) return null;
 
   return (
-    <div className="resume-reading">
+    <div className={s.resumeReading}>
       <span>Continue where you left off ({savedPosition}%)?</span>
-      <button onClick={scrollToPosition} className="resume-btn">Resume</button>
-      <button onClick={dismiss} className="resume-dismiss" aria-label="Dismiss">×</button>
+      <button onClick={scrollToPosition} className={s.resumeBtn}>Resume</button>
+      <button onClick={dismiss} className={s.resumeDismiss} aria-label="Dismiss">×</button>
     </div>
   );
 }

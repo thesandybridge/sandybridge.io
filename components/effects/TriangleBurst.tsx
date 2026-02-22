@@ -1,4 +1,5 @@
 // Server component — no hydration, pure SVG
+import s from './TriangleBurst.module.css';
 
 // Seeded PRNG (mulberry32) for deterministic triangle placement
 function mulberry32(seed: number) {
@@ -34,7 +35,7 @@ function generateTriangles(): Triangle[] {
     { radius: 600, count: 24, opacity: 0.15 },
     { radius: 800, count: 30, opacity: 0.1 },
   ];
-  const driftClasses = ['triangle-drift-1', 'triangle-drift-2', 'triangle-drift-3'];
+  const driftClasses = [s.triangleDrift1, s.triangleDrift2, s.triangleDrift3];
 
   for (const ring of rings) {
     for (let i = 0; i < ring.count; i++) {
@@ -63,7 +64,7 @@ function trianglePath(size: number): string {
 export function TriangleBurst() {
   return (
     <svg
-      className="triangle-burst"
+      className={s.triangleBurst}
       viewBox="-1000 -1000 2000 2000"
       preserveAspectRatio="xMidYMid slice"
       aria-hidden="true"

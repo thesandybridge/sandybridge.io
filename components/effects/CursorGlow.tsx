@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useIsMobile } from '@/lib/use-mobile';
 import { useTheme, type Theme } from '../theme/ThemeProvider';
+import s from './CursorGlow.module.css';
 
 interface Particle {
   x: number;
@@ -621,29 +622,29 @@ export function CursorGlow() {
 
     const onMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const interactive = target.closest('a, button, [role="button"], .portfolio-card');
+      const interactive = target.closest('a, button, [role="button"], [data-tilt]');
       if (interactive && !isHovering) {
         isHovering = true;
-        dot.classList.add('cursor-hover');
-        ring.classList.add('cursor-hover');
+        dot.classList.add(s.cursorHover);
+        ring.classList.add(s.cursorHover);
       } else if (!interactive && isHovering) {
         isHovering = false;
-        dot.classList.remove('cursor-hover');
-        ring.classList.remove('cursor-hover');
+        dot.classList.remove(s.cursorHover);
+        ring.classList.remove(s.cursorHover);
       }
     };
 
     const onMouseDown = () => {
       isDown = true;
-      dot.classList.add('cursor-down');
-      ring.classList.add('cursor-down');
+      dot.classList.add(s.cursorDown);
+      ring.classList.add(s.cursorDown);
     };
 
     const onMouseUp = () => {
       if (isDown) {
         isDown = false;
-        dot.classList.remove('cursor-down');
-        ring.classList.remove('cursor-down');
+        dot.classList.remove(s.cursorDown);
+        ring.classList.remove(s.cursorDown);
       }
     };
 
@@ -693,8 +694,8 @@ export function CursorGlow() {
           transition: 'opacity 0.3s ease',
         }}
       />
-      <div ref={dotRef} className="cursor-dot" />
-      <div ref={ringRef} className="cursor-ring" />
+      <div ref={dotRef} className={s.cursorDot} />
+      <div ref={ringRef} className={s.cursorRing} />
     </>
   );
 }
