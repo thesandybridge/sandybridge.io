@@ -145,6 +145,11 @@
     font-size: 0.85rem;
 }
 
+.turnstile {
+    display: flex;
+    justify-content: flex-end;
+}
+
 .apiError {
     font-size: 0.8rem;
     color: #fb4934;

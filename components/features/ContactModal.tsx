@@ -1,9 +1,19 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { X } from 'lucide-react';
 import s from './ContactModal.module.css';
+
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (el: HTMLElement, opts: Record<string, unknown>) => string;
+      reset: (id: string) => void;
+      remove: (id: string) => void;
+    };
+  }
+}
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -15,6 +25,10 @@ type Status = 'idle' | 'sending' | 'sent' | 'error';
 export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [status, setStatus] = useState<Status>('idle');
   const [apiError, setApiError] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const turnstileRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<string | null>(null);
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   const form = useForm({
     defaultValues: { name: '', email: '', message: '' },
@@ -38,13 +52,17 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
       },
     },
     onSubmit: async ({ value }) => {
+      if (siteKey && !turnstileToken) {
+        setApiError('Please complete the verification');
+        return;
+      }
       setStatus('sending');
       setApiError('');
       try {
         const res = await fetch('/api/contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(value),
+          body: JSON.stringify({ ...value, turnstileToken }),
         });
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
@@ -79,9 +97,42 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
     if (!isOpen) {
       setStatus('idle');
       setApiError('');
+      setTurnstileToken('');
       form.reset();
+      if (widgetIdRef.current && window.turnstile) {
+        window.turnstile.remove(widgetIdRef.current);
+        widgetIdRef.current = null;
+      }
+      return;
     }
-  }, [isOpen, form]);
+    if (!siteKey) return;
+
+    function renderWidget() {
+      if (!turnstileRef.current || widgetIdRef.current) return;
+      if (!window.turnstile) return;
+      widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
+        sitekey: siteKey,
+        theme: 'dark',
+        callback: (token: string) => setTurnstileToken(token),
+        'expired-callback': () => setTurnstileToken(''),
+      });
+    }
+
+    if (window.turnstile) {
+      renderWidget();
+    } else {
+      const existing = document.querySelector('script[src*="turnstile"]');
+      if (!existing) {
+        const script = document.createElement('script');
+        script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+        script.async = true;
+        script.onload = renderWidget;
+        document.head.appendChild(script);
+      } else {
+        existing.addEventListener('load', renderWidget);
+      }
+    }
+  }, [isOpen, form, siteKey]);
 
   if (!isOpen) return null;
 
@@ -164,6 +215,8 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 </div>
               )}
             </form.Field>
+
+            {siteKey && <div ref={turnstileRef} className={s.turnstile} />}
 
             {apiError && <div className={s.apiError}>{apiError}</div>}
 

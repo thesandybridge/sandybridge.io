@@ -7,6 +7,7 @@ interface ContactBody {
   name: string;
   email: string;
   message: string;
+  turnstileToken?: string;
 }
 
 function validate(body: ContactBody): string | null {
@@ -39,6 +40,30 @@ export async function POST(req: Request) {
   }
 
   const ip = getClientIP(req);
+
+  const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
+  if (turnstileSecret) {
+    const tokenRes = await fetch(
+      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          secret: turnstileSecret,
+          response: body.turnstileToken || '',
+          remoteip: ip,
+        }),
+      },
+    );
+    const tokenData = await tokenRes.json();
+    if (!tokenData.success) {
+      return NextResponse.json(
+        { error: 'Verification failed. Please try again.' },
+        { status: 403 },
+      );
+    }
+  }
+
   const allowed = await rateLimit(`contact:${ip}`, 3, 3600);
   if (!allowed) {
     return NextResponse.json(
