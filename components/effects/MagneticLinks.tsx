@@ -39,6 +39,12 @@ export function MagneticLinks() {
     };
 
     const animate = () => {
+      // Skip expensive DOM queries during drag operations
+      if ('dragging' in document.documentElement.dataset) {
+        rafId = requestAnimationFrame(animate);
+        return;
+      }
+
       const now = performance.now();
       if (now - lastQuery > 400) {
         elements = Array.from(document.querySelectorAll<HTMLElement>(SELECTOR));

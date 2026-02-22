@@ -48,6 +48,7 @@ export function SoundEffects() {
 
     const onPointerOver = (e: Event) => {
       if (!isUnlocked()) return;
+      if ('dragging' in document.documentElement.dataset) return;
       const el = findClickable(e.target as Element);
       if (el && el !== lastHovered) {
         lastHovered = el;

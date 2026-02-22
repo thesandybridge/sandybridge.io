@@ -1,51 +1,18 @@
 import type { Block, BlockChange, TreeNode } from './types';
 
 export function diffBlocks(prev: Block[], next: Block[]): BlockChange[] {
-  const prevByParent = new Map<string | null, string[]>();
-  const nextByParent = new Map<string | null, string[]>();
-
-  for (const block of prev) {
-    const list = prevByParent.get(block.parentId) ?? [];
-    list.push(block.id);
-    prevByParent.set(block.parentId, list);
-  }
-
-  for (const block of next) {
-    const list = nextByParent.get(block.parentId) ?? [];
-    list.push(block.id);
-    nextByParent.set(block.parentId, list);
-  }
-
-  const prevPositions = new Map<string, { parentId: string | null; index: number }>();
-  const nextPositions = new Map<string, { parentId: string | null; index: number }>();
-
-  for (const [parentId, ids] of prevByParent.entries()) {
-    ids.forEach((id, index) => {
-      prevPositions.set(id, { parentId, index });
-    });
-  }
-
-  for (const [parentId, ids] of nextByParent.entries()) {
-    ids.forEach((id, index) => {
-      nextPositions.set(id, { parentId, index });
-    });
-  }
-
   const prevMap = new Map(prev.map(b => [b.id, b]));
   const nextMap = new Map(next.map(b => [b.id, b]));
   const changes: BlockChange[] = [];
 
   for (const [id, nextBlock] of nextMap.entries()) {
-    const prevPos = prevPositions.get(id);
-    const nextPos = nextPositions.get(id);
-
-    if (!prevPos) {
+    const prevBlock = prevMap.get(id);
+    if (!prevBlock) {
       changes.push({ type: 'added', block: nextBlock });
-    } else if (nextPos) {
-      const parentChanged = prevPos.parentId !== nextPos.parentId;
-      const indexChanged = prevPos.index !== nextPos.index;
-
-      if (parentChanged || indexChanged) {
+    } else {
+      const parentChanged = prevBlock.parentId !== nextBlock.parentId;
+      const orderChanged = String(prevBlock.order) !== String(nextBlock.order);
+      if (parentChanged || orderChanged) {
         changes.push({ type: 'changed', block: nextBlock });
       }
     }
@@ -53,8 +20,7 @@ export function diffBlocks(prev: Block[], next: Block[]): BlockChange[] {
 
   for (const id of prevMap.keys()) {
     if (!nextMap.has(id)) {
-      const prevBlock = prevMap.get(id)!;
-      changes.push({ type: 'removed', block: prevBlock });
+      changes.push({ type: 'removed', block: prevMap.get(id)! });
     }
   }
 

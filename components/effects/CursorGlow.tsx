@@ -594,6 +594,9 @@ export function CursorGlow() {
       mouseX = e.clientX;
       mouseY = e.clientY;
 
+      // Skip visual updates during drag operations
+      if ('dragging' in document.documentElement.dataset) return;
+
       glow.style.left = e.clientX + 'px';
       glow.style.top = e.clientY + 'px';
       glow.style.opacity = '1';

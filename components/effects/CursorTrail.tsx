@@ -103,6 +103,9 @@ export function CursorTrail() {
       mouseX = e.clientX;
       mouseY = e.clientY;
 
+      // Skip during drag operations
+      if ('dragging' in document.documentElement.dataset) return;
+
       // Add point to trail
       trail.push({ x: mouseX, y: mouseY, age: 0 });
       if (trail.length > maxTrailLength) {

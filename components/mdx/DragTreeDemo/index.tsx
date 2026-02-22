@@ -5,7 +5,9 @@ import {
   BlockTree,
   type ContainerRendererProps,
   type BlockRendererProps,
-} from 'dnd-block-tree';
+  type OrderingStrategy,
+  initFractionalOrder,
+} from '@dnd-block-tree/react';
 import { ChevronRight, Folder, FolderOpen, FileText, Plus, RotateCcw, GripVertical } from 'lucide-react';
 import { MiniMap } from './MiniMap';
 import type { Block } from './types';
@@ -74,10 +76,34 @@ const renderers = {
   item: ItemRenderer,
 };
 
+function toInteger(blocks: Block[]): Block[] {
+  const byParent = new Map<string | null, Block[]>();
+  for (const b of blocks) {
+    const list = byParent.get(b.parentId) ?? [];
+    list.push(b);
+    byParent.set(b.parentId, list);
+  }
+  return blocks.map(b => {
+    const siblings = byParent.get(b.parentId)!;
+    return { ...b, order: siblings.indexOf(b) };
+  });
+}
+
 export function DragTreeDemo() {
   const [blocks, setBlocks] = useState<Block[]>(INITIAL_BLOCKS);
+  const [ordering, setOrdering] = useState<OrderingStrategy>('integer');
   const blockCount = blocks.length;
   const canAdd = blockCount < MAX_BLOCKS;
+
+  const toggleOrdering = useCallback(() => {
+    setOrdering(prev => {
+      const next = prev === 'integer' ? 'fractional' : 'integer';
+      setBlocks(current =>
+        next === 'fractional' ? initFractionalOrder(current) : toInteger(current)
+      );
+      return next;
+    });
+  }, []);
 
   const addItem = useCallback((type: Block['type']) => {
     const id = `${type[0]}${Date.now()}`;
@@ -86,8 +112,8 @@ export function DragTreeDemo() {
   }, []);
 
   const reset = useCallback(() => {
-    setBlocks(INITIAL_BLOCKS);
-  }, []);
+    setBlocks(ordering === 'fractional' ? initFractionalOrder(INITIAL_BLOCKS) : INITIAL_BLOCKS);
+  }, [ordering]);
 
   return (
     <div className={s.dragTreeDemo}>
@@ -125,6 +151,10 @@ export function DragTreeDemo() {
           renderers={renderers}
           containerTypes={CONTAINER_TYPES}
           onChange={setBlocks}
+          orderingStrategy={ordering}
+          onDragStart={() => { document.documentElement.dataset.dragging = ''; }}
+          onDragEnd={() => { delete document.documentElement.dataset.dragging; }}
+          onDragCancel={() => { delete document.documentElement.dataset.dragging; }}
           initialExpanded="all"
           showDropPreview
           activationDistance={8}
@@ -146,7 +176,7 @@ export function DragTreeDemo() {
           )}
         />
       </div>
-      <MiniMap blocks={blocks} initialBlocks={INITIAL_BLOCKS} />
+      <MiniMap blocks={blocks} initialBlocks={INITIAL_BLOCKS} ordering={ordering} onToggleOrdering={toggleOrdering} />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import type { BaseBlock } from 'dnd-block-tree';
+import type { BaseBlock } from '@dnd-block-tree/core';
 
 export interface Block extends BaseBlock {
   type: 'section' | 'item';
