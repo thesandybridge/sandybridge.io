@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useCallback, type MouseEvent } from 'react';
+import { cx } from '@/lib/cx';
+import s from './CodeTabs.module.css';
 
 interface CodeTabsProps {
   labels: string[];
@@ -16,12 +18,12 @@ export function CodeTabs({ labels, children }: CodeTabsProps) {
   }, []);
 
   return (
-    <div className="code-tabs">
-      <div className="code-tabs-header">
+    <div className={s.codeTabs}>
+      <div className={s.codeTabsHeader}>
         {labels.map((label, i) => (
           <button
             key={label}
-            className={`code-tab ${i === active ? 'code-tab-active' : ''}`}
+            className={cx(s.codeTab, i === active && s.codeTabActive)}
             data-index={i}
             onClick={handleTabClick}
           >
@@ -29,7 +31,7 @@ export function CodeTabs({ labels, children }: CodeTabsProps) {
           </button>
         ))}
       </div>
-      <div className="code-tabs-body">
+      <div className={s.codeTabsBody}>
         {Array.isArray(children) ? children[active] : children}
       </div>
     </div>

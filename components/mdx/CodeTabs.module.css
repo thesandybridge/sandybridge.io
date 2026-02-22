@@ -1,0 +1,39 @@
+/* Extracted from globals.css lines 2088-2127 */
+.codeTabs {
+    margin: 1.5rem 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.codeTabsHeader {
+    display: flex;
+    background: var(--code-bg);
+    border-bottom: 1px solid var(--border);
+}
+
+.codeTab {
+    padding: 0.5rem 1rem;
+    background: none;
+    border: none;
+    color: var(--primary-fg);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.85rem;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+
+    &:hover {
+        color: var(--text-bright);
+    }
+}
+
+.codeTabActive {
+    color: var(--secondary-fg);
+    border-bottom-color: var(--secondary-fg);
+}
+
+.codeTabsBody pre {
+    margin: 0;
+    border-radius: 0;
+}

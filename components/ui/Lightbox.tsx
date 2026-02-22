@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, type MouseEvent } from 'react';
+import s from './Lightbox.module.css';
 
 function stopPropagation(e: MouseEvent) {
   e.stopPropagation();
@@ -53,8 +54,8 @@ export function Lightbox() {
   if (!src) return null;
 
   return (
-    <div className="lightbox-overlay" onClick={close}>
-      <img src={src} alt={alt} className="lightbox-image" onClick={stopPropagation} />
+    <div className={s.lightboxOverlay} onClick={close}>
+      <img src={src} alt={alt} className={s.lightboxImage} onClick={stopPropagation} />
     </div>
   );
 }

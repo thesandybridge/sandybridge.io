@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Github, Linkedin, Twitter, Rss, Mail, FileText, Briefcase } from 'lucide-react';
 import { PresenceIndicator } from './PresenceIndicator';
+import s from './Footer.module.css';
 
 interface FooterProps {
   year: number;
@@ -10,7 +11,7 @@ export function Footer({ year }: FooterProps) {
   return (
     <footer>
       <PresenceIndicator />
-      <div className="footer-links">
+      <div className={s.footerLinks}>
         <Link href="/blog">
           <FileText size={16} />
           <span>Blog</span>
@@ -28,7 +29,7 @@ export function Footer({ year }: FooterProps) {
         </a>
       </div>
 
-      <div className="footer-social">
+      <div className={s.footerSocial}>
         <a
           href="https://github.com/thesandybridge"
           target="_blank"
@@ -58,9 +59,9 @@ export function Footer({ year }: FooterProps) {
         </a>
       </div>
 
-      <div className="footer-meta">
+      <div className={s.footerMeta}>
         <span>&copy; {year} sandybridge</span>
-        <span className="footer-kbd">
+        <span className={s.footerKbd}>
           <kbd>Ctrl</kbd>+<kbd>K</kbd> to search
         </span>
       </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback, type ReactNode } from 'react';
 import { useIsMobile } from '@/lib/use-mobile';
+import s from './TiltCard.module.css';
 
 interface TiltCardProps {
   children: ReactNode;
@@ -65,9 +66,9 @@ export function TiltCard({ children, className }: TiltCardProps) {
   }, [handleMouseMove, handleMouseLeave, isMobile]);
 
   return (
-    <div className={`tilt-container${className ? ' ' + className : ''}`} ref={containerRef}>
+    <div className={s.tiltContainer + (className ? ' ' + className : '')} ref={containerRef}>
       {children}
-      <div className="tilt-shine" ref={shineRef} />
+      <div className={s.tiltShine} ref={shineRef} />
     </div>
   );
 }

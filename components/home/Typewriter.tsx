@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import s from './Typewriter.module.css';
 
 interface TypewriterProps {
   lines: string[];
@@ -40,7 +41,7 @@ export function Typewriter({ lines, speed = 18 }: TypewriterProps) {
       pElements.push(p);
     }
     const cursor = document.createElement('span');
-    cursor.className = 'typewriter-cursor';
+    cursor.className = s.typewriterCursor;
     cursor.textContent = '_';
     pElements[0].appendChild(cursor);
 
@@ -105,7 +106,7 @@ export function Typewriter({ lines, speed = 18 }: TypewriterProps) {
         {lines.map((line, i) => (
           <p key={i}>
             {line}
-            {i === lines.length - 1 && <span className="typewriter-cursor">_</span>}
+            {i === lines.length - 1 && <span className={s.typewriterCursor}>_</span>}
           </p>
         ))}
       </div>

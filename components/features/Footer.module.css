@@ -1,0 +1,73 @@
+/* Extracted from globals.css lines 749-820 */
+.footerLinks {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+
+    a {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.85rem;
+        color: var(--primary-fg);
+        transition: color 0.2s;
+
+        &:hover {
+            color: var(--secondary-fg);
+        }
+    }
+}
+
+.footerSocial {
+    display: flex;
+    gap: 0.75rem;
+
+    a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--secondary-bg);
+        border-radius: 50%;
+        color: var(--primary-fg);
+        transition: border-color 0.2s, color 0.2s, transform 0.2s;
+
+        &:hover {
+            border-color: var(--secondary-fg);
+            color: var(--secondary-fg);
+            transform: translateY(-2px);
+        }
+    }
+}
+
+.footerMeta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    font-size: 0.75rem;
+    color: var(--primary-fg);
+    opacity: 0.6;
+}
+
+.footerKbd {
+    display: none;
+}
+
+@media (min-width: 900px) {
+    .footerKbd {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .footerKbd kbd {
+        background: var(--secondary-bg);
+        border-radius: 3px;
+        padding: 2px 6px;
+        font-size: 0.7rem;
+    }
+}

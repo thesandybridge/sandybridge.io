@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
+import s from './PresenceIndicator.module.css';
 
 interface PresenceData {
   total: number;
@@ -35,14 +36,10 @@ export function PresenceIndicator() {
   }, []);
 
   useEffect(() => {
-    // Initial heartbeat and fetch
     sendHeartbeat();
     fetchPresence();
 
-    // Send heartbeat every 15 seconds
     const heartbeatInterval = setInterval(sendHeartbeat, 15000);
-
-    // Poll presence every 10 seconds
     const pollInterval = setInterval(fetchPresence, 10000);
 
     return () => {
@@ -51,13 +48,12 @@ export function PresenceIndicator() {
     };
   }, [sendHeartbeat, fetchPresence]);
 
-  // Don't show if only 1 visitor (just you)
   if (!presence || presence.total <= 1) return null;
 
   return (
-    <div className="presence-indicator" title={`${presence.total} visitors online`}>
-      <span className="presence-dot" />
-      <span className="presence-count">{presence.total} online</span>
+    <div className={s.presenceIndicator} title={`${presence.total} visitors online`}>
+      <span className={s.presenceDot} />
+      <span className={s.presenceCount}>{presence.total} online</span>
     </div>
   );
 }

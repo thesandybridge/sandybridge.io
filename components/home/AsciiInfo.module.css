@@ -1,0 +1,83 @@
+/* Extracted from globals.css lines 594-675 */
+.asciiInfoWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.asciiInfoTrigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    background: none;
+    border: 1px solid var(--secondary-bg);
+    border-radius: 20px;
+    color: var(--primary-fg);
+    font-family: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+
+    &:hover {
+        border-color: var(--secondary-fg);
+        color: var(--secondary-fg);
+    }
+
+    svg {
+        fill: none;
+        stroke: currentColor;
+    }
+}
+
+.asciiInfoPanel {
+    margin-top: 1rem;
+    padding: 1.25rem;
+    border: 1px solid var(--secondary-bg);
+    border-radius: 8px;
+    background: var(--primary-bg);
+    max-width: 600px;
+    animation: info-panel-in 0.3s ease;
+}
+
+@keyframes info-panel-in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.asciiInfoItem {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.asciiInfoIcon {
+    flex-shrink: 0;
+    color: var(--secondary-fg);
+    margin-top: 0.15rem;
+}
+
+.asciiInfoItem h4 {
+    font-size: 0.9rem;
+    color: var(--secondary-fg);
+    margin: 0 0 0.35rem 0;
+}
+
+.asciiInfoItem p {
+    font-size: 0.85rem;
+    color: var(--primary-fg);
+    margin: 0;
+    line-height: 1.6;
+}

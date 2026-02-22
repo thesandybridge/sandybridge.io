@@ -1,0 +1,6 @@
+/* Extracted from globals.css lines 3575-3580 */
+.typewriterCursor {
+    color: var(--secondary-fg);
+    animation: blink 0.7s step-end infinite;
+    font-weight: 700;
+}

@@ -8,3 +8,4 @@ export { MagneticLinks } from './MagneticLinks';
 export { SoundEffects } from './SoundEffects';
 export { TriangleBurst } from './TriangleBurst';
 export { TiltCard } from './TiltCard';
+export { GrainOverlay } from './GrainOverlay';

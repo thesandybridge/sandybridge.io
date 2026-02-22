@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { cx } from '@/lib/cx';
+import s from './PlaceholderImage.module.css';
 
 interface PlaceholderImageProps {
   src?: string;
@@ -24,17 +26,17 @@ export function PlaceholderImage({ src, alt, className = '' }: PlaceholderImageP
   if (!src) return null;
 
   return (
-    <span className={`placeholder-image-wrapper ${loaded ? 'loaded' : ''} ${className}`}>
-      {!loaded && <span className="placeholder-image-skeleton" />}
+    <span className={cx(s.placeholderImageWrapper, loaded && s.loaded, className)}>
+      {!loaded && <span className={s.placeholderImageSkeleton} />}
       <img
         src={src}
         alt={alt || ''}
-        className={`placeholder-image ${loaded ? 'visible' : ''}`}
+        className={cx(s.placeholderImage, loaded && s.visible)}
         onLoad={handleLoad}
         onError={handleError}
         loading="lazy"
       />
-      {error && <span className="placeholder-image-error">Failed to load image</span>}
+      {error && <span className={s.placeholderImageError}>Failed to load image</span>}
     </span>
   );
 }

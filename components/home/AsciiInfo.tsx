@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { Info, X, Cpu, Sparkles } from 'lucide-react';
+import s from './AsciiInfo.module.css';
 
 export function AsciiInfo() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,9 +12,9 @@ export function AsciiInfo() {
   }, []);
 
   return (
-    <div className="ascii-info-wrapper">
+    <div className={s.asciiInfoWrapper}>
       <button
-        className="ascii-info-trigger"
+        className={s.asciiInfoTrigger}
         onClick={toggleOpen}
         aria-expanded={isOpen}
         aria-label={isOpen ? "Close info" : "What is Sandy Bridge?"}
@@ -23,9 +24,9 @@ export function AsciiInfo() {
       </button>
 
       {isOpen && (
-        <div className="ascii-info-panel">
-          <div className="ascii-info-item">
-            <Cpu size={20} className="ascii-info-icon" />
+        <div className={s.asciiInfoPanel}>
+          <div className={s.asciiInfoItem}>
+            <Cpu size={20} className={s.asciiInfoIcon} />
             <div>
               <h4>The CPU</h4>
               <p>
@@ -36,8 +37,8 @@ export function AsciiInfo() {
             </div>
           </div>
 
-          <div className="ascii-info-item">
-            <Sparkles size={20} className="ascii-info-icon" />
+          <div className={s.asciiInfoItem}>
+            <Sparkles size={20} className={s.asciiInfoIcon} />
             <div>
               <h4>The Name</h4>
               <p>
