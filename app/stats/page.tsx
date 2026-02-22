@@ -5,6 +5,7 @@ import { getAllPosts, getAllTags } from '@/lib/content';
 import { CoronaReveal } from '@/components/effects';
 import { GitHubContributions } from '@/components/features';
 import { TextScramble } from '@/components/home';
+import tagStyles from '@/components/blog/tags.module.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -98,9 +99,9 @@ export default async function StatsPage() {
       </div>
 
       <h2>Tags</h2>
-      <div className="post-tags" style={{ marginBottom: '2rem' }}>
+      <div className={tagStyles.postTags} style={{ marginBottom: '2rem' }}>
         {sortedTags.map(([tag, count]) => (
-          <span key={tag} className="tag">{tag} ({count})</span>
+          <span key={tag} className={tagStyles.tag}>{tag} ({count})</span>
         ))}
       </div>
 

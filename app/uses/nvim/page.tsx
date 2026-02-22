@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { NvimConfigExplorer } from '@/components/features';
+import pm from '@/components/blog/post-meta.module.css';
 
 export const metadata: Metadata = {
   title: 'Neovim Config',
@@ -11,7 +12,7 @@ export default function NvimConfigPage() {
   return (
     <>
       <p style={{ marginBottom: '0.5rem' }}>
-        <Link href="/uses" className="back-link">← Back to Uses</Link>
+        <Link href="/uses" className={pm.backLink}>← Back to Uses</Link>
       </p>
       <h1>Neovim Config</h1>
       <p>

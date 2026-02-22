@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Skeleton } from '../ui/Skeleton';
+import s from './TrendingPosts.module.css';
 
 interface PostInfo {
   slug: string;
@@ -34,11 +35,11 @@ export function TrendingPosts({ posts }: { posts: PostInfo[] }) {
 
   if (trending === null) {
     return (
-      <section className="trending-section">
+      <section className={s.trendingSection}>
         <h2>Trending</h2>
-        <div className="trending-skeleton">
+        <div className={s.trendingSkeleton}>
           {[1, 2, 3].map((i) => (
-            <div key={i} className="trending-skeleton-item">
+            <div key={i} className={s.trendingSkeletonItem}>
               <Skeleton width="1.5rem" height="1.5rem" />
               <Skeleton width="60%" />
               <Skeleton width="4rem" />
@@ -52,14 +53,14 @@ export function TrendingPosts({ posts }: { posts: PostInfo[] }) {
   if (trending.length === 0) return null;
 
   return (
-    <section className="trending-section">
+    <section className={s.trendingSection}>
       <h2>Trending</h2>
-      <ol className="trending-list">
+      <ol className={s.trendingList}>
         {trending.map((item, i) => (
-          <li key={item.slug} className="trending-item">
-            <span className="trending-rank">{i + 1}</span>
-            <Link href={`/blog/${item.slug}`} className="trending-title">{item.title}</Link>
-            <span className="trending-views">{item.views.toLocaleString()} views</span>
+          <li key={item.slug} className={s.trendingItem}>
+            <span className={s.trendingRank}>{i + 1}</span>
+            <Link href={`/blog/${item.slug}`} className={s.trendingTitle}>{item.title}</Link>
+            <span className={s.trendingViews}>{item.views.toLocaleString()} views</span>
           </li>
         ))}
       </ol>

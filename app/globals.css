@@ -986,109 +986,6 @@ footer {
     }
 }
 
-.back-link {
-    font-size: 0.85rem;
-    margin-bottom: 1rem;
-}
-
-.post-date {
-    color: var(--primary-fg);
-    font-size: 0.85rem;
-    display: block;
-    margin-bottom: 1rem;
-}
-
-.read-time {
-    color: var(--primary-fg);
-    font-size: 0.85rem;
-}
-
-/* Post meta inline layout */
-.post-meta-line {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.meta-dot {
-    color: var(--primary-fg);
-    opacity: 0.4;
-}
-
-.view-count {
-    color: var(--primary-fg);
-    font-size: 0.85rem;
-    opacity: 0.7;
-}
-
-/* Heat indicator */
-.heat-indicator {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    background: var(--error);
-    border-radius: 50%;
-    margin-left: 0.4rem;
-    vertical-align: middle;
-    animation: heat-pulse 2s ease-in-out infinite;
-}
-
-@keyframes heat-pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-}
-
-/* Trending section */
-.trending-section {
-    margin-bottom: 2rem;
-    border: 1px solid var(--secondary-bg);
-    border-radius: 5px;
-    padding: 1rem;
-
-    h2 {
-        font-size: 1rem;
-        margin-bottom: 0.75rem;
-        color: var(--secondary-fg);
-    }
-}
-
-.trending-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.trending-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.35rem 0;
-    font-size: 0.85rem;
-}
-
-.trending-rank {
-    color: var(--secondary-fg);
-    font-weight: 700;
-    min-width: 1.5rem;
-}
-
-.trending-title {
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.trending-views {
-    color: var(--primary-fg);
-    opacity: 0.6;
-    font-size: 0.8rem;
-    white-space: nowrap;
-    margin-left: auto;
-}
-
 /* Heatmap */
 .heatmap-container {
     overflow-x: auto;
@@ -1152,30 +1049,6 @@ footer {
     50% { opacity: 0.3; }
 }
 
-.post-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-}
-
-.tag {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.6rem;
-    border: 1px solid var(--secondary-bg);
-    border-radius: 3px;
-    color: var(--primary-fg);
-    white-space: nowrap;
-}
-
-a.tag {
-    display: inline-flex;
-
-    &:hover {
-        border-color: var(--secondary-fg);
-        color: var(--secondary-fg);
-    }
-}
 
 /* TIL Section */
 .til-list {
@@ -1325,15 +1198,15 @@ a.tag {
     will-change: width;
 }
 
-main nav:not(.toc, .series-nav, .related-posts, .post-nav) ul {
+main nav:not([data-nav]) ul {
     padding-left: 2rem;
 }
 
-main nav:not(.toc, .series-nav, .related-posts, .post-nav) li {
+main nav:not([data-nav]) li {
     position: relative;
 }
 
-main nav:not(.toc, .series-nav, .related-posts, .post-nav) li::before {
+main nav:not([data-nav]) li::before {
     content: '';
     position: absolute;
     left: -1.75rem;
@@ -1352,11 +1225,11 @@ main nav:not(.toc, .series-nav, .related-posts, .post-nav) li::before {
     transition: background-color 0.2s ease;
 }
 
-main nav:not(.toc, .series-nav, .related-posts, .post-nav) li:hover::before {
+main nav:not([data-nav]) li:hover::before {
     background-color: var(--secondary-fg);
 }
 
-main nav:not(.toc, .series-nav, .related-posts, .post-nav) li a {
+main nav:not([data-nav]) li a {
     display: flex;
     flex-direction: column;
 }
@@ -1530,71 +1403,6 @@ nav li time {
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
-}
-
-.toc {
-    margin-bottom: 2rem;
-    font-size: 0.85rem;
-    border: 1px solid var(--secondary-bg);
-    border-radius: 5px;
-    padding: 1rem;
-
-    summary {
-        cursor: pointer;
-        color: var(--secondary-fg);
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-    }
-
-    ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    li {
-        margin: 0.25rem 0;
-    }
-
-    a {
-        color: var(--primary-fg);
-        transition: color 0.2s ease;
-
-        &:hover, &.toc-active {
-            color: var(--secondary-fg);
-        }
-    }
-}
-
-.post-nav {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--secondary-bg);
-}
-
-.post-nav-link {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    max-width: 45%;
-}
-
-.post-nav-next {
-    text-align: right;
-    margin-left: auto;
-}
-
-.post-nav-label {
-    font-size: 0.75rem;
-    color: var(--primary-fg);
-}
-
-.post-nav-title {
-    font-size: 0.85rem;
-    color: var(--secondary-fg);
 }
 
 .stats-grid {
@@ -2823,24 +2631,6 @@ article > h1 ~ h1 {
     to { opacity: 1; pointer-events: auto; }
 }
 
-.trending-skeleton {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.trending-skeleton-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.view-skeleton {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
 /* Offline page */
 .offline-page {
     text-align: center;
@@ -3307,11 +3097,10 @@ html.konami-active {
 /* Print stylesheet */
 @media print {
     nav, footer, .palette-overlay, .palette-modal, .terminal-wrapper,
-    .search-overlay, .share-trigger, .toc, .giscus-wrapper, .post-nav,
+    .search-overlay, .share-trigger, .giscus-wrapper,
     .skip-link, .reading-progress, .series-nav, .related-posts,
-    .copy-button, .heading-anchor, .back-link, .back-to-top,
-    .heatmap-container, .top-posts-chart, .flamegraph-container,
-    .trending-section, .heat-indicator {
+    .copy-button, .heading-anchor, .back-to-top,
+    .heatmap-container, .top-posts-chart, .flamegraph-container {
         display: none !important;
     }
 
@@ -3384,18 +3173,6 @@ html.konami-active {
 
     .portfolio-featured-grid {
         grid-template-columns: 1fr;
-    }
-
-    .post-nav {
-        flex-direction: column;
-    }
-
-    .post-nav-link {
-        max-width: 100%;
-    }
-
-    .post-nav-next {
-        text-align: left;
     }
 
     .stats-grid {

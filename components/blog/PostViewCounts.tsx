@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import s from './ViewCounts.module.css';
 
 export function PostViewCounts() {
   useEffect(() => {
@@ -21,12 +22,12 @@ export function PostViewCounts() {
           if (!link) continue;
 
           const span = document.createElement('span');
-          span.className = 'view-count';
+          span.className = s.viewCount;
           span.textContent = `${views.toLocaleString()} ${views === 1 ? 'view' : 'views'}`;
 
           if (views >= threshold) {
             const dot = document.createElement('span');
-            dot.className = 'heat-indicator';
+            dot.className = s.heatIndicator;
             dot.title = 'Popular post';
             span.appendChild(dot);
           }

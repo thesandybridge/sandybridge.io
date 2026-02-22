@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { Skeleton } from '../ui/Skeleton';
+import s from './ViewCounts.module.css';
+import meta from './post-meta.module.css';
 
 export function ViewCounter({ slug }: { slug: string }) {
   const [views, setViews] = useState<number | null>(null);
@@ -80,8 +82,8 @@ export function ViewCounter({ slug }: { slug: string }) {
 
   if (loading) {
     return (
-      <span className="view-skeleton">
-        <span className="meta-dot">&middot;</span>
+      <span className={s.viewSkeleton}>
+        <span className={meta.metaDot}>&middot;</span>
         <Skeleton width="4rem" height="1em" />
       </span>
     );
@@ -91,8 +93,8 @@ export function ViewCounter({ slug }: { slug: string }) {
 
   return (
     <>
-      <span className="meta-dot">&middot;</span>
-      <span className="view-count">{views.toLocaleString()} {views === 1 ? 'view' : 'views'}</span>
+      <span className={meta.metaDot}>&middot;</span>
+      <span className={s.viewCount}>{views.toLocaleString()} {views === 1 ? 'view' : 'views'}</span>
     </>
   );
 }

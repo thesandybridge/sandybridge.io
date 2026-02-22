@@ -13,7 +13,7 @@ export function SeriesNav({ currentSlug, seriesPosts, seriesName }: SeriesNavPro
   const total = seriesPosts.length;
 
   return (
-    <nav className="series-nav" aria-label={`${seriesName} series navigation`}>
+    <nav className="series-nav" aria-label={`${seriesName} series navigation`} data-nav>
       <div className="series-header">
         <span className="series-label">Series: {seriesName}</span>
         <span className="series-progress">Part {part} of {total}</span>

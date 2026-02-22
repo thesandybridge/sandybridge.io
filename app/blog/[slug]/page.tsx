@@ -12,6 +12,10 @@ import { getPost, getAllPosts, getAdjacentPosts, extractHeadings, getRelatedPost
 import { getMDXComponents } from '@/lib/mdx-components';
 import { CopyButton, Lightbox } from '@/components/ui';
 import { HeadingAnchors, Share, ReadingProgress, TableOfContents, SeriesNav, Giscus, ViewCounter, ResumeReading } from '@/components/blog';
+import pm from '@/components/blog/post-meta.module.css';
+import tags from '@/components/blog/tags.module.css';
+import nav from '@/components/blog/post-nav.module.css';
+import { cx } from '@/lib/cx';
 import type { Metadata } from 'next';
 
 function generateArticleJsonLd(post: { title: string; description: string; date: string; lastModified?: string; slug: string; tags: string[] }) {
@@ -87,19 +91,19 @@ export default async function BlogPost({ params }: Props) {
       />
       <ReadingProgress />
       <ResumeReading slug={slug} />
-      <Link href="/blog" className="back-link">&larr; Back to Blog</Link>
+      <Link href="/blog" className={pm.backLink}>&larr; Back to Blog</Link>
       <article>
         <h1 style={{ viewTransitionName: `post-${slug}` }}>{post.title}</h1>
-        {post.date && <time className="post-date" dateTime={post.date}>{post.date}</time>}
+        {post.date && <time className={pm.postDate} dateTime={post.date}>{post.date}</time>}
         {showUpdated && <time className="post-updated" dateTime={post.lastModified}>Updated {post.lastModified}</time>}
-        <div className="post-meta-line">
-          {post.readTime > 0 && <span className="read-time">{post.readTime} min read</span>}
+        <div className={pm.postMetaLine}>
+          {post.readTime > 0 && <span className={pm.readTime}>{post.readTime} min read</span>}
           <ViewCounter slug={slug} />
         </div>
         {post.tags.length > 0 && (
-          <div className="post-tags">
+          <div className={tags.postTags}>
             {post.tags.map((tag) => (
-              <Link key={tag} href={`/blog/tag/${tag}`} className="tag">{tag}</Link>
+              <Link key={tag} href={`/blog/tag/${tag}`} className={tags.tag}>{tag}</Link>
             ))}
           </div>
         )}
@@ -124,24 +128,24 @@ export default async function BlogPost({ params }: Props) {
         />
       </article>
       {(prev || next) && (
-        <nav className="post-nav" aria-label="Post navigation">
+        <nav className={nav.postNav} aria-label="Post navigation" data-nav>
           {prev ? (
-            <Link href={`/blog/${prev.slug}`} className="post-nav-link post-nav-prev">
-              <span className="post-nav-label">&larr; Previous</span>
-              <span className="post-nav-title">{prev.title}</span>
+            <Link href={`/blog/${prev.slug}`} className={nav.postNavLink}>
+              <span className={nav.postNavLabel}>&larr; Previous</span>
+              <span className={nav.postNavTitle}>{prev.title}</span>
             </Link>
           ) : <span />}
           {next ? (
-            <Link href={`/blog/${next.slug}`} className="post-nav-link post-nav-next">
-              <span className="post-nav-label">Next &rarr;</span>
-              <span className="post-nav-title">{next.title}</span>
+            <Link href={`/blog/${next.slug}`} className={cx(nav.postNavLink, nav.postNavNext)}>
+              <span className={nav.postNavLabel}>Next &rarr;</span>
+              <span className={nav.postNavTitle}>{next.title}</span>
             </Link>
           ) : <span />}
         </nav>
       )}
       <Giscus />
       {relatedPosts.length > 0 && (
-        <nav className="related-posts" aria-label="Related posts">
+        <nav className="related-posts" aria-label="Related posts" data-nav>
           <h3>Related Posts</h3>
           <ul>
             {relatedPosts.map((rp) => (

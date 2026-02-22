@@ -14,6 +14,8 @@ import { CopyButton, Lightbox } from '@/components/ui';
 import { HeadingAnchors, Share } from '@/components/blog';
 import { ProjectLinks, StatusBadges } from '@/components/features';
 import { BLUR_DATA_URL } from '@/lib/blur-placeholder';
+import pm from '@/components/blog/post-meta.module.css';
+import tags from '@/components/blog/tags.module.css';
 import type { Metadata } from 'next';
 
 const getCachedPost = cache((slug: string) => getPost('portfolio', slug));
@@ -49,7 +51,7 @@ export default async function PortfolioItem({ params }: Props) {
 
   return (
     <>
-      <Link href="/portfolio" className="back-link">&larr; Back to Portfolio</Link>
+      <Link href="/portfolio" className={pm.backLink}>&larr; Back to Portfolio</Link>
       <article>
         <ProjectLinks github={post.github} url={post.url} blog={post.blog} npm={post.npm} />
         <StatusBadges github={post.github} />
@@ -66,11 +68,11 @@ export default async function PortfolioItem({ params }: Props) {
             style={{ width: '100%', height: 'auto' }}
           />
         )}
-        {post.date && <time className="post-date" dateTime={post.date}>{post.date}</time>}
+        {post.date && <time className={pm.postDate} dateTime={post.date}>{post.date}</time>}
         {post.tags.length > 0 && (
-          <div className="post-tags">
+          <div className={tags.postTags}>
             {post.tags.map((tag) => (
-              <Link key={tag} href={`/blog/tag/${tag}`} className="tag">{tag}</Link>
+              <Link key={tag} href={`/blog/tag/${tag}`} className={tags.tag}>{tag}</Link>
             ))}
           </div>
         )}

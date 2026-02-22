@@ -10,6 +10,10 @@ import { shikiConfig } from '@/lib/shiki-config';
 import { getPost, getAllPosts, getAdjacentPosts } from '@/lib/content';
 import { getMDXComponents } from '@/lib/mdx-components';
 import { CopyButton, Lightbox } from '@/components/ui';
+import pm from '@/components/blog/post-meta.module.css';
+import tags from '@/components/blog/tags.module.css';
+import nav from '@/components/blog/post-nav.module.css';
+import { cx } from '@/lib/cx';
 import type { Metadata } from 'next';
 
 const getCachedPost = cache((slug: string) => getPost('til', slug));
@@ -47,14 +51,14 @@ export default async function TILPost({ params }: Props) {
 
   return (
     <>
-      <Link href="/til" className="back-link">&larr; Back to TIL</Link>
+      <Link href="/til" className={pm.backLink}>&larr; Back to TIL</Link>
       <article className="til-article">
         <h1>{post.title}</h1>
-        {post.date && <time className="post-date" dateTime={post.date}>{post.date}</time>}
+        {post.date && <time className={pm.postDate} dateTime={post.date}>{post.date}</time>}
         {post.tags.length > 0 && (
-          <div className="post-tags">
+          <div className={tags.postTags}>
             {post.tags.map((tag) => (
-              <span key={tag} className="tag">{tag}</span>
+              <span key={tag} className={tags.tag}>{tag}</span>
             ))}
           </div>
         )}
@@ -74,17 +78,17 @@ export default async function TILPost({ params }: Props) {
         />
       </article>
       {(prev || next) && (
-        <nav className="post-nav" aria-label="Post navigation">
+        <nav className={nav.postNav} aria-label="Post navigation" data-nav>
           {prev ? (
-            <Link href={`/til/${prev.slug}`} className="post-nav-link post-nav-prev">
-              <span className="post-nav-label">&larr; Previous</span>
-              <span className="post-nav-title">{prev.title}</span>
+            <Link href={`/til/${prev.slug}`} className={nav.postNavLink}>
+              <span className={nav.postNavLabel}>&larr; Previous</span>
+              <span className={nav.postNavTitle}>{prev.title}</span>
             </Link>
           ) : <span />}
           {next ? (
-            <Link href={`/til/${next.slug}`} className="post-nav-link post-nav-next">
-              <span className="post-nav-label">Next &rarr;</span>
-              <span className="post-nav-title">{next.title}</span>
+            <Link href={`/til/${next.slug}`} className={cx(nav.postNavLink, nav.postNavNext)}>
+              <span className={nav.postNavLabel}>Next &rarr;</span>
+              <span className={nav.postNavTitle}>{next.title}</span>
             </Link>
           ) : <span />}
         </nav>

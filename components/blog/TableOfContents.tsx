@@ -3,6 +3,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useIsMobile } from '@/lib/use-mobile';
 import type { Heading } from '@/lib/content';
+import s from './TableOfContents.module.css';
 
 interface Props {
   headings: Heading[];
@@ -38,9 +39,9 @@ export function TableOfContents({ headings }: Props) {
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            if (activeLink) activeLink.classList.remove('toc-active');
+            if (activeLink) activeLink.classList.remove(s.tocActive);
             activeLink = nav.querySelector(`a[href="#${entry.target.id}"]`);
-            if (activeLink) activeLink.classList.add('toc-active');
+            if (activeLink) activeLink.classList.add(s.tocActive);
             break;
           }
         }
@@ -57,7 +58,7 @@ export function TableOfContents({ headings }: Props) {
   }, [headings]);
 
   return (
-    <nav className="toc" ref={navRef} aria-label="Table of contents">
+    <nav className={s.toc} ref={navRef} aria-label="Table of contents" data-nav>
       <details open={!isMobile}>
         <summary>Table of Contents</summary>
         <ul>
