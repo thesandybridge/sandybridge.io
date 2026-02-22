@@ -1,0 +1,176 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 998;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.15s ease;
+}
+
+.modal {
+    max-width: 480px;
+    width: 100%;
+    background: var(--primary-bg);
+    border: 1px solid var(--secondary-bg);
+    border-radius: 8px;
+    padding: 2rem;
+    position: relative;
+    box-shadow: 0 0 20px 4px rgba(var(--secondary-fg-rgb), 0.15);
+    animation: slideUp 0.15s ease;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.closeBtn {
+    background: none;
+    border: none;
+    color: var(--primary-fg);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: color 0.2s;
+}
+
+.closeBtn:hover {
+    color: var(--secondary-fg);
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.field label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--primary-fg);
+    margin-bottom: 0.35rem;
+    opacity: 0.7;
+}
+
+.field input,
+.field textarea {
+    width: 100%;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--secondary-bg);
+    color: var(--primary-fg);
+    font-size: 16px;
+    font-family: inherit;
+    padding: 0.5rem 0;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.field input:focus,
+.field textarea:focus {
+    border-color: var(--secondary-fg);
+}
+
+.field textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.fieldError {
+    font-size: 0.75rem;
+    color: #fb4934;
+    margin-top: 0.25rem;
+}
+
+.charCount {
+    font-size: 0.7rem;
+    color: var(--primary-fg);
+    opacity: 0.5;
+    text-align: right;
+    margin-top: 0.25rem;
+}
+
+.submitBtn {
+    background: none;
+    border: 1px solid var(--secondary-fg);
+    color: var(--secondary-fg);
+    padding: 0.6rem 1.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    align-self: flex-end;
+}
+
+.submitBtn:hover:not(:disabled) {
+    background: var(--secondary-fg);
+    color: var(--primary-bg);
+}
+
+.submitBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.success {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.success p {
+    color: var(--primary-fg);
+    margin: 0;
+}
+
+.success p:first-child {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.success p:last-child {
+    opacity: 0.6;
+    font-size: 0.85rem;
+}
+
+.apiError {
+    font-size: 0.8rem;
+    color: #fb4934;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 900px) {
+    .modal {
+        max-width: none;
+        margin: 0 1rem;
+        border-radius: 8px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .overlay,
+    .modal {
+        animation: none;
+    }
+}

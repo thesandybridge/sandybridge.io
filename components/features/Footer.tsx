@@ -1,6 +1,10 @@
+'use client';
+
+import { useState } from 'react';
 import Link from 'next/link';
 import { Github, Linkedin, Twitter, Rss, Mail, FileText, Briefcase } from 'lucide-react';
 import { PresenceIndicator } from './PresenceIndicator';
+import { ContactModal } from './ContactModal';
 import s from './Footer.module.css';
 
 interface FooterProps {
@@ -8,6 +12,8 @@ interface FooterProps {
 }
 
 export function Footer({ year }: FooterProps) {
+  const [contactOpen, setContactOpen] = useState(false);
+
   return (
     <footer>
       <PresenceIndicator />
@@ -54,9 +60,9 @@ export function Footer({ year }: FooterProps) {
         >
           <Twitter size={18} />
         </a>
-        <a href="mailto:matt@mattmillerdev.io" aria-label="Email">
+        <button onClick={() => setContactOpen(true)} aria-label="Email">
           <Mail size={18} />
-        </a>
+        </button>
       </div>
 
       <div className={s.footerMeta}>
@@ -65,6 +71,8 @@ export function Footer({ year }: FooterProps) {
           <kbd>Ctrl</kbd>+<kbd>K</kbd> to search
         </span>
       </div>
+
+      <ContactModal isOpen={contactOpen} onClose={() => setContactOpen(false)} />
     </footer>
   );
 }

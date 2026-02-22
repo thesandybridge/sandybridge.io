@@ -1,4 +1,5 @@
 export { CachedPages } from './CachedPages';
+export { ContactModal } from './ContactModal';
 export { PortfolioGrid } from './PortfolioGrid';
 export { DesktopSpeedDial } from './DesktopSpeedDial';
 export { Footer } from './Footer';

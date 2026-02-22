@@ -23,7 +23,7 @@
     display: flex;
     gap: 0.75rem;
 
-    a {
+    a, button {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -32,6 +32,10 @@
         border: 1px solid var(--secondary-bg);
         border-radius: 50%;
         color: var(--primary-fg);
+        background: none;
+        font: inherit;
+        padding: 0;
+        cursor: pointer;
         transition: border-color 0.2s, color 0.2s, transform 0.2s;
 
         &:hover {
