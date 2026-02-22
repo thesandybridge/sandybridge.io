@@ -1,4 +1,5 @@
 import { getContributions, type ContributionDay } from '@/lib/github';
+import s from './GitHubContributions.module.css';
 
 interface GitHubContributionsProps {
   username: string;
@@ -46,27 +47,27 @@ export async function GitHubContributions({ username }: GitHubContributionsProps
   const recentWeeks = weeks.slice(-20);
 
   return (
-    <div className="github-contributions">
-      <div className="contributions-header">
-        <span className="contributions-total">
+    <div className={s.githubContributions}>
+      <div className={s.contributionsHeader}>
+        <span className={s.contributionsTotal}>
           {totalContributions.toLocaleString()} contributions in the last year
         </span>
         <a
           href={`https://github.com/${username}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="contributions-link"
+          className={s.contributionsLink}
         >
           @{username}
         </a>
       </div>
-      <div className="contributions-graph">
+      <div className={s.contributionsGraph}>
         {recentWeeks.map((week, weekIndex) => (
-          <div key={weekIndex} className="contributions-week">
+          <div key={weekIndex} className={s.contributionsWeek}>
             {week.map((day) => (
               <div
                 key={day.date}
-                className="contributions-day"
+                className={s.contributionsDay}
                 style={{ backgroundColor: levelColors[day.level] }}
                 title={`${day.date}: ${day.count} contribution${day.count !== 1 ? 's' : ''}`}
               />
@@ -74,12 +75,12 @@ export async function GitHubContributions({ username }: GitHubContributionsProps
           </div>
         ))}
       </div>
-      <div className="contributions-legend">
+      <div className={s.contributionsLegend}>
         <span>Less</span>
         {levelColors.map((color, i) => (
           <div
             key={i}
-            className="contributions-day"
+            className={s.contributionsDay}
             style={{ backgroundColor: color }}
           />
         ))}

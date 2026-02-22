@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { WifiOff } from 'lucide-react';
 import { CachedPages } from '@/components/features';
+import s from './page.module.css';
 
 export const metadata: Metadata = {
   title: 'Offline',
@@ -8,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function OfflinePage() {
   return (
-    <div className="offline-page">
-      <div className="offline-icon">
+    <div className={s.offlinePage}>
+      <div className={s.icon}>
         <WifiOff size={48} />
       </div>
       <h1>You&apos;re offline</h1>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import s from './RaftDemo.module.css';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -201,43 +202,43 @@ export function RaftDemo() {
   }, []);
 
   if (!wasmReady || !state) {
-    return <div className="raft-demo raft-demo--loading">loading wasm…</div>;
+    return <div className={`${s.raftDemo} ${s.raftDemoLoading}`}>loading wasm...</div>;
   }
 
   return (
-    <div className="raft-demo">
+    <div className={s.raftDemo}>
       {/* Controls */}
-      <div className="raft-demo-controls">
+      <div className={s.raftDemoControls}>
         <button
-          className={`raft-demo-btn${running ? '' : ' raft-demo-btn--active'}`}
+          className={`${s.raftDemoBtn}${running ? '' : ` ${s.raftDemoBtnActive}`}`}
           onClick={() => setRunning(r => !r)}
         >
           {running ? 'Pause' : 'Resume'}
         </button>
 
-        <div className="raft-demo-speeds">
-          {SPEEDS.map(s => (
+        <div className={s.raftDemoSpeeds}>
+          {SPEEDS.map(sp => (
             <button
-              key={s}
-              className={`raft-demo-speed-btn${speed === s ? ' raft-demo-speed-btn--active' : ''}`}
-              onClick={() => setSpeed(s)}
+              key={sp}
+              className={`${s.raftDemoSpeedBtn}${speed === sp ? ` ${s.raftDemoSpeedBtnActive}` : ''}`}
+              onClick={() => setSpeed(sp)}
             >
-              {s}×
+              {sp}x
             </button>
           ))}
         </div>
 
         {partitionMode ? (
           <>
-            <span className="raft-demo-hint">
-              {partitionFrom === null ? 'click first node…' : 'click second node…'}
+            <span className={s.raftDemoHint}>
+              {partitionFrom === null ? 'click first node...' : 'click second node...'}
             </span>
-            <button className="raft-demo-btn raft-demo-btn--active" onClick={cancelPartition}>
+            <button className={`${s.raftDemoBtn} ${s.raftDemoBtnActive}`} onClick={cancelPartition}>
               Cancel
             </button>
           </>
         ) : (
-          <button className="raft-demo-btn" onClick={() => setPartitionMode(true)}>
+          <button className={s.raftDemoBtn} onClick={() => setPartitionMode(true)}>
             Partition
           </button>
         )}
@@ -245,7 +246,7 @@ export function RaftDemo() {
 
       {/* SVG visualization */}
       <svg
-        className="raft-demo-svg"
+        className={s.raftDemoSvg}
         viewBox={`0 0 ${SVG_W} ${SVG_H}`}
         width="100%"
         aria-label="Raft cluster visualization"
@@ -296,7 +297,7 @@ export function RaftDemo() {
           const isPartSel = partitionMode && partitionFrom === node.id;
 
           let sublabel: string;
-          if (node.dead) sublabel = '—';
+          if (node.dead) sublabel = '\u2014';
           else if (node.role === 'leader') sublabel = 'lead';
           else if (node.role === 'candidate') sublabel = `${node.votes_received ?? 0}/3`;
           else sublabel = `t${node.term}`;
@@ -373,25 +374,25 @@ export function RaftDemo() {
       </svg>
 
       {/* Command input */}
-      <div className="raft-demo-cmd">
+      <div className={s.raftDemoCmd}>
         <input
-          className="raft-demo-input"
+          className={s.raftDemoInput}
           type="text"
-          placeholder="submit command to leader…"
+          placeholder="submit command to leader..."
           value={cmdInput}
           onChange={e => setCmdInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && submitCommand()}
         />
-        <button className="raft-demo-btn" onClick={submitCommand} disabled={!cmdInput.trim()}>
+        <button className={s.raftDemoBtn} onClick={submitCommand} disabled={!cmdInput.trim()}>
           Submit
         </button>
       </div>
 
       {/* Info panels */}
-      <div className="raft-demo-info">
-        <div className="raft-demo-events">
-          <div className="raft-demo-info-label">Events</div>
-          <ul className="raft-demo-event-list">
+      <div className={s.raftDemoInfo}>
+        <div className={s.raftDemoEvents}>
+          <div className={s.raftDemoInfoLabel}>Events</div>
+          <ul className={s.raftDemoEventList}>
             {[...state.events].reverse().slice(0, 10).map((e, i) => (
               <li key={i}>{e}</li>
             ))}
@@ -399,9 +400,9 @@ export function RaftDemo() {
         </div>
 
         {state.applied_commands.length > 0 && (
-          <div className="raft-demo-applied">
-            <div className="raft-demo-info-label">Applied</div>
-            <ul className="raft-demo-applied-list">
+          <div className={s.raftDemoApplied}>
+            <div className={s.raftDemoInfoLabel}>Applied</div>
+            <ul className={s.raftDemoAppliedList}>
               {[...state.applied_commands].reverse().map((c, i) => (
                 <li key={i}>{c}</li>
               ))}
@@ -410,13 +411,13 @@ export function RaftDemo() {
         )}
       </div>
 
-      <div className="raft-demo-legend">
-        <span className="raft-demo-legend-item" style={{ '--dot': '#b8bb26' } as React.CSSProperties}>leader</span>
-        <span className="raft-demo-legend-item" style={{ '--dot': '#d79921' } as React.CSSProperties}>candidate</span>
-        <span className="raft-demo-legend-item" style={{ '--dot': '#3c3836' } as React.CSSProperties}>follower</span>
-        <span className="raft-demo-legend-item" style={{ '--dot': '#1d2021' } as React.CSSProperties}>dead</span>
-        <span className="raft-demo-legend-sep">·</span>
-        <span className="raft-demo-legend-note">click node to kill/revive</span>
+      <div className={s.raftDemoLegend}>
+        <span className={s.raftDemoLegendItem} style={{ '--dot': '#b8bb26' } as React.CSSProperties}>leader</span>
+        <span className={s.raftDemoLegendItem} style={{ '--dot': '#d79921' } as React.CSSProperties}>candidate</span>
+        <span className={s.raftDemoLegendItem} style={{ '--dot': '#3c3836' } as React.CSSProperties}>follower</span>
+        <span className={s.raftDemoLegendItem} style={{ '--dot': '#1d2021' } as React.CSSProperties}>dead</span>
+        <span className={s.raftDemoLegendSep}>&middot;</span>
+        <span className={s.raftDemoLegendNote}>click node to kill/revive</span>
       </div>
     </div>
   );

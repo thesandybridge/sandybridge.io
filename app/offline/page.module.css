@@ -1,0 +1,19 @@
+.offlinePage {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.icon {
+    color: var(--secondary-fg);
+    margin-bottom: 1.5rem;
+    opacity: 0.7;
+}
+
+.offlinePage h1 {
+    margin-bottom: 0.5rem;
+}
+
+.offlinePage > p {
+    color: var(--secondary-fg);
+    margin-bottom: 2rem;
+}

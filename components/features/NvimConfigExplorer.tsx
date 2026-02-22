@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ChevronRight, ChevronDown, File, Folder, Copy, Check, ExternalLink, FolderOpen } from 'lucide-react';
 import { Skeleton } from '../ui/Skeleton';
+import s from './NvimConfigExplorer.module.css';
 
 interface FileNode {
   name: string;
@@ -39,9 +40,9 @@ function FileTreeNode({
 
   if (node.type === 'directory') {
     return (
-      <div className="file-tree-node">
+      <div>
         <button
-          className={`file-tree-item directory${isExpanded ? ' expanded' : ''}`}
+          className={`${s.fileTreeItem} ${s.directory}${isExpanded ? ` ${s.expanded}` : ''}`}
           style={{ paddingLeft }}
           onClick={() => onToggle(node.path)}
           aria-expanded={isExpanded}
@@ -51,7 +52,7 @@ function FileTreeNode({
           <span>{node.name}</span>
         </button>
         {isExpanded && node.children && (
-          <div className="file-tree-children">
+          <div>
             {node.children.map((child) => (
               <FileTreeNode
                 key={child.path}
@@ -71,7 +72,7 @@ function FileTreeNode({
 
   return (
     <button
-      className={`file-tree-item file${isSelected ? ' selected' : ''}`}
+      className={`${s.fileTreeItem}${isSelected ? ` ${s.selected}` : ''}`}
       style={{ paddingLeft }}
       onClick={() => onSelect(node.path)}
     >
@@ -177,13 +178,13 @@ export function NvimConfigExplorer() {
 
   if (loading) {
     return (
-      <div className="nvim-explorer nvim-explorer-skeleton">
-        <div className="nvim-explorer-sidebar">
-          <div className="nvim-explorer-header">
+      <div className={s.explorer}>
+        <div className={s.sidebar}>
+          <div className={s.header}>
             <Folder size={14} />
             <span>~/.config/nvim</span>
           </div>
-          <div className="file-tree" style={{ padding: '0.5rem' }}>
+          <div className={s.fileTree} style={{ padding: '0.5rem' }}>
             {[...Array(8)].map((_, i) => (
               <div key={i} style={{ marginBottom: '0.5rem' }}>
                 <Skeleton height="1.5rem" />
@@ -191,11 +192,11 @@ export function NvimConfigExplorer() {
             ))}
           </div>
         </div>
-        <div className="nvim-explorer-content">
-          <div className="nvim-explorer-file-header">
+        <div className={s.content}>
+          <div className={s.fileHeader}>
             <Skeleton width="40%" height="1rem" />
           </div>
-          <div className="nvim-explorer-code" style={{ padding: '1rem' }}>
+          <div className={s.code} style={{ padding: '1rem' }}>
             {[...Array(15)].map((_, i) => (
               <div key={i} style={{ marginBottom: '0.5rem' }}>
                 <Skeleton width={`${60 + (i * 7) % 40}%`} height="1rem" />
@@ -208,22 +209,22 @@ export function NvimConfigExplorer() {
   }
 
   if (error) {
-    return <div className="nvim-explorer-error">{error}</div>;
+    return <div className={s.error}>{error}</div>;
   }
 
   return (
-    <div className="nvim-explorer">
-      <div className={`nvim-explorer-sidebar${mobileTreeOpen ? ' mobile-open' : ''}`}>
+    <div className={s.explorer}>
+      <div className={`${s.sidebar}${mobileTreeOpen ? ` ${s.mobileOpen}` : ''}`}>
         <button
-          className="nvim-explorer-header"
+          className={s.header}
           onClick={() => setMobileTreeOpen(!mobileTreeOpen)}
           aria-expanded={mobileTreeOpen}
         >
           {mobileTreeOpen ? <FolderOpen size={14} /> : <Folder size={14} />}
           <span>~/.config/nvim</span>
-          <ChevronDown size={14} className={`mobile-chevron${mobileTreeOpen ? ' open' : ''}`} />
+          <ChevronDown size={14} className={`${s.mobileChevron}${mobileTreeOpen ? ` ${s.mobileChevronOpen}` : ''}`} />
         </button>
-        <div className={`file-tree${mobileTreeOpen ? ' mobile-visible' : ''}`}>
+        <div className={`${s.fileTree}${mobileTreeOpen ? ` ${s.mobileVisible}` : ''}`}>
           {tree.map((node) => (
             <FileTreeNode
               key={node.path}
@@ -240,18 +241,18 @@ export function NvimConfigExplorer() {
           href="https://github.com/thesandybridge/nvim"
           target="_blank"
           rel="noopener noreferrer"
-          className="nvim-explorer-github"
+          className={s.github}
         >
           <ExternalLink size={14} />
           Clone from GitHub
         </a>
       </div>
-      <div className="nvim-explorer-content">
+      <div className={s.content}>
         {selectedPath && (
-          <div className="nvim-explorer-file-header">
-            <span className="nvim-explorer-file-path">{selectedPath}</span>
+          <div className={s.fileHeader}>
+            <span className={s.filePath}>{selectedPath}</span>
             <button
-              className="nvim-explorer-copy"
+              className={s.copy}
               onClick={handleCopy}
               disabled={!fileContent}
               aria-label="Copy to clipboard"
@@ -261,7 +262,7 @@ export function NvimConfigExplorer() {
             </button>
           </div>
         )}
-        <div className="nvim-explorer-code">
+        <div className={s.code}>
           {loadingFile ? (
             <div style={{ padding: '1rem' }}>
               {[...Array(20)].map((_, i) => (
@@ -272,13 +273,13 @@ export function NvimConfigExplorer() {
             </div>
           ) : fileContent ? (
             <div
-              className="nvim-explorer-highlighted"
+              className={s.highlighted}
               dangerouslySetInnerHTML={{ __html: fileContent.highlighted }}
             />
           ) : selectedPath ? (
-            <div className="nvim-explorer-empty">Unable to load file</div>
+            <div className={s.empty}>Unable to load file</div>
           ) : (
-            <div className="nvim-explorer-empty">Select a file to view its contents</div>
+            <div className={s.empty}>Select a file to view its contents</div>
           )}
         </div>
       </div>

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { PostMeta } from '@/lib/content';
+import s from './SeriesNav.module.css';
 
 interface SeriesNavProps {
   currentSlug: string;
@@ -13,14 +14,14 @@ export function SeriesNav({ currentSlug, seriesPosts, seriesName }: SeriesNavPro
   const total = seriesPosts.length;
 
   return (
-    <nav className="series-nav" aria-label={`${seriesName} series navigation`} data-nav>
-      <div className="series-header">
-        <span className="series-label">Series: {seriesName}</span>
-        <span className="series-progress">Part {part} of {total}</span>
+    <nav className={s.seriesNav} aria-label={`${seriesName} series navigation`} data-nav>
+      <div className={s.header}>
+        <span className={s.label}>Series: {seriesName}</span>
+        <span className={s.progress}>Part {part} of {total}</span>
       </div>
-      <ol className="series-list">
+      <ol className={s.list}>
         {seriesPosts.map((post) => (
-          <li key={post.slug} className={post.slug === currentSlug ? 'series-current' : ''}>
+          <li key={post.slug} className={post.slug === currentSlug ? s.current : ''}>
             {post.slug === currentSlug ? (
               <span>{post.title}</span>
             ) : (

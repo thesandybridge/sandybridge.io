@@ -5,6 +5,7 @@ import { SummaryCards } from './SummaryCards';
 import { ContributionHeatmap } from './ContributionHeatmap';
 import { TopPostsChart } from './TopPostsChart';
 import { Flamegraph } from './Flamegraph';
+import s from './ViewsDashboard.module.css';
 
 interface PostInfo {
   slug: string;
@@ -31,11 +32,11 @@ export function ViewsDashboard({ posts }: { posts: PostInfo[] }) {
   }, []);
 
   if (loading) {
-    return <p className="loading-text">Loading analytics data...</p>;
+    return <p className={s.loadingText}>Loading analytics data...</p>;
   }
 
   if (!data || Object.keys(data.totals).length === 0) {
-    return <p className="loading-text">No view data available yet.</p>;
+    return <p className={s.loadingText}>No view data available yet.</p>;
   }
 
   const titleMap = new Map(posts.map((p) => [p.slug, p.title]));
@@ -45,7 +46,7 @@ export function ViewsDashboard({ posts }: { posts: PostInfo[] }) {
 
   return (
     <>
-      <section className="dashboard-section">
+      <section className={s.dashboardSection}>
         <SummaryCards
           totalViews={data.summary.totalViews}
           viewsThisWeek={data.summary.viewsThisWeek}
@@ -54,17 +55,17 @@ export function ViewsDashboard({ posts }: { posts: PostInfo[] }) {
         />
       </section>
 
-      <section className="dashboard-section">
+      <section className={s.dashboardSection}>
         <h2>Activity</h2>
         <ContributionHeatmap daily={data.daily} />
       </section>
 
-      <section className="dashboard-section">
+      <section className={s.dashboardSection}>
         <h2>Top Posts</h2>
         <TopPostsChart totals={data.totals} daily={data.daily} titleMap={titleMap} />
       </section>
 
-      <section className="dashboard-section">
+      <section className={s.dashboardSection}>
         <h2>Content Flamegraph</h2>
         <p style={{ fontSize: '0.85rem', color: 'var(--primary-fg)', marginBottom: '1rem' }}>Tags → Posts → Views breakdown. Posts with multiple tags appear under each.</p>
         <Flamegraph totals={data.totals} posts={posts} />

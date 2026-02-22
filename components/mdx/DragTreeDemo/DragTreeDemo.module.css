@@ -1,0 +1,393 @@
+/* Drag Tree Demo */
+
+.dragTreeDemo {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    align-items: stretch;
+}
+
+@media (max-width: 768px) {
+    .dragTreeDemo {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Root tree container */
+.dragTree {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    background: var(--secondary-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 250px;
+    min-width: 0;
+}
+
+/* Nested container indent */
+.treeIndent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-left: 1rem;
+    border-left: 1px solid var(--border);
+    min-width: 0;
+}
+
+/* Section (folder) block */
+.dragSection {
+    border-radius: 6px;
+    border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+    background: color-mix(in srgb, var(--primary-bg) 50%, transparent);
+    transition: opacity 0.15s, transform 0.15s;
+    will-change: transform, opacity;
+    min-width: 0;
+}
+
+.dragSection.dragDragging {
+    opacity: 0.4;
+    transform: scale(0.98);
+}
+
+.sectionChildren {
+    padding: 0.25rem 0.5rem 0.5rem;
+    min-width: 0;
+    animation: folderExpand 0.2s ease-out;
+}
+
+@keyframes folderExpand {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Shared node row */
+.dragNode {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    transition: background 0.15s;
+    min-width: 0;
+}
+
+.dragNode:hover {
+    background: color-mix(in srgb, var(--secondary-bg) 50%, transparent);
+}
+
+.dragNodeSection {
+    font-weight: 500;
+    cursor: grab;
+}
+
+/* Item (file) block */
+.dragNodeItem {
+    border-radius: 4px;
+    border: 1px solid color-mix(in srgb, var(--border) 30%, transparent);
+    background: color-mix(in srgb, var(--primary-bg) 50%, transparent);
+    cursor: grab;
+    transition: background 0.15s, opacity 0.15s, transform 0.15s;
+    will-change: transform, opacity;
+    min-width: 0;
+}
+
+.dragNodeItem:hover {
+    background: color-mix(in srgb, var(--secondary-bg) 50%, transparent);
+}
+
+.dragNodeItem.dragDragging {
+    opacity: 0.4;
+    transform: scale(0.98);
+}
+
+/* Drag grip icon */
+.dragGrip {
+    flex-shrink: 0;
+    color: var(--primary-fg);
+    opacity: 0.4;
+    transition: opacity 0.15s, color 0.15s;
+}
+
+.dragNode:hover .dragGrip {
+    opacity: 1;
+}
+
+.dragGrip:hover {
+    color: var(--secondary-fg);
+}
+
+/* Expand/collapse toggle */
+.expandToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.15rem;
+    border: none;
+    background: transparent;
+    color: var(--primary-fg);
+    cursor: pointer;
+    border-radius: 3px;
+    flex-shrink: 0;
+    transition: background 0.15s;
+}
+
+.expandToggle:hover {
+    background: color-mix(in srgb, var(--secondary-bg) 60%, transparent);
+}
+
+.expandToggle:active {
+    transform: scale(0.95);
+}
+
+.expandChevron {
+    transition: transform 0.2s ease;
+    color: var(--primary-fg);
+}
+
+.expandChevron.expanded {
+    transform: rotate(90deg);
+}
+
+/* Node icon & title */
+.nodeIcon {
+    color: var(--primary-fg);
+    flex-shrink: 0;
+    opacity: 0.7;
+    transition: color 0.2s, opacity 0.2s;
+}
+
+.nodeIconActive {
+    color: var(--secondary-fg);
+    opacity: 1;
+}
+
+.nodeTitle {
+    color: var(--text-bright);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
+    font-size: 0.85rem;
+}
+
+/* Drop zone indicators */
+.dropIndicator {
+    height: 2px;
+    border-radius: 2px;
+    transition: height 0.1s ease, background 0.1s ease;
+    background: transparent;
+}
+
+.dropIndicatorActive {
+    height: 3px;
+    background: var(--secondary-fg);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--secondary-fg) 40%, transparent);
+}
+
+/* Drag overlay */
+.dragOverlayItem {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.75rem;
+    min-width: 180px;
+    background: var(--primary-bg);
+    border: 1px solid var(--secondary-fg);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: var(--text-bright);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15);
+    opacity: 0.95;
+    transform: rotate(1.5deg) scale(1.02);
+    animation: dragLift 0.2s ease-out;
+}
+
+@keyframes dragLift {
+    from { transform: rotate(0deg) scale(1); opacity: 0.7; }
+    to { transform: rotate(1.5deg) scale(1.02); opacity: 0.95; }
+}
+
+.dragOverlayGrip {
+    color: var(--primary-fg);
+    opacity: 0.4;
+    flex-shrink: 0;
+}
+
+.dragOverlayTitle {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Panel & controls */
+.dragTreePanel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-height: 300px;
+    min-width: 0;
+}
+
+.dragTreeControls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.dragTreeBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--secondary-bg);
+    color: var(--primary-fg);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.dragTreeBtn:hover:not(:disabled) {
+    border-color: var(--secondary-fg);
+    color: var(--secondary-fg);
+}
+
+.dragTreeBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.dragTreeCount {
+    font-size: 0.7rem;
+    color: var(--primary-fg);
+    margin-left: auto;
+}
+
+/* MiniMap */
+.dragTreeMinimap {
+    background: var(--primary-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem;
+    font-size: 0.75rem;
+    overflow-y: auto;
+    min-height: 300px;
+    align-self: stretch;
+}
+
+.minimapHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.minimapTitle {
+    font-weight: 600;
+    color: var(--text-bright);
+}
+
+.minimapBadge {
+    padding: 0.15rem 0.4rem;
+    background: var(--secondary-fg);
+    color: var(--primary-bg);
+    border-radius: 10px;
+    font-size: 0.65rem;
+    font-weight: 600;
+}
+
+.minimapTree {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.minimapNode {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.2rem 0.35rem;
+    padding-left: calc(var(--depth, 0) * 0.75rem + 0.35rem);
+    border-radius: 3px;
+    color: var(--primary-fg);
+    transition: background 0.15s;
+}
+
+.minimapNode.diffAdded {
+    background: rgba(var(--success-rgb, 184, 187, 38), 0.2);
+    color: var(--success);
+}
+
+.minimapNode.diffRemoved {
+    background: rgba(var(--error-rgb, 251, 73, 52), 0.2);
+    color: var(--error);
+    text-decoration: line-through;
+}
+
+.minimapNode.diffChanged {
+    background: rgba(var(--warning-rgb, 250, 189, 47), 0.2);
+    color: var(--warning);
+}
+
+.minimapIndicator {
+    font-weight: 700;
+    width: 0.75rem;
+    text-align: center;
+}
+
+.minimapType {
+    color: var(--primary-fg);
+    opacity: 0.6;
+}
+
+.minimapLabel {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.minimapLegend {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.65rem;
+    color: var(--primary-fg);
+}
+
+.legendItem {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.legendDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+}
+
+.legendDot.diffChanged {
+    background: var(--warning);
+}
+
+.legendDot.diffAdded {
+    background: var(--success);
+}
+
+.legendDot.diffRemoved {
+    background: var(--error);
+}

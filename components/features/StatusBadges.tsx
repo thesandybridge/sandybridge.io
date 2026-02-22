@@ -1,5 +1,6 @@
 import { getWorkflowRuns, parseGitHubUrl, type WorkflowRun } from '@/lib/github';
 import { CheckCircle, XCircle, Clock, Loader } from 'lucide-react';
+import s from './StatusBadges.module.css';
 
 interface StatusBadgesProps {
   github?: string;
@@ -20,6 +21,13 @@ const statusLabels: Record<WorkflowRun['status'], string> = {
   in_progress: 'Running',
 };
 
+const statusClasses: Record<WorkflowRun['status'], string> = {
+  success: s.statusSuccess,
+  failure: s.statusFailure,
+  pending: s.statusPending,
+  in_progress: s.statusInProgress,
+};
+
 export async function StatusBadges({ github }: StatusBadgesProps) {
   if (!github) return null;
 
@@ -34,12 +42,12 @@ export async function StatusBadges({ github }: StatusBadgesProps) {
   const Icon = statusIcons[latestRun.status];
 
   return (
-    <div className="status-badges">
+    <div className={s.statusBadges}>
       <a
         href={latestRun.url}
         target="_blank"
         rel="noopener noreferrer"
-        className={`status-badge status-${latestRun.status}`}
+        className={`${s.statusBadge} ${statusClasses[latestRun.status]}`}
         title={`${latestRun.name}: ${statusLabels[latestRun.status]}`}
       >
         <Icon size={12} />

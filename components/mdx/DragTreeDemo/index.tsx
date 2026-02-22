@@ -9,6 +9,7 @@ import {
 import { ChevronRight, Folder, FolderOpen, FileText, Plus, RotateCcw, GripVertical } from 'lucide-react';
 import { MiniMap } from './MiniMap';
 import type { Block } from './types';
+import s from './DragTreeDemo.module.css';
 
 const MAX_BLOCKS = 20;
 
@@ -33,24 +34,24 @@ function SectionRenderer({ block, children, isDragging, isExpanded, onToggleExpa
   const Icon = isExpanded ? FolderOpen : Folder;
 
   return (
-    <div className={`drag-section${isDragging ? ' drag-dragging' : ''}`}>
-      <div className="drag-node drag-node-section">
-        <GripVertical size={14} className="drag-grip" />
+    <div className={`${s.dragSection}${isDragging ? ` ${s.dragDragging}` : ''}`}>
+      <div className={`${s.dragNode} ${s.dragNodeSection}`}>
+        <GripVertical size={14} className={s.dragGrip} />
         <button
-          className="expand-toggle"
+          className={s.expandToggle}
           onClick={(e) => {
             e.stopPropagation();
             onToggleExpand();
           }}
           aria-label={isExpanded ? 'Collapse' : 'Expand'}
         >
-          <ChevronRight size={14} className={`expand-chevron${isExpanded ? ' expanded' : ''}`} />
+          <ChevronRight size={14} className={`${s.expandChevron}${isExpanded ? ` ${s.expanded}` : ''}`} />
         </button>
-        <Icon size={14} className={`node-icon${isExpanded ? ' node-icon-active' : ''}`} />
-        <span className="node-title">{block.title}</span>
+        <Icon size={14} className={`${s.nodeIcon}${isExpanded ? ` ${s.nodeIconActive}` : ''}`} />
+        <span className={s.nodeTitle}>{block.title}</span>
       </div>
       {isExpanded && children && (
-        <div className="section-children">
+        <div className={s.sectionChildren}>
           {children}
         </div>
       )}
@@ -60,10 +61,10 @@ function SectionRenderer({ block, children, isDragging, isExpanded, onToggleExpa
 
 function ItemRenderer({ block, isDragging }: BlockRendererProps<Block>) {
   return (
-    <div className={`drag-node drag-node-item${isDragging ? ' drag-dragging' : ''}`}>
-      <GripVertical size={14} className="drag-grip" />
-      <FileText size={14} className="node-icon" />
-      <span className="node-title">{block.title}</span>
+    <div className={`${s.dragNode} ${s.dragNodeItem}${isDragging ? ` ${s.dragDragging}` : ''}`}>
+      <GripVertical size={14} className={s.dragGrip} />
+      <FileText size={14} className={s.nodeIcon} />
+      <span className={s.nodeTitle}>{block.title}</span>
     </div>
   );
 }
@@ -89,11 +90,11 @@ export function DragTreeDemo() {
   }, []);
 
   return (
-    <div className="drag-tree-demo">
-      <div className="drag-tree-panel">
-        <div className="drag-tree-controls">
+    <div className={s.dragTreeDemo}>
+      <div className={s.dragTreePanel}>
+        <div className={s.dragTreeControls}>
           <button
-            className="drag-tree-btn"
+            className={s.dragTreeBtn}
             onClick={() => addItem('section')}
             disabled={!canAdd}
             title="Add section"
@@ -102,7 +103,7 @@ export function DragTreeDemo() {
             <Folder size={14} />
           </button>
           <button
-            className="drag-tree-btn"
+            className={s.dragTreeBtn}
             onClick={() => addItem('item')}
             disabled={!canAdd}
             title="Add item"
@@ -111,13 +112,13 @@ export function DragTreeDemo() {
             <FileText size={14} />
           </button>
           <button
-            className="drag-tree-btn"
+            className={s.dragTreeBtn}
             onClick={reset}
             title="Reset to initial"
           >
             <RotateCcw size={14} />
           </button>
-          <span className="drag-tree-count">{blockCount}/{MAX_BLOCKS}</span>
+          <span className={s.dragTreeCount}>{blockCount}/{MAX_BLOCKS}</span>
         </div>
         <BlockTree<Block, typeof CONTAINER_TYPES>
           blocks={blocks}
@@ -128,19 +129,19 @@ export function DragTreeDemo() {
           showDropPreview
           activationDistance={8}
           previewDebounce={200}
-          className="drag-tree"
-          dropZoneClassName="drop-indicator"
-          dropZoneActiveClassName="drop-indicator-active"
-          indentClassName="tree-indent"
+          className={s.dragTree}
+          dropZoneClassName={s.dropIndicator}
+          dropZoneActiveClassName={s.dropIndicatorActive}
+          indentClassName={s.treeIndent}
           dragOverlay={(block) => (
-            <div className="drag-overlay-item">
-              <GripVertical size={14} className="drag-overlay-grip" />
+            <div className={s.dragOverlayItem}>
+              <GripVertical size={14} className={s.dragOverlayGrip} />
               {block.type === 'section' ? (
                 <Folder size={14} />
               ) : (
                 <FileText size={14} />
               )}
-              <span className="drag-overlay-title">{block.title}</span>
+              <span className={s.dragOverlayTitle}>{block.title}</span>
             </div>
           )}
         />

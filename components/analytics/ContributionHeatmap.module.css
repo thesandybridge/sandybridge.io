@@ -1,0 +1,28 @@
+.container {
+    overflow-x: auto;
+    margin: 1rem 0 2rem;
+}
+
+.cell:hover {
+    stroke: var(--secondary-fg);
+    stroke-width: 2;
+}
+
+.legend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 0.5rem;
+}
+
+.tooltip {
+    background: var(--primary-bg);
+    border: 1px solid var(--secondary-bg);
+    border-radius: 4px;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.75rem;
+    color: var(--primary-fg);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 100;
+}

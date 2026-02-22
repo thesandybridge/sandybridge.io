@@ -9,6 +9,7 @@ import { shikiConfig } from '@/lib/shiki-config';
 import { getDocBySlug, getDocSlugs } from '@/lib/docs';
 import { getMDXComponents } from '@/lib/mdx-components';
 import { CopyButton } from '@/components/ui';
+import s from '../docs.module.css';
 import type { Metadata } from 'next';
 
 const getCachedDoc = cache((slug: string) => getDocBySlug(slug));
@@ -42,7 +43,7 @@ export default async function DocPage({ params }: Props) {
     <>
       <article>
         <h1>{doc.title}</h1>
-        {doc.description && <p className="docs-subtitle">{doc.description}</p>}
+        {doc.description && <p className={s.subtitle}>{doc.description}</p>}
         <MDXRemote
           source={doc.content}
           components={getMDXComponents()}

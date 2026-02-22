@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import s from './TopPostsChart.module.css';
 
 const BAR_HEIGHT = 28;
 const ROW_HEIGHT = 40;
@@ -76,7 +77,7 @@ export function TopPostsChart({
   const svgH = rows.length * ROW_HEIGHT + 4;
 
   return (
-    <div className="top-posts-chart">
+    <div className={s.chart}>
       <svg
         viewBox={`0 0 ${TOTAL_WIDTH} ${svgH}`}
         width={TOTAL_WIDTH}

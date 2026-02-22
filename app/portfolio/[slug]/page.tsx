@@ -16,6 +16,7 @@ import { ProjectLinks, StatusBadges } from '@/components/features';
 import { BLUR_DATA_URL } from '@/lib/blur-placeholder';
 import pm from '@/components/blog/post-meta.module.css';
 import tags from '@/components/blog/tags.module.css';
+import p from '@/components/features/PortfolioGrid.module.css';
 import type { Metadata } from 'next';
 
 const getCachedPost = cache((slug: string) => getPost('portfolio', slug));
@@ -61,7 +62,7 @@ export default async function PortfolioItem({ params }: Props) {
             alt={post.title}
             width={800}
             height={450}
-            className="portfolio-hero"
+            className={p.portfolioHero}
             priority
             placeholder="blur"
             blurDataURL={BLUR_DATA_URL}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import s from './KonamiCode.module.css';
 
 const KONAMI_CODE = [
   'ArrowUp', 'ArrowUp',
@@ -57,11 +58,11 @@ export function KonamiCode() {
   if (!activated && particles.length === 0) return null;
 
   return (
-    <div className="konami-overlay" aria-hidden="true">
+    <div className={s.overlay} aria-hidden="true">
       {particles.map((p) => (
         <div
           key={p.id}
-          className="konami-particle"
+          className={s.particle}
           style={{
             left: p.x,
             top: p.y,
@@ -70,8 +71,8 @@ export function KonamiCode() {
         />
       ))}
       {activated && (
-        <div className="konami-message">
-          🎮 KONAMI CODE ACTIVATED! 🎮
+        <div className={s.message}>
+          KONAMI CODE ACTIVATED!
         </div>
       )}
     </div>

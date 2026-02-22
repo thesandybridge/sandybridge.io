@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Menu, X, Home, Briefcase, BookOpen, Wrench, Palette, Check, Sun, Moon, Search, Lightbulb } from 'lucide-react';
 import { useTheme, THEMES } from '../theme/ThemeProvider';
 import { haptic } from '@/lib/haptics';
+import s from './MobileNav.module.css';
 
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
@@ -58,19 +59,19 @@ export function MobileNav() {
   }, []);
 
   return (
-    <div className="mobile-nav">
+    <div className={s.mobileNav}>
       {/* Backdrop */}
-      {isOpen && <div className="mobile-nav-backdrop" onClick={toggleMenu} />}
+      {isOpen && <div className={s.backdrop} onClick={toggleMenu} />}
 
       {/* Speed dial items */}
-      <div className={`mobile-nav-items ${isOpen ? 'open' : ''}`}>
+      <div className={`${s.items}${isOpen ? ` ${s.itemsOpen}` : ''}`}>
         {showThemes ? (
           // Theme selection
           <>
             {THEMES.map((t, i) => (
               <button
                 key={t.id}
-                className={`mobile-nav-pill theme-pill ${theme === t.id ? 'active' : ''}`}
+                className={`${s.pill} ${s.themePill}${theme === t.id ? ` ${s.pillActive}` : ''}`}
                 style={{ transitionDelay: `${i * 30}ms` }}
                 onClick={() => handleThemeSelect(t.id)}
               >
@@ -79,7 +80,7 @@ export function MobileNav() {
               </button>
             ))}
             <button
-              className="mobile-nav-pill back-pill"
+              className={`${s.pill} ${s.backPill}`}
               style={{ transitionDelay: `${THEMES.length * 30}ms` }}
               onClick={toggleThemes}
             >
@@ -97,7 +98,7 @@ export function MobileNav() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`mobile-nav-pill ${isActive ? 'active' : ''}`}
+                  className={`${s.pill}${isActive ? ` ${s.pillActive}` : ''}`}
                   style={{ transitionDelay: `${i * 30}ms` }}
                   onClick={handleNavClick}
                 >
@@ -107,7 +108,7 @@ export function MobileNav() {
               );
             })}
             <button
-              className="mobile-nav-pill"
+              className={s.pill}
               style={{ transitionDelay: `${navItems.length * 30}ms` }}
               onClick={handleSearchClick}
             >
@@ -115,7 +116,7 @@ export function MobileNav() {
               <span>Search</span>
             </button>
             <button
-              className="mobile-nav-pill"
+              className={s.pill}
               style={{ transitionDelay: `${(navItems.length + 1) * 30}ms` }}
               onClick={handleModeToggle}
             >
@@ -123,7 +124,7 @@ export function MobileNav() {
               <span>{mode === 'dark' ? 'Light' : 'Dark'}</span>
             </button>
             <button
-              className="mobile-nav-pill"
+              className={s.pill}
               style={{ transitionDelay: `${(navItems.length + 2) * 30}ms` }}
               onClick={toggleThemes}
             >
@@ -136,7 +137,7 @@ export function MobileNav() {
 
       {/* FAB button */}
       <button
-        className={`mobile-nav-fab ${isOpen ? 'open' : ''}`}
+        className={`${s.fab}${isOpen ? ` ${s.fabOpen}` : ''}`}
         onClick={toggleMenu}
         aria-label={isOpen ? 'Close menu' : 'Open menu'}
         aria-expanded={isOpen}

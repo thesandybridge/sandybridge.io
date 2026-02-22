@@ -6,6 +6,7 @@ import { X, Search, FileText, Briefcase } from 'lucide-react';
 import { useSearch } from '@/lib/use-search';
 import { CONTENT_TYPES, getContentUrl, type ContentType } from '@/lib/constants';
 import { haptic } from '@/lib/haptics';
+import s from './MobileSearch.module.css';
 
 export function MobileSearch() {
   const [isOpen, setIsOpen] = useState(false);
@@ -57,14 +58,14 @@ export function MobileSearch() {
   if (!isOpen) return null;
 
   return (
-    <div className="mobile-search-overlay">
-      <div className="mobile-search-header">
-        <div className="mobile-search-input-wrapper">
-          <Search size={20} className="mobile-search-icon" />
+    <div className={s.overlay}>
+      <div className={s.header}>
+        <div className={s.inputWrapper}>
+          <Search size={20} className={s.icon} />
           <input
             ref={inputRef}
             type="text"
-            className="mobile-search-input"
+            className={s.input}
             placeholder="Search posts and projects..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -74,30 +75,30 @@ export function MobileSearch() {
             spellCheck={false}
           />
         </div>
-        <button className="mobile-search-close" onClick={handleClose} aria-label="Close search">
+        <button className={s.close} onClick={handleClose} aria-label="Close search">
           <X size={24} />
         </button>
       </div>
 
-      <div className="mobile-search-results">
+      <div className={s.results}>
         {isLoading ? (
-          <div className="mobile-search-loading">Loading...</div>
+          <div className={s.loading}>Loading...</div>
         ) : results.length === 0 && query.trim() ? (
-          <div className="mobile-search-empty">No results found</div>
+          <div className={s.empty}>No results found</div>
         ) : (
           results.slice(0, 20).map((item) => (
             <button
               key={`${item.type}-${item.slug}`}
-              className="mobile-search-result"
+              className={s.result}
               onClick={() => handleResultClick(getContentUrl(item.type as ContentType, item.slug))}
             >
-              <span className="mobile-search-result-icon">
+              <span className={s.resultIcon}>
                 {item.type === CONTENT_TYPES.BLOG ? <FileText size={18} /> : <Briefcase size={18} />}
               </span>
-              <span className="mobile-search-result-content">
-                <span className="mobile-search-result-title">{item.title}</span>
+              <span className={s.resultContent}>
+                <span className={s.resultTitle}>{item.title}</span>
                 {item.description && (
-                  <span className="mobile-search-result-desc">{item.description}</span>
+                  <span className={s.resultDesc}>{item.description}</span>
                 )}
               </span>
             </button>

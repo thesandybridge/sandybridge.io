@@ -3,11 +3,18 @@
 import { useRef, useEffect, useMemo } from 'react';
 import { diffBlocks, buildTree, flattenTree } from './utils';
 import type { Block, BlockChange, TreeNode } from './types';
+import s from './DragTreeDemo.module.css';
 
 interface MiniMapProps {
   blocks: Block[];
   initialBlocks: Block[];
 }
+
+const DIFF_CLASS: Record<string, string> = {
+  added: s.diffAdded,
+  removed: s.diffRemoved,
+  changed: s.diffChanged,
+};
 
 export function MiniMap({ blocks, initialBlocks }: MiniMapProps) {
   const prevBlocksRef = useRef<Block[]>(initialBlocks);
@@ -43,20 +50,20 @@ export function MiniMap({ blocks, initialBlocks }: MiniMapProps) {
   const hasChanges = changes.size > 0;
 
   return (
-    <div className="drag-tree-minimap">
-      <div className="minimap-header">
-        <span className="minimap-title">Structure Diff</span>
-        {hasChanges && <span className="minimap-badge">{changes.size} change{changes.size !== 1 ? 's' : ''}</span>}
+    <div className={s.dragTreeMinimap}>
+      <div className={s.minimapHeader}>
+        <span className={s.minimapTitle}>Structure Diff</span>
+        {hasChanges && <span className={s.minimapBadge}>{changes.size} change{changes.size !== 1 ? 's' : ''}</span>}
       </div>
-      <div className="minimap-tree">
+      <div className={s.minimapTree}>
         {tree.map((node) => (
           <MiniMapNode key={node.id} node={node} changeType={changes.get(node.id)} />
         ))}
       </div>
-      <div className="minimap-legend">
-        <span className="legend-item"><span className="legend-dot diff-changed" /> moved</span>
-        <span className="legend-item"><span className="legend-dot diff-added" /> added</span>
-        <span className="legend-item"><span className="legend-dot diff-removed" /> removed</span>
+      <div className={s.minimapLegend}>
+        <span className={s.legendItem}><span className={`${s.legendDot} ${s.diffChanged}`} /> moved</span>
+        <span className={s.legendItem}><span className={`${s.legendDot} ${s.diffAdded}`} /> added</span>
+        <span className={s.legendItem}><span className={`${s.legendDot} ${s.diffRemoved}`} /> removed</span>
       </div>
     </div>
   );
@@ -72,12 +79,12 @@ function MiniMapNode({ node, changeType }: MiniMapNodeProps) {
 
   return (
     <div
-      className={`minimap-node ${changeType ? `diff-${changeType}` : ''}`}
+      className={`${s.minimapNode}${changeType ? ` ${DIFF_CLASS[changeType]}` : ''}`}
       style={{ '--depth': node.depth } as React.CSSProperties}
     >
-      {indicator && <span className="minimap-indicator">{indicator}</span>}
-      <span className="minimap-type">{node.type === 'section' ? '▸' : '·'}</span>
-      <span className="minimap-label">{node.title}</span>
+      {indicator && <span className={s.minimapIndicator}>{indicator}</span>}
+      <span className={s.minimapType}>{node.type === 'section' ? '\u25B8' : '\u00B7'}</span>
+      <span className={s.minimapLabel}>{node.title}</span>
     </div>
   );
 }

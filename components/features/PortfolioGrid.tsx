@@ -7,6 +7,7 @@ import { CoronaReveal, TiltCard } from '@/components/effects';
 import { BLUR_DATA_URL } from '@/lib/blur-placeholder';
 import type { PostMeta } from '@/lib/content';
 import type { RepoStats } from '@/lib/github';
+import s from './PortfolioGrid.module.css';
 
 const CATEGORIES = [
   { id: 'all', label: 'All' },
@@ -70,7 +71,7 @@ function PortfolioCard({
     <TiltCard>
       <Link
         href={`/portfolio/${item.slug}`}
-        className="portfolio-card"
+        className={s.portfolioCard}
         style={{ '--cat-color': catColor } as React.CSSProperties}
       >
         {item.image ? (
@@ -84,20 +85,20 @@ function PortfolioCard({
             style={{ width: '100%', height: 'auto' }}
           />
         ) : (
-          <div className="portfolio-card-accent" />
+          <div className={s.portfolioCardAccent} />
         )}
-        <div className="portfolio-card-body">
+        <div className={s.portfolioCardBody}>
           <h3>{item.title}</h3>
           {item.description && <p>{item.description}</p>}
           {stats ? (
-            <div className="portfolio-stats">
-              {stats.language && <span className="portfolio-stat">{stats.language}</span>}
-              <span className="portfolio-stat">&#9733; {stats.stars} &middot; {stats.commits} commits</span>
-              <span className="portfolio-stat">{relativeTime(stats.lastPush)}</span>
+            <div className={s.portfolioStats}>
+              {stats.language && <span className={s.portfolioStat}>{stats.language}</span>}
+              <span className={s.portfolioStat}>&#9733; {stats.stars} &middot; {stats.commits} commits</span>
+              <span className={s.portfolioStat}>{relativeTime(stats.lastPush)}</span>
             </div>
           ) : item.work ? (
-            <div className="portfolio-stats">
-              <span className="portfolio-stat portfolio-stat-work">Work</span>
+            <div className={s.portfolioStats}>
+              <span className={`${s.portfolioStat} ${s.portfolioStatWork}`}>Work</span>
             </div>
           ) : null}
         </div>
@@ -158,16 +159,16 @@ export function PortfolioGrid({ items, statsMap }: PortfolioGridProps) {
   return (
     <>
       {featured.length > 0 && (
-        <section className="portfolio-featured">
+        <section className={s.portfolioFeatured}>
           <h2>Recently Active</h2>
-          <div className="portfolio-featured-grid">
+          <div className={s.portfolioFeaturedGrid}>
             {[0, 1].map((col) => (
-              <div key={col} className="portfolio-column">
+              <div key={col} className={s.portfolioColumn}>
                 {featured.filter((_, i) => i % 2 === col).map((item) => (
                   <TiltCard key={item.slug}>
                     <Link
                       href={`/portfolio/${item.slug}`}
-                      className="portfolio-card portfolio-featured-card"
+                      className={`${s.portfolioCard} ${s.portfolioFeaturedCard}`}
                       style={{ '--cat-color': getCatColor(item) } as React.CSSProperties}
                     >
                       {item.image ? (
@@ -181,22 +182,22 @@ export function PortfolioGrid({ items, statsMap }: PortfolioGridProps) {
                           style={{ width: '100%', height: 'auto' }}
                         />
                       ) : (
-                        <div className="portfolio-card-accent" />
+                        <div className={s.portfolioCardAccent} />
                       )}
-                      <div className="portfolio-card-body">
+                      <div className={s.portfolioCardBody}>
                         <h3>{item.title}</h3>
                         {item.description && <p>{item.description}</p>}
                         {statsMap[item.slug] ? (
-                          <div className="portfolio-stats">
+                          <div className={s.portfolioStats}>
                             {statsMap[item.slug].language && (
-                              <span className="portfolio-stat">{statsMap[item.slug].language}</span>
+                              <span className={s.portfolioStat}>{statsMap[item.slug].language}</span>
                             )}
-                            <span className="portfolio-stat">&#9733; {statsMap[item.slug].stars} &middot; {statsMap[item.slug].commits} commits</span>
-                            <span className="portfolio-stat">{relativeTime(statsMap[item.slug].lastPush)}</span>
+                            <span className={s.portfolioStat}>&#9733; {statsMap[item.slug].stars} &middot; {statsMap[item.slug].commits} commits</span>
+                            <span className={s.portfolioStat}>{relativeTime(statsMap[item.slug].lastPush)}</span>
                           </div>
                         ) : item.work ? (
-                          <div className="portfolio-stats">
-                            <span className="portfolio-stat portfolio-stat-work">Work</span>
+                          <div className={s.portfolioStats}>
+                            <span className={`${s.portfolioStat} ${s.portfolioStatWork}`}>Work</span>
                           </div>
                         ) : null}
                       </div>
@@ -209,7 +210,7 @@ export function PortfolioGrid({ items, statsMap }: PortfolioGridProps) {
         </section>
       )}
 
-      <div className="portfolio-filters">
+      <div className={s.portfolioFilters}>
         {CATEGORIES.map((cat) => {
           const count = cat.id === 'all'
             ? nonFeatured.length
@@ -218,19 +219,19 @@ export function PortfolioGrid({ items, statsMap }: PortfolioGridProps) {
           return (
             <button
               key={cat.id}
-              className={`portfolio-filter-pill${activeCategory === cat.id ? ' active' : ''}`}
+              className={`${s.portfolioFilterPill}${activeCategory === cat.id ? ` ${s.active}` : ''}`}
               onClick={() => setActiveCategory(cat.id)}
             >
               {cat.label}
-              <span className="portfolio-filter-count">{count}</span>
+              <span className={s.portfolioFilterCount}>{count}</span>
             </button>
           );
         })}
       </div>
 
-      <CoronaReveal className="portfolio-masonry">
+      <CoronaReveal className={s.portfolioMasonry}>
         {[0, 1].map((col) => (
-          <div key={col} className="portfolio-column">
+          <div key={col} className={s.portfolioColumn}>
             {filtered.filter((_, i) => i % 2 === col).map((item) => (
               <PortfolioCard
                 key={item.slug}

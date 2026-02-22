@@ -13,6 +13,7 @@ import { CopyButton, Lightbox } from '@/components/ui';
 import pm from '@/components/blog/post-meta.module.css';
 import tags from '@/components/blog/tags.module.css';
 import nav from '@/components/blog/post-nav.module.css';
+import til from '../til.module.css';
 import { cx } from '@/lib/cx';
 import type { Metadata } from 'next';
 
@@ -52,7 +53,7 @@ export default async function TILPost({ params }: Props) {
   return (
     <>
       <Link href="/til" className={pm.backLink}>&larr; Back to TIL</Link>
-      <article className="til-article">
+      <article className={til.article}>
         <h1>{post.title}</h1>
         {post.date && <time className={pm.postDate} dateTime={post.date}>{post.date}</time>}
         {post.tags.length > 0 && (

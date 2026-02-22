@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import s from './Sha3Demo.module.css';
 
 interface Sha3WasmStateInstance {
   free(): void;
@@ -60,15 +61,15 @@ export function Sha3Demo() {
   const autoTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const syncUi = useCallback(() => {
-    const s = stateRef.current;
-    if (!s) return;
-    setRound(s.get_round());
-    setStepIndex(s.get_step_index());
-    setStepName(s.get_current_step_name());
-    const complete = s.is_complete();
+    const st = stateRef.current;
+    if (!st) return;
+    setRound(st.get_round());
+    setStepIndex(st.get_step_index());
+    setStepName(st.get_current_step_name());
+    const complete = st.is_complete();
     setIsComplete(complete);
-    setStateBytes(s.get_state_as_bytes());
-    if (complete) setOutputHex(s.get_output_hex());
+    setStateBytes(st.get_state_as_bytes());
+    if (complete) setOutputHex(st.get_output_hex());
   }, []);
 
   const stopAuto = useCallback(() => {
@@ -96,11 +97,11 @@ export function Sha3Demo() {
   }, []);
 
   const doStep = useCallback(() => {
-    const s = stateRef.current;
-    if (!s || s.is_complete()) return;
-    s.step();
+    const st = stateRef.current;
+    if (!st || st.is_complete()) return;
+    st.step();
     syncUi();
-    if (s.is_complete()) stopAuto();
+    if (st.is_complete()) stopAuto();
   }, [syncUi, stopAuto]);
 
   const resetState = useCallback((val: string) => {
@@ -108,9 +109,9 @@ export function Sha3Demo() {
     const Cls = wasmClassRef.current;
     if (!Cls) return;
     stateRef.current?.free();
-    const s = new Cls();
-    stateRef.current = s;
-    if (val) s.set_input(val);
+    const st = new Cls();
+    stateRef.current = st;
+    if (val) st.set_input(val);
     setRound(0);
     setStepIndex(0);
     setStepName('Absorb Input');
@@ -129,8 +130,8 @@ export function Sha3Demo() {
       stopAuto();
       return;
     }
-    const s = stateRef.current;
-    if (!s || s.is_complete()) return;
+    const st = stateRef.current;
+    if (!st || st.is_complete()) return;
     setIsAuto(true);
     autoTimerRef.current = setInterval(() => {
       const cur = stateRef.current;
@@ -155,42 +156,42 @@ export function Sha3Demo() {
   const stepColor = STEP_COLORS[stepIndex] ?? '#928374';
 
   return (
-    <div className="sha3-demo">
-      <div className="sha3-demo-header">
+    <div className={s.sha3Demo}>
+      <div className={s.sha3DemoHeader}>
         <input
-          className="sha3-demo-input"
+          className={s.sha3DemoInput}
           type="text"
-          placeholder="type to hash…"
+          placeholder="type to hash..."
           value={input}
           onChange={e => handleInput(e.target.value)}
           disabled={!wasmReady}
         />
-        <span className="sha3-demo-variant">SHA3-256</span>
+        <span className={s.sha3DemoVariant}>SHA3-256</span>
       </div>
 
-      <div className="sha3-demo-status">
-        <span className="sha3-demo-step-info">
+      <div className={s.sha3DemoStatus}>
+        <span className={s.sha3DemoStepInfo}>
           Round <strong>{round}</strong>/23
-          {' · '}
+          {' \u00B7 '}
           <span style={{ color: stepColor }}>{stepName}</span>
         </span>
-        <div className="sha3-demo-buttons">
+        <div className={s.sha3DemoButtons}>
           <button
-            className="sha3-demo-btn"
+            className={s.sha3DemoBtn}
             onClick={doStep}
             disabled={!wasmReady || isComplete}
           >
             Step
           </button>
           <button
-            className={`sha3-demo-btn${isAuto ? ' sha3-demo-btn--active' : ''}`}
+            className={`${s.sha3DemoBtn}${isAuto ? ` ${s.sha3DemoBtnActive}` : ''}`}
             onClick={toggleAuto}
             disabled={!wasmReady || isComplete}
           >
             {isAuto ? 'Pause' : 'Auto'}
           </button>
           <button
-            className="sha3-demo-btn"
+            className={s.sha3DemoBtn}
             onClick={() => resetState(input)}
             disabled={!wasmReady}
           >
@@ -199,9 +200,9 @@ export function Sha3Demo() {
         </div>
       </div>
 
-      <div className="sha3-demo-grid">
+      <div className={s.sha3DemoGrid}>
         {!wasmReady ? (
-          <div className="sha3-demo-loading">loading wasm…</div>
+          <div className={s.sha3DemoLoading}>loading wasm...</div>
         ) : (
           Array.from({ length: 25 }, (_, i) => {
             const x = i % 5;
@@ -212,14 +213,14 @@ export function Sha3Demo() {
             return (
               <div
                 key={i}
-                className="sha3-demo-cell"
+                className={s.sha3DemoCell}
                 style={{
                   background: `hsl(0,0%,${lightness.toFixed(1)}%)`,
                   borderColor: stepColor,
                 }}
                 title={hex}
               >
-                <span className="sha3-demo-cell-label">{hex.slice(0, 8)}</span>
+                <span className={s.sha3DemoCellLabel}>{hex.slice(0, 8)}</span>
               </div>
             );
           })
@@ -227,9 +228,9 @@ export function Sha3Demo() {
       </div>
 
       {isComplete && outputHex && (
-        <div className="sha3-demo-output">
-          <span className="sha3-demo-output-label">SHA3-256</span>
-          <code className="sha3-demo-output-hex">{outputHex}</code>
+        <div className={s.sha3DemoOutput}>
+          <span className={s.sha3DemoOutputLabel}>SHA3-256</span>
+          <code className={s.sha3DemoOutputHex}>{outputHex}</code>
         </div>
       )}
     </div>

@@ -7,6 +7,7 @@ import type { SearchItem } from '@/lib/search-index';
 import { PaletteTitlebar } from './PaletteTitlebar';
 import { useTheme, type ParticleDensity } from '../theme/ThemeProvider';
 import { useIsMobile } from '@/lib/use-mobile';
+import s from './CommandPalette.module.css';
 
 const COMMANDS = ['help', 'cd', 'ls', 'clear', 'github', 'x', 'whoami', 'echo', 'contact', 'cat', 'pwd', 'grep', 'man', 'tree', 'history', 'ascii', 'neofetch', 'matrix', 'theme'];
 const CD_TARGETS = ['home', 'blog', 'portfolio', 'uses'];
@@ -658,10 +659,10 @@ export function CommandPalette() {
   return (
     <div
       ref={wrapperRef}
-      className="palette-overlay"
+      className={s.overlay}
       onClick={close}
     >
-      <div className={`palette-modal${isMinimized ? ' minimized' : ''}${isMaximized ? ' maximized' : ''}`} onClick={stopPropagation}>
+      <div className={`${s.modal}${isMinimized ? ` ${s.minimized}` : ''}${isMaximized ? ` ${s.maximized}` : ''}`} onClick={stopPropagation}>
         {isTerminalMode ? (
           <>
             <PaletteTitlebar
@@ -675,14 +676,14 @@ export function CommandPalette() {
             />
             {!isMinimized && (
               <>
-                <div className="term-messages" ref={messagesRef}>
-                  <div className="msg">
+                <div className={s.messages} ref={messagesRef}>
+                  <div className={s.msg}>
                     {messages.map((msg) => (
                       <div key={msg.id} dangerouslySetInnerHTML={{ __html: msg.html }} />
                     ))}
                   </div>
                 </div>
-                <form className="cmd-wrapper" onSubmit={handleSubmit}>
+                <form className={s.cmdWrapper} onSubmit={handleSubmit}>
                   <label htmlFor="palette-input">$</label>
                   <input
                     ref={termInputRef}
@@ -696,7 +697,7 @@ export function CommandPalette() {
                     placeholder="help"
                   />
                 </form>
-                <div className="palette-hint">
+                <div className={s.hint}>
                   <span><kbd>Ctrl+K</kbd> toggle</span>
                   <span><kbd>↑↓</kbd> history</span>
                   <span><kbd>Tab</kbd> complete</span>
@@ -723,32 +724,32 @@ export function CommandPalette() {
                   <input
                     ref={searchInputRef}
                     type="text"
-                    className="palette-search-input"
+                    className={s.searchInput}
                     placeholder={isMobile ? "Search posts..." : "Search posts... or type > for terminal"}
                     value={inputValue}
                     onChange={handleSearchInputChange}
                     onKeyDown={handleKeyDown}
                   />
                 </form>
-                <div className="search-results">
+                <div className={s.searchResults}>
                   {searchResults.slice(0, 10).map((item, i) => (
                     <button
                       key={`${item.type}-${item.slug}`}
-                      className={`search-result${i === selectedIndex ? ' selected' : ''}`}
+                      className={`${s.searchResult}${i === selectedIndex ? ` ${s.selected}` : ''}`}
                       data-index={i}
                       onClick={handleResultClick}
                       onMouseEnter={handleResultMouseEnter}
                     >
-                      <span className="search-result-type">{item.type}</span>
-                      <span className="search-result-title">{item.title}</span>
-                      {item.description && <span className="search-result-desc">{item.description}</span>}
+                      <span className={s.searchResultType}>{item.type}</span>
+                      <span className={s.searchResultTitle}>{item.title}</span>
+                      {item.description && <span className={s.searchResultDesc}>{item.description}</span>}
                     </button>
                   ))}
                   {searchResults.length === 0 && inputValue.trim() && (
-                    <div className="search-empty">No results found</div>
+                    <div className={s.searchEmpty}>No results found</div>
                   )}
                 </div>
-                <div className="palette-hint">
+                <div className={s.hint}>
                   {!isMobile && <span><kbd>/</kbd> or <kbd>Ctrl+K</kbd> open</span>}
                   <span><kbd>↑↓</kbd> navigate</span>
                   <span><kbd>Enter</kbd> select</span>

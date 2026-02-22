@@ -6,6 +6,7 @@ import { CoronaReveal } from '@/components/effects';
 import { GitHubContributions } from '@/components/features';
 import { TextScramble } from '@/components/home';
 import tagStyles from '@/components/blog/tags.module.css';
+import sc from '@/components/analytics/SummaryCards.module.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -87,12 +88,12 @@ export default async function StatsPage() {
       <TextScramble>Stats</TextScramble>
       <p>Numbers from the build at {new Date().toISOString().split('T')[0]}.</p>
 
-      <div className="stats-grid">
+      <div className={sc.grid}>
         {statCards.map((card, i) => (
           <CoronaReveal key={card.label} delay={i * 80}>
-            <div className="stat-card">
-              <span className="stat-value">{card.value}</span>
-              <span className="stat-label">{card.label}</span>
+            <div className={sc.card}>
+              <span className={sc.value}>{card.value}</span>
+              <span className={sc.label}>{card.label}</span>
             </div>
           </CoronaReveal>
         ))}

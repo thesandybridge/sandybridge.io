@@ -5,6 +5,7 @@ import { CoronaReveal, TiltCard } from '@/components/effects';
 import { BLUR_DATA_URL } from '@/lib/blur-placeholder';
 import { BootSequence, HeroText, InteractiveAscii, Typewriter, TechStack, AsciiInfo } from '@/components/home';
 import { StatusIndicator } from '@/components/ui';
+import p from '@/components/features/PortfolioGrid.module.css';
 
 export default function Home() {
   const posts = getAllPosts('blog');
@@ -50,10 +51,10 @@ export default function Home() {
       {recentPortfolio.length > 0 && (
         <CoronaReveal>
           <h2>Projects</h2>
-          <div className="portfolio-grid">
+          <div className={p.portfolioGrid}>
             {recentPortfolio.map((item) => (
               <TiltCard key={item.slug}>
-                <Link href={`/portfolio/${item.slug}`} className="portfolio-card">
+                <Link href={`/portfolio/${item.slug}`} className={p.portfolioCard}>
                   {item.image && (
                     <Image
                       src={`/assets/portfolio/${item.image}`}
@@ -65,7 +66,7 @@ export default function Home() {
                       style={{ width: '100%', height: 'auto' }}
                     />
                   )}
-                  <div className="portfolio-card-body">
+                  <div className={p.portfolioCardBody}>
                     <h3>{item.title}</h3>
                     {item.description && <p>{item.description}</p>}
                   </div>

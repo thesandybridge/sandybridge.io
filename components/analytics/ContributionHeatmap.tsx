@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import s from './ContributionHeatmap.module.css';
 
 const CELL = 13;
 const GAP = 3;
@@ -68,7 +69,7 @@ export function ContributionHeatmap({ daily }: { daily: Record<string, Record<st
   const svgH = HEADER_H + DAYS * SIZE;
 
   return (
-    <div className="heatmap-container">
+    <div className={s.container}>
       <svg
         viewBox={`0 0 ${svgW} ${svgH}`}
         width={svgW}
@@ -110,7 +111,7 @@ export function ContributionHeatmap({ daily }: { daily: Record<string, Record<st
         {grid.map((cell) => (
           <rect
             key={cell.date}
-            className="heatmap-cell"
+            className={s.cell}
             x={LABEL_W + cell.col * SIZE}
             y={HEADER_H + cell.row * SIZE}
             width={CELL}
@@ -131,7 +132,7 @@ export function ContributionHeatmap({ daily }: { daily: Record<string, Record<st
       </svg>
 
       {/* Legend */}
-      <div className="heatmap-legend">
+      <div className={s.legend}>
         <span style={{ fontSize: '0.75rem', color: 'var(--primary-fg)' }}>Less</span>
         {COLORS.map((c, i) => (
           <span key={i} style={{ display: 'inline-block', width: 12, height: 12, background: c, borderRadius: 2 }} />
@@ -142,7 +143,7 @@ export function ContributionHeatmap({ daily }: { daily: Record<string, Record<st
       {/* Tooltip */}
       {tooltip && (
         <div
-          className="flamegraph-tooltip"
+          className={s.tooltip}
           style={{
             position: 'fixed',
             left: tooltip.x,

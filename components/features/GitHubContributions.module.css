@@ -1,0 +1,52 @@
+.githubContributions {
+    margin: 1.5rem 0 2rem;
+    padding: 1rem;
+    background: var(--secondary-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.contributionsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+}
+
+.contributionsTotal {
+    color: var(--primary-fg);
+}
+
+.contributionsLink {
+    color: var(--secondary-fg);
+}
+
+.contributionsGraph {
+    display: flex;
+    gap: 3px;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+}
+
+.contributionsWeek {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.contributionsDay {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+}
+
+.contributionsLegend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: flex-end;
+    font-size: 0.7rem;
+    color: var(--primary-fg);
+    margin-top: 0.5rem;
+}

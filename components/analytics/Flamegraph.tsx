@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import s from './Flamegraph.module.css';
 
 const GRUVBOX = ['#d79921', '#8ec07c', '#83a598', '#d3869b', '#b8bb26', '#fb4934', '#fe8019'];
 const SVG_WIDTH = 800;
@@ -145,7 +146,7 @@ export function Flamegraph({
   const svgH = 3 * (LEVEL_HEIGHT + GAP);
 
   return (
-    <div className="flamegraph-container">
+    <div className={s.container}>
       <svg
         viewBox={`0 0 ${SVG_WIDTH} ${svgH}`}
         width={SVG_WIDTH}
@@ -160,7 +161,7 @@ export function Flamegraph({
           return (
             <g
               key={bar.id}
-              className="flamegraph-bar"
+              className={s.bar}
               opacity={isHighlighted ? 1 : 0.3}
               onMouseEnter={(e) => {
                 setHoveredId(bar.id);
@@ -203,7 +204,7 @@ export function Flamegraph({
 
       {tooltip && (
         <div
-          className="flamegraph-tooltip"
+          className={s.tooltip}
           style={{
             position: 'fixed',
             left: tooltip.x,

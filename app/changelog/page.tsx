@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getChangelog, groupChangelogByDate } from '@/lib/changelog';
+import s from './changelog.module.css';
 
 export const metadata: Metadata = {
   title: 'Changelog',
@@ -18,15 +19,15 @@ export default function ChangelogPage() {
       <h1>Changelog</h1>
       <p>Recent changes and updates to this site, automatically generated from git history.</p>
 
-      <div className="changelog">
+      <div className={s.changelog}>
         {dates.map((date) => (
-          <div key={date} className="changelog-day">
-            <h2 className="changelog-date">{date}</h2>
-            <ul className="changelog-entries">
+          <div key={date} className={s.day}>
+            <h2 className={s.date}>{date}</h2>
+            <ul className={s.entries}>
               {grouped[date].map((entry) => (
-                <li key={entry.hash} className="changelog-entry">
-                  <code className="changelog-hash">{entry.hash}</code>
-                  <span className="changelog-message">{entry.message}</span>
+                <li key={entry.hash} className={s.entry}>
+                  <code className={s.hash}>{entry.hash}</code>
+                  <span className={s.message}>{entry.message}</span>
                 </li>
               ))}
             </ul>
@@ -35,7 +36,7 @@ export default function ChangelogPage() {
       </div>
 
       {entries.length === 0 && (
-        <p className="empty-state">No changelog entries found.</p>
+        <p className={s.emptyState}>No changelog entries found.</p>
       )}
     </>
   );

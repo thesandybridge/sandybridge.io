@@ -1,6 +1,7 @@
 'use client';
 
 import { memo, useCallback, type MouseEvent } from 'react';
+import s from './CommandPalette.module.css';
 
 interface PaletteTitlebarProps {
   title: string;
@@ -37,28 +38,28 @@ export const PaletteTitlebar = memo(function PaletteTitlebar({
   }, [onMaximize]);
 
   return (
-    <div className="term-header" onClick={onHeaderClick}>
-      <div className="term-dots">
+    <div className={s.header} onClick={onHeaderClick}>
+      <div className={s.dots}>
         <button
-          className="term-dot red"
+          className={`${s.dot} ${s.red}`}
           onClick={handleClose}
           aria-label="Close"
           title="Close"
         />
         <button
-          className="term-dot yellow"
+          className={`${s.dot} ${s.yellow}`}
           onClick={handleMinimize}
           aria-label={isMinimized ? "Restore" : "Minimize"}
           title={isMinimized ? "Restore" : "Minimize"}
         />
         <button
-          className="term-dot green"
+          className={`${s.dot} ${s.green}`}
           onClick={handleMaximize}
           aria-label={isMaximized ? "Restore" : "Maximize"}
           title={isMaximized ? "Restore" : "Maximize"}
         />
       </div>
-      <span className="term-title">{title}</span>
+      <span className={s.title}>{title}</span>
     </div>
   );
 });

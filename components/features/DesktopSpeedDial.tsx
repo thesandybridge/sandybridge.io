@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { SlidersHorizontal, Check, Sun, Moon, Volume2, Volume1, VolumeX, Settings, X } from 'lucide-react';
 import { useTheme, THEMES, type Theme } from '../theme/ThemeProvider';
 import { getVolume, setVolume, setMuted, isMuted, playSound } from '@/lib/audio';
+import s from './DesktopSpeedDial.module.css';
 
 function VolumeIcon({ volume }: { volume: number }) {
   if (volume === 0) return <VolumeX size={13} />;
@@ -27,7 +28,7 @@ export function DesktopSpeedDial() {
     if (!open) return;
     const handleOutside = (e: MouseEvent) => {
       const target = e.target as Element;
-      if (!target.closest('.desktop-dial')) setOpen(false);
+      if (!target.closest(`.${s.dial}`)) setOpen(false);
     };
     document.addEventListener('mousedown', handleOutside);
     return () => document.removeEventListener('mousedown', handleOutside);
@@ -88,13 +89,13 @@ export function DesktopSpeedDial() {
   }, [theme]);
 
   return (
-    <div className="desktop-dial">
+    <div className={s.dial}>
       {open && (
-        <div className="desktop-dial-panel" ref={panelRef}>
+        <div className={s.panel} ref={panelRef}>
           {/* Volume control */}
-          <div className="desktop-dial-volume">
+          <div className={s.volume}>
             <button
-              className="desktop-dial-vol-icon"
+              className={s.volIcon}
               onClick={handleVolumeMuteToggle}
               title={vol === 0 ? 'Unmute' : 'Mute'}
               aria-label={vol === 0 ? 'Unmute' : 'Mute'}
@@ -103,7 +104,7 @@ export function DesktopSpeedDial() {
             </button>
             <input
               type="range"
-              className="desktop-dial-slider"
+              className={s.slider}
               min={0}
               max={100}
               value={Math.round(vol * 100)}
@@ -112,12 +113,12 @@ export function DesktopSpeedDial() {
             />
           </div>
 
-          <div className="desktop-dial-separator" />
+          <div className={s.separator} />
 
           {/* Action row */}
-          <div className="desktop-dial-row">
+          <div className={s.row}>
             <button
-              className="desktop-dial-action"
+              className={s.action}
               onClick={handleModeToggle}
               title={mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               aria-label={mode === 'dark' ? 'Light mode' : 'Dark mode'}
@@ -125,7 +126,7 @@ export function DesktopSpeedDial() {
               {mode === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
             </button>
             <button
-              className="desktop-dial-action desktop-dial-close"
+              className={`${s.action} ${s.close}`}
               onClick={handleClose}
               aria-label="Close"
             >
@@ -133,14 +134,14 @@ export function DesktopSpeedDial() {
             </button>
           </div>
 
-          <div className="desktop-dial-separator" />
+          <div className={s.separator} />
 
           {/* Theme list */}
-          <div className="desktop-dial-themes">
+          <div className={s.themes}>
             {THEMES.map((t) => (
               <button
                 key={t.id}
-                className={`desktop-dial-theme-item${theme === t.id ? ' active' : ''}`}
+                className={`${s.themeItem}${theme === t.id ? ` ${s.themeItemActive}` : ''}`}
                 onClick={() => handleThemeSelect(t.id)}
                 onMouseEnter={() => handlePreviewEnter(t.id)}
                 onMouseLeave={handlePreviewLeave}
@@ -151,11 +152,11 @@ export function DesktopSpeedDial() {
             ))}
           </div>
 
-          <div className="desktop-dial-separator" />
+          <div className={s.separator} />
 
           <Link
             href="/uses/theme"
-            className="desktop-dial-more"
+            className={s.more}
             onClick={() => setOpen(false)}
           >
             <Settings size={12} />
@@ -165,7 +166,7 @@ export function DesktopSpeedDial() {
       )}
 
       <button
-        className={`desktop-dial-fab${open ? ' open' : ''}`}
+        className={`${s.fab}${open ? ` ${s.fabOpen}` : ''}`}
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? 'Close settings' : 'Open settings'}
         aria-expanded={open}

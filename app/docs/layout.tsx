@@ -1,5 +1,6 @@
 import { getAllDocs } from '@/lib/docs';
 import { DocsSidebar } from '@/components/docs-sidebar';
+import s from './docs.module.css';
 
 export default async function DocsLayout({
   children,
@@ -9,7 +10,7 @@ export default async function DocsLayout({
   const docs = await getAllDocs();
 
   return (
-    <div className="docs-layout">
+    <div className={s.layout} data-docs-layout>
       <DocsSidebar
         docs={docs.map((d) => ({
           slug: d.slug,
@@ -17,7 +18,7 @@ export default async function DocsLayout({
           headings: d.headings,
         }))}
       />
-      <div className="docs-content">
+      <div className={s.content}>
         {children}
       </div>
     </div>

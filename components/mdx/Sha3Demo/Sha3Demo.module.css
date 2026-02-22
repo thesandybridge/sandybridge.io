@@ -1,0 +1,146 @@
+/* SHA-3 WASM Demo */
+
+.sha3Demo {
+    border: 1px solid var(--secondary-bg);
+    border-radius: 4px;
+    padding: 1rem;
+    background: var(--secondary-bg);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+}
+
+.sha3DemoHeader {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.sha3DemoInput {
+    flex: 1;
+    background: var(--primary-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text-bright);
+    padding: 0.4rem 0.6rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
+}
+
+.sha3DemoInput:focus {
+    border-color: var(--secondary-fg);
+}
+
+.sha3DemoInput:disabled {
+    opacity: 0.5;
+}
+
+.sha3DemoVariant {
+    font-size: 0.8rem;
+    color: var(--primary-fg);
+    font-family: monospace;
+    white-space: nowrap;
+}
+
+.sha3DemoStatus {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.sha3DemoStepInfo {
+    font-size: 0.875rem;
+    color: var(--primary-fg);
+}
+
+.sha3DemoButtons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.sha3DemoBtn {
+    background: var(--primary-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--primary-fg);
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.sha3DemoBtn:hover:not(:disabled) {
+    border-color: var(--secondary-fg);
+    color: var(--text-bright);
+}
+
+.sha3DemoBtn:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.sha3DemoBtnActive {
+    border-color: var(--secondary-fg);
+    color: var(--secondary-fg);
+}
+
+.sha3DemoGrid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3px;
+}
+
+.sha3DemoLoading {
+    grid-column: span 5;
+    text-align: center;
+    color: var(--primary-fg);
+    font-size: 0.85rem;
+    padding: 1rem;
+}
+
+.sha3DemoCell {
+    border: 1px solid transparent;
+    border-radius: 2px;
+    padding: 0.3rem 0.4rem;
+    cursor: default;
+    transition: background 0.1s;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.sha3DemoCellLabel {
+    font-family: monospace;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.5);
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.sha3DemoOutput {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--primary-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+}
+
+.sha3DemoOutputLabel {
+    font-size: 0.75rem;
+    color: var(--primary-fg);
+}
+
+.sha3DemoOutputHex {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: var(--secondary-fg);
+    word-break: break-all;
+}

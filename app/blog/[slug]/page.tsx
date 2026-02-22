@@ -16,6 +16,7 @@ import pm from '@/components/blog/post-meta.module.css';
 import tags from '@/components/blog/tags.module.css';
 import nav from '@/components/blog/post-nav.module.css';
 import { cx } from '@/lib/cx';
+import bp from './page.module.css';
 import type { Metadata } from 'next';
 
 function generateArticleJsonLd(post: { title: string; description: string; date: string; lastModified?: string; slug: string; tags: string[] }) {
@@ -145,13 +146,13 @@ export default async function BlogPost({ params }: Props) {
       )}
       <Giscus />
       {relatedPosts.length > 0 && (
-        <nav className="related-posts" aria-label="Related posts" data-nav>
+        <nav className={bp.relatedPosts} aria-label="Related posts" data-nav>
           <h3>Related Posts</h3>
           <ul>
             {relatedPosts.map((rp) => (
               <li key={rp.slug}>
                 <Link href={`/blog/${rp.slug}`}>
-                  <span className="related-title">{rp.title}</span>
+                  <span className={bp.relatedTitle}>{rp.title}</span>
                   <time>{rp.date}</time>
                 </Link>
               </li>
@@ -159,7 +160,7 @@ export default async function BlogPost({ params }: Props) {
           </ul>
         </nav>
       )}
-      <a href="#content" className="back-to-top" aria-label="Back to top">
+      <a href="#content" className={bp.backToTop} aria-label="Back to top">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M8 12V4M4 7l4-4 4 4" />
         </svg>

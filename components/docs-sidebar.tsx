@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { Heading } from '@/lib/docs';
+import s from './docs-sidebar.module.css';
 
 interface DocLink {
   slug: string;
@@ -48,11 +49,11 @@ export function DocsSidebar({ docs }: { docs: DocLink[] }) {
   }, [activeDoc, updateActiveHeading]);
 
   return (
-    <aside className="docs-sidebar">
+    <aside className={s.sidebar}>
       <nav aria-label="Documentation">
         <Link
           href="/docs"
-          className={`docs-sidebar-link${pathname === '/docs' ? ' active' : ''}`}
+          className={`${s.link}${pathname === '/docs' ? ` ${s.linkActive}` : ''}`}
         >
           Overview
         </Link>
@@ -60,17 +61,17 @@ export function DocsSidebar({ docs }: { docs: DocLink[] }) {
           <div key={doc.slug}>
             <Link
               href={`/docs/${doc.slug}`}
-              className={`docs-sidebar-link${activeSlug === doc.slug ? ' active' : ''}`}
+              className={`${s.link}${activeSlug === doc.slug ? ` ${s.linkActive}` : ''}`}
             >
               {doc.title}
             </Link>
             {activeSlug === doc.slug && doc.headings.length > 0 && (
-              <div className="docs-sidebar-headings">
+              <div className={s.headings}>
                 {doc.headings.map((heading) => (
                   <a
                     key={heading.id}
                     href={`#${heading.id}`}
-                    className={`docs-sidebar-heading${activeHeadingId === heading.id ? ' active' : ''}`}
+                    className={`${s.heading}${activeHeadingId === heading.id ? ` ${s.headingActive}` : ''}`}
                     onClick={(e) => {
                       e.preventDefault();
                       const el = document.getElementById(heading.id);

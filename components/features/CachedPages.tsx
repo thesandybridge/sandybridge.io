@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import s from './CachedPages.module.css';
 
 interface CachedPage {
   url: string;
@@ -48,15 +49,15 @@ export function CachedPages() {
   }, []);
 
   if (loading) {
-    return <p className="offline-loading">Checking cache...</p>;
+    return <p className={s.loading}>Checking cache...</p>;
   }
 
   if (pages.length === 0) {
-    return <p className="offline-empty">No cached pages found. Visit some blog posts while online to cache them.</p>;
+    return <p className={s.empty}>No cached pages found. Visit some blog posts while online to cache them.</p>;
   }
 
   return (
-    <ul className="cached-pages-list">
+    <ul className={s.list}>
       {pages.map((page) => (
         <li key={page.url}>
           <Link href={page.url}>{page.title}</Link>
