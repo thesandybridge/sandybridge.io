@@ -86,9 +86,9 @@ export async function POST(req: Request) {
   }
 
   const transporter = nodemailer.createTransport({
-    host: 'mail.protonmail.ch',
-    port: 587,
-    secure: false,
+    host: 'smtp.protonmail.ch',
+    port: 465,
+    secure: true,
     auth: { user, pass },
     connectionTimeout: 10_000,
     greetingTimeout: 10_000,
