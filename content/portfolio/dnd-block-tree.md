@@ -7,7 +7,6 @@ github: "https://github.com/thesandybridge/dnd-block-tree"
 npm: "https://www.npmjs.com/package/dnd-block-tree"
 url: "https://blocktree.sandybridge.io"
 category: "library"
-featured: true
 ---
 
 # dnd-block-tree

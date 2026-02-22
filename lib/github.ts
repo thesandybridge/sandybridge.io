@@ -1,5 +1,6 @@
 export interface RepoStats {
   stars: number;
+  commits: number;
   language: string | null;
   lastPush: string;
 }
@@ -35,18 +36,38 @@ export function parseGitHubUrl(url: string): { owner: string; repo: string } | n
   return { owner: match[1], repo: match[2].replace(/\.git$/, '') };
 }
 
+async function getCommitCount(owner: string, repo: string): Promise<number> {
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/commits?per_page=1`,
+      { headers: getGitHubHeaders(), next: { revalidate: 3600 } },
+    );
+    if (!res.ok) return 0;
+    const link = res.headers.get('Link');
+    if (!link) return 1;
+    const match = link.match(/page=(\d+)>; rel="last"/);
+    return match ? parseInt(match[1], 10) : 0;
+  } catch {
+    return 0;
+  }
+}
+
 export async function getRepoStats(owner: string, repo: string): Promise<RepoStats | null> {
   try {
-    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
-      headers: getGitHubHeaders(),
-      next: { revalidate: 3600 },
-    });
+    const [res, commits] = await Promise.all([
+      fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+        headers: getGitHubHeaders(),
+        next: { revalidate: 3600 },
+      }),
+      getCommitCount(owner, repo),
+    ]);
 
     if (!res.ok) return null;
 
     const data = await res.json();
     return {
       stars: data.stargazers_count ?? 0,
+      commits,
       language: data.language ?? null,
       lastPush: data.pushed_at ? new Date(data.pushed_at).toISOString().split('T')[0] : '',
     };

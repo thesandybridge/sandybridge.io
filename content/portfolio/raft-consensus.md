@@ -5,7 +5,6 @@ description: "An implementation of the Raft distributed consensus protocol in Ru
 tags: ["rust", "distributed-systems", "algorithms"]
 github: "https://github.com/thesandybridge/raft-consensus"
 category: "systems"
-featured: true
 ---
 
 # Raft Consensus

@@ -8,7 +8,6 @@ github: "https://github.com/thesandybridge/tileforge"
 url: "https://tileforge.sandybridge.io"
 blog: "/blog/building_tileforge"
 category: "web"
-featured: true
 ---
 
 # Tileforge

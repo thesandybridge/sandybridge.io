@@ -35,6 +35,7 @@ export interface PostMeta {
   seriesOrder?: number;
   category?: string;
   featured?: boolean;
+  work?: boolean;
 }
 
 export interface Post extends PostMeta {
@@ -116,6 +117,7 @@ function parseFrontmatter(filePath: string): PostMeta | null {
     seriesOrder: data.seriesOrder,
     category: data.category,
     featured: data.featured || false,
+    work: data.work || false,
   };
 }
 
@@ -218,6 +220,7 @@ export async function getPost(dir: ContentDir, slug: string): Promise<Post | nul
     seriesOrder: data.seriesOrder,
     category: data.category,
     featured: data.featured || false,
+    work: data.work || false,
     content: html,
     rawContent: content,
   };

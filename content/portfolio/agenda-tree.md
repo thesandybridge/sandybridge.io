@@ -4,8 +4,8 @@ date: 2025-06-15
 description: "A real-time collaborative agenda editor with drag-and-drop reordering, built for Leadr's meeting platform."
 tags: ["typescript", "react", "dnd-kit", "real-time", "ably"]
 image: "agenda-tree.png"
-github: "https://github.com/thesandybridge/dnd-sandbox"
 category: "web"
+work: true
 ---
 
 # Agenda Tree

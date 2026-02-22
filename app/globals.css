@@ -1788,6 +1788,12 @@ nav li time {
     }
 }
 
+.portfolio-card-accent {
+    height: 3px;
+    background: var(--cat-color, var(--primary-fg));
+    opacity: 0.6;
+}
+
 .portfolio-card-body {
     flex: 1;
     display: flex;
@@ -3070,6 +3076,12 @@ h4:hover .heading-anchor {
     opacity: 0.7;
 }
 
+.portfolio-stat-work {
+    color: var(--secondary-fg);
+    opacity: 1;
+    font-weight: 600;
+}
+
 /* Portfolio Featured Section */
 .portfolio-featured {
     margin-bottom: 2rem;
@@ -3134,6 +3146,12 @@ h4:hover .heading-anchor {
         border-color: var(--secondary-fg);
         color: var(--primary-bg);
     }
+}
+
+.portfolio-filter-count {
+    font-size: 0.7rem;
+    opacity: 0.6;
+    margin-left: 0.25rem;
 }
 
 [data-mode="light"] .portfolio-filter-pill {

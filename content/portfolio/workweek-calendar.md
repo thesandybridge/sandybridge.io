@@ -5,6 +5,7 @@ description: "A custom weekly calendar view for Leadr's meeting platform with ov
 tags: ["typescript", "react", "calendar", "performance"]
 image: "workweek-calendar.png"
 category: "web"
+work: true
 ---
 
 # Workweek Calendar

@@ -5,6 +5,7 @@ description: "A notification center with infinite scroll, optimistic cache updat
 tags: ["typescript", "react", "react-query", "performance"]
 image: "notification-center.png"
 category: "web"
+work: true
 ---
 
 # Notification Center
