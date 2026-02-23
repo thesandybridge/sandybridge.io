@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import { handleSkillClick } from '@/lib/skill-effects';
 import s from './TechStack.module.css';
 
 const technologies = [
@@ -31,18 +32,30 @@ export function TechStack() {
     });
   }, []);
 
+  const onClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>, tech: (typeof technologies)[number]) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = (rect.left + rect.width / 2) / window.innerWidth;
+      const y = (rect.top + rect.height / 2) / window.innerHeight;
+      handleSkillClick(tech.name, tech.color, x, y);
+    },
+    [],
+  );
+
   return (
     <div className={s.techStack} ref={containerRef}>
       <span className={s.techLabel}>Tech I work with</span>
       <div className={s.techItems}>
         {technologies.map((tech) => (
-          <span
+          <button
             key={tech.name}
+            type="button"
             className={s.techItem}
             style={{ '--tech-color': tech.color } as React.CSSProperties}
+            onClick={(e) => onClick(e, tech)}
           >
             {tech.name}
-          </span>
+          </button>
         ))}
       </div>
     </div>

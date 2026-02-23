@@ -23,6 +23,10 @@
     border-radius: 4px;
     font-size: 0.8rem;
     color: var(--primary-fg);
+    background: none;
+    font-family: inherit;
+    cursor: pointer;
+    user-select: none;
     transition: border-color 0.2s, color 0.2s, transform 0.2s;
     animation: tech-fade-in 0.4s ease backwards;
 
