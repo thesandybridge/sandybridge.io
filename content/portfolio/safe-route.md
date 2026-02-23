@@ -4,17 +4,18 @@ date: 2026-01-15
 description: "A weather-adaptive road risk assessment system that combines crash data, weather, and road geometry to score segment-level danger."
 tags: ["rust", "postgresql", "geospatial", "nextjs"]
 category: "systems"
+github: "https://github.com/thesandybridge/safe-route"
 ---
 
 # Safe Route Intelligence
 
-A weather-adaptive road risk assessment system for the Lehigh Valley region of Pennsylvania. It ingests historical crash data from PennDOT, real-time weather observations from NOAA, and road geometry from OpenStreetMap, then computes per-segment risk scores through a multi-factor model.
+A weather-adaptive road risk intelligence system that predicts road-level danger by combining historical crash data, real-time weather, road geometry, and time-of-day patterns. It assigns a 0-100 risk score to individual road segments, currently targeting the Lehigh Valley region of Pennsylvania.
 
 ## How It Works
 
-Each road segment receives a composite risk score (0-100) based on four factors:
+Each road segment receives a composite risk score based on a multi-factor model:
 
-- **Base risk** — crashes-per-mile normalized from PennDOT historical data
+- **Base risk** — crash density normalized from PennDOT and NHTSA FARS historical data
 - **Weather multiplier** — condition-specific crash rates (snow 3x, fog 2.5x, blowing snow 4x)
 - **Infrastructure factor** — bridges ice first (1.5x), steep grades (1.8x), high curvature (1.3x)
 - **Time factor** — rush hour (1.3x weekdays), nighttime (1.5x)
@@ -23,28 +24,29 @@ Segments under 200m use total crash count instead of crashes-per-mile to avoid i
 
 ## Architecture
 
-A Rust workspace with six crates:
+A Rust workspace split into focused crates with a read/write service separation:
 
 | Crate | Purpose |
 |---|---|
-| `safe-route-core` | Domain models — crashes, road segments, weather observations, risk scores |
+| `safe-route-core` | Domain models, traits — crashes, road segments, weather observations, risk scores |
 | `safe-route-db` | Repository pattern over PostgreSQL/PostGIS with compile-time checked queries (sqlx) |
-| `safe-route-ingest` | Three data pipelines — PA DOT crash CSV/GeoJSON, NOAA ISD hourly weather, OpenStreetMap PBF road extraction |
-| `safe-route-risk` | Multi-factor scoring engine with spatial crash-to-segment matching |
-| `safe-route-cli` | CLI for data ingestion, risk calculation, and database management |
-| `safe-route-api` | Axum REST API with spatial queries, live Socrata data refresh, and CSV upload |
+| `safe-route-ingest` | Data pipelines — PA DOT crash CSV/GeoJSON, NOAA weather, OpenStreetMap PBF extraction |
+| `safe-route-query` | Read-only API server (port 3000) — spatial queries, segment lookups, SSE streaming |
+| `safe-route-worker` | Write operations + scheduler (port 3001) — ingestion jobs, risk recalculation, cron tasks |
 
-The database uses PostGIS for spatial indexing and nearest-neighbor queries via `ST_DWithin` and the `<->` GiST operator. The OSM ingestion does a two-pass parse — first collecting all node coordinates, then resolving ways into coordinate arrays with parallel processing.
+The query/worker split keeps read-heavy dashboard traffic isolated from write-heavy ingestion and scoring jobs. The database uses PostGIS for spatial indexing and nearest-neighbor queries via `ST_DWithin` and the `<->` GiST operator.
+
+Real-time updates flow through SSE and WebSocket channels, with delta sync support so clients only receive changed segments. Multi-region configuration is driven by TOML files, and API access is gated by role-based key management.
 
 ## Dashboard
 
-A Next.js frontend with Mapbox GL JS renders an interactive risk heatmap over the Lehigh Valley. Users can filter by county, weather condition, and risk range, with segment detail panels showing contributing factors.
+A Next.js frontend with MapLibre GL JS renders an interactive risk heatmap over the Lehigh Valley. Users can filter by county, weather condition, and risk range, with segment detail panels showing contributing factors. Mobile-optimized payloads strip unnecessary data for compact delivery.
 
 ## Tech Stack
 
-- **Rust** — workspace with 6 crates
+- **Rust** — workspace with Axum 0.7, tokio-cron-scheduler, moka/Redis caching
 - **PostgreSQL + PostGIS** — spatial database with GiST indexes
 - **sqlx** — compile-time verified SQL queries
-- **Axum** — REST API server
-- **Next.js** — dashboard with Mapbox GL JS
-- **Data sources** — PA DOT Crash Information System, NOAA/NWS ISD, OpenStreetMap
+- **Next.js** — dashboard with MapLibre GL JS, Tailwind, shadcn/ui
+- **Documentation** — utoipa + Swagger UI
+- **Data sources** — PA DOT Crash Information System, NHTSA FARS, NOAA NCEI, OpenStreetMap
