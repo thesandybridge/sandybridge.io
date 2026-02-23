@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { headers } from 'next/headers';
 import { getAllPosts } from '@/lib/content';
 import { CoronaReveal, TiltCard } from '@/components/effects';
 import { BLUR_DATA_URL } from '@/lib/blur-placeholder';
@@ -7,7 +8,11 @@ import { BootSequence, HeroText, InteractiveAscii, Typewriter, TechStack, AsciiI
 import { StatusIndicator } from '@/components/ui';
 import p from '@/components/features/PortfolioGrid.module.css';
 
-export default function Home() {
+export default async function Home() {
+  const h = await headers();
+  const ip = h.get('x-forwarded-for')?.split(',')[0].trim()
+    || h.get('x-real-ip')?.trim()
+    || '127.0.0.1';
   const posts = getAllPosts('blog');
   const portfolioItems = getAllPosts('portfolio');
   const recentPosts = posts.slice(0, 3);
@@ -15,7 +20,7 @@ export default function Home() {
 
   return (
     <>
-      <BootSequence postCount={posts.length} projectCount={portfolioItems.length} />
+      <BootSequence postCount={posts.length} projectCount={portfolioItems.length} clientIP={ip} />
       <InteractiveAscii />
       <AsciiInfo />
       <StatusIndicator />
