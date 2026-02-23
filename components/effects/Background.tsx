@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import { useIsMobile } from '@/lib/use-mobile';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Vector3, Shape, ExtrudeGeometry, type Mesh, type PerspectiveCamera } from 'three';
+import { Vector3, Shape, ExtrudeGeometry, Color, MeshBasicMaterial, type Mesh, type PerspectiveCamera } from 'three';
 import { useTheme, THEME_COLORS, type Theme } from '../theme/ThemeProvider';
+import { onSkillEffect } from '@/lib/skill-effects';
 
 // Create a bat-shaped geometry
 function createBatGeometry() {
@@ -64,6 +65,8 @@ function Shapes({ accentHex, theme }: { accentHex: number; theme: Theme }) {
   const focal = useRef(new Vector3());
   const targetFocal = useRef(new Vector3());
   const scrollY = useRef(0);
+  const tintRef = useRef<{ color: Color; originX: number; originY: number; startTime: number } | null>(null);
+  const baseColor = useMemo(() => new Color(accentHex), [accentHex]);
 
   const vFov = (camera as PerspectiveCamera).fov * Math.PI / 180;
   const halfFovTan = Math.tan(vFov / 2);
@@ -110,6 +113,20 @@ function Shapes({ accentHex, theme }: { accentHex: number; theme: Theme }) {
     };
   }, [camera, halfFovTan]);
 
+  useEffect(() => {
+    return onSkillEffect((event) => {
+      const vFov = (camera as PerspectiveCamera).fov * Math.PI / 180;
+      const dist = camera.position.z - (-2);
+      const halfH = Math.tan(vFov / 2) * dist;
+      tintRef.current = {
+        color: new Color(event.color),
+        originX: (event.x * 2 - 1) * halfH * (camera as PerspectiveCamera).aspect,
+        originY: (-(event.y * 2 - 1)) * halfH,
+        startTime: performance.now() / 1000,
+      };
+    });
+  }, [camera]);
+
   useFrame((_, delta) => {
     focal.current.lerp(targetFocal.current, 0.05);
     const t = performance.now() * 0.001;
@@ -136,6 +153,34 @@ function Shapes({ accentHex, theme }: { accentHex: number; theme: Theme }) {
       (mesh.material as { opacity: number }).opacity = Math.min(0.3, pulse);
 
       mesh.lookAt(focal.current);
+
+      const tint = tintRef.current;
+      if (tint) {
+        const tintElapsed = performance.now() / 1000 - tint.startTime;
+        const mat = mesh.material as MeshBasicMaterial;
+
+        if (tintElapsed < 0.3) {
+          const progress = tintElapsed / 0.3;
+          const lerpedColor = baseColor.clone().lerp(tint.color, progress * 0.4);
+          mat.color.copy(lerpedColor);
+        } else if (tintElapsed < 1.3) {
+          const progress = (tintElapsed - 0.3) / 1.0;
+          const lerpedColor = baseColor.clone().lerp(tint.color, (1 - progress) * 0.4);
+          mat.color.copy(lerpedColor);
+        } else {
+          mat.color.set(accentHex);
+          if (i === shapes.length - 1) tintRef.current = null;
+        }
+
+        if (tintElapsed < 1.0) {
+          const pushStrength = Math.max(0, 0.3 * (1 - tintElapsed));
+          const dx = mesh.position.x - tint.originX;
+          const dy = mesh.position.y - tint.originY;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          mesh.position.x += (dx / dist) * pushStrength * delta;
+          mesh.position.y += (dy / dist) * pushStrength * delta;
+        }
+      }
     }
   });
 
