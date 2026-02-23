@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
-import Script from 'next/script';
 import { Nav, MobileNav } from '@/components/nav';
 import { CommandPalette, MobileSearch } from '@/components/search';
 import { BackgroundLazy as Background, CursorGlow, CursorTrail, MagneticLinks, SoundEffects, TriangleBurst, CoronaScroll, GrainOverlay } from '@/components/effects';
@@ -63,19 +62,11 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{ __html: generateThemeScript() }}
         />
-        <Script id="gtm" strategy="afterInteractive">
-          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-          })(window,document,'script','dataLayer','GTM-NFSBFRPK');`}
-        </Script>
         {umamiUrl && umamiId && (
-          <Script
+          <script
             async
             src={umamiUrl}
             data-website-id={umamiId}
-            strategy="afterInteractive"
           />
         )}
       </head>
@@ -88,14 +79,6 @@ export default function RootLayout({
             </filter>
           </svg>
           <a href="#content" className="skip-link">Skip to content</a>
-          <noscript>
-            <iframe
-              src="https://www.googletagmanager.com/ns.html?id=GTM-NFSBFRPK"
-              height="0"
-              width="0"
-              style={{ display: 'none', visibility: 'hidden' }}
-            />
-          </noscript>
           <div className="container">
             <header>
               <Nav />

@@ -444,12 +444,6 @@ export function CommandPalette() {
     setCmdHistory((prev) => [...prev, cmd]);
     setHistoryIndex(-1);
 
-    if (typeof window !== 'undefined') {
-      const w = window as unknown as Record<string, unknown[]>;
-      w.dataLayer = w.dataLayer || [];
-      w.dataLayer.push({ event: 'terminal_command', command: cmd });
-    }
-
     try {
       const res = await fetch('/api/commands', {
         method: 'POST',
