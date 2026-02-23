@@ -158,17 +158,18 @@ function Shapes({ accentHex, theme }: { accentHex: number; theme: Theme }) {
 
       mesh.lookAt(focal.current);
 
-      if (tintRef.current) {
-        const tintElapsed = performance.now() / 1000 - tintRef.current.startTime;
+      const tint = tintRef.current;
+      if (tint) {
+        const tintElapsed = performance.now() / 1000 - tint.startTime;
         const mat = mesh.material as MeshBasicMaterial;
 
         if (tintElapsed < 0.3) {
           const progress = tintElapsed / 0.3;
-          const lerpedColor = baseColor.clone().lerp(tintRef.current.color, progress * 0.4);
+          const lerpedColor = baseColor.clone().lerp(tint.color, progress * 0.4);
           mat.color.copy(lerpedColor);
         } else if (tintElapsed < 1.3) {
           const progress = (tintElapsed - 0.3) / 1.0;
-          const lerpedColor = baseColor.clone().lerp(tintRef.current.color, (1 - progress) * 0.4);
+          const lerpedColor = baseColor.clone().lerp(tint.color, (1 - progress) * 0.4);
           mat.color.copy(lerpedColor);
         } else {
           mat.color.set(accentHex);
@@ -177,8 +178,8 @@ function Shapes({ accentHex, theme }: { accentHex: number; theme: Theme }) {
 
         if (tintElapsed < 1.0) {
           const pushStrength = Math.max(0, 0.3 * (1 - tintElapsed));
-          const dx = mesh.position.x - tintRef.current.originX;
-          const dy = mesh.position.y - tintRef.current.originY;
+          const dx = mesh.position.x - tint.originX;
+          const dy = mesh.position.y - tint.originY;
           const dist = Math.sqrt(dx * dx + dy * dy) || 1;
           mesh.position.x += (dx / dist) * pushStrength * delta;
           mesh.position.y += (dy / dist) * pushStrength * delta;
