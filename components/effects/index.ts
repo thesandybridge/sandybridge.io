@@ -9,3 +9,4 @@ export { SoundEffects } from './SoundEffects';
 export { TriangleBurst } from './TriangleBurst';
 export { TiltCard } from './TiltCard';
 export { GrainOverlay } from './GrainOverlay';
+export { SkillEffects } from './SkillEffects';
