@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { Nav, MobileNav } from '@/components/nav';
 import { CommandPalette, MobileSearch } from '@/components/search';
-import { BackgroundLazy as Background, CursorGlow, CursorTrail, MagneticLinks, SoundEffects, TriangleBurst, CoronaScroll, GrainOverlay } from '@/components/effects';
+import { BackgroundLazy as Background, SkillEffectsLazy as SkillEffects, CursorGlow, CursorTrail, MagneticLinks, SoundEffects, TriangleBurst, CoronaScroll, GrainOverlay } from '@/components/effects';
 import { DesktopSpeedDial, VimBindings, KonamiCode, Footer } from '@/components/features';
 import { DynamicFavicon, ThemeProvider } from '@/components/theme';
 import { generateThemeScript } from '@/lib/themes';
@@ -91,6 +91,7 @@ export default function RootLayout({
           </div>
           <TriangleBurst />
           <Background />
+          <SkillEffects />
           <CursorGlow />
           <CursorTrail />
           <GrainOverlay />
