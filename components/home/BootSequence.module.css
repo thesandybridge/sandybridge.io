@@ -40,3 +40,18 @@
     color: var(--primary-fg);
     opacity: 0.4;
 }
+
+@media (max-width: 480px) {
+    .bootOverlay {
+        padding: 1.5rem 1rem;
+    }
+
+    .bootLines {
+        font-size: 0.72rem;
+    }
+
+    .bootLine {
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
+}
