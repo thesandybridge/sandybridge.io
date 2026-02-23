@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import { getClientIP } from '@/lib/views';
 import { rateLimit } from '@/lib/rate-limit';
 
@@ -78,23 +78,15 @@ export async function POST(req: Request) {
     );
   }
 
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  if (!user || !pass) {
-    console.error('SMTP credentials not configured');
+  const apiKey = process.env.RESEND_API_KEY;
+  const fromAddress = process.env.RESEND_FROM;
+  const toAddress = process.env.RESEND_TO;
+  if (!apiKey || !fromAddress || !toAddress) {
+    console.error('Resend credentials not configured');
     return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
   }
 
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.protonmail.ch',
-    port: 587,
-    secure: false,
-    requireTLS: true,
-    auth: { user, pass },
-    connectionTimeout: 10_000,
-    greetingTimeout: 10_000,
-    socketTimeout: 10_000,
-  });
+  const resend = new Resend(apiKey);
 
   const name = body.name.trim();
   const email = body.email.trim();
@@ -130,14 +122,18 @@ export async function POST(req: Request) {
 </div>`;
 
   try {
-    await transporter.sendMail({
-      from: user,
-      to: user,
+    const { error: sendError } = await resend.emails.send({
+      from: fromAddress,
+      to: toAddress,
       replyTo: email,
       subject: `${prefix}: ${name}`,
       text,
       html,
     });
+    if (sendError) {
+      console.error('Failed to send email:', sendError);
+      return NextResponse.json({ error: 'Failed to send message' }, { status: 500 });
+    }
   } catch (err) {
     console.error('Failed to send email:', err);
     return NextResponse.json({ error: 'Failed to send message' }, { status: 500 });
