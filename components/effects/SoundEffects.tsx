@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { initAudio, unlock, isUnlocked, playSound } from '@/lib/audio';
 
 const INTERACTIVE = 'a, button, [role="button"], [role="tab"], [role="menuitem"], [tabindex]:not([tabindex="-1"]), summary, input, select';
@@ -25,54 +25,66 @@ function findClickable(target: Element | null): Element | null {
 }
 
 export function SoundEffects() {
+  const cleanupRef = useRef<(() => void) | null>(null);
+
   useEffect(() => {
-    initAudio();
+    let cancelled = false;
 
-    const coarse = window.matchMedia('(pointer: coarse)').matches;
-    if (coarse) return;
+    initAudio().then(() => {
+      if (cancelled) return;
 
-    let lastHovered: Element | null = null;
+      const coarse = window.matchMedia('(pointer: coarse)').matches;
+      if (coarse) return;
 
-    const onPointerDown = (e: Event) => {
-      unlock();
-      if (findClickable(e.target as Element)) playSound('click');
-    };
+      let lastHovered: Element | null = null;
 
-    const onKeyDown = (e: Event) => {
-      unlock();
-      const key = (e as KeyboardEvent).key;
-      if (key === 'Enter' || key === ' ') {
+      const onPointerDown = (e: Event) => {
+        unlock();
         if (findClickable(e.target as Element)) playSound('click');
-      }
-    };
+      };
 
-    const onPointerOver = (e: Event) => {
-      if (!isUnlocked()) return;
-      if ('dragging' in document.documentElement.dataset) return;
-      const el = findClickable(e.target as Element);
-      if (el && el !== lastHovered) {
-        lastHovered = el;
-        playSound('hover');
-      }
-    };
+      const onKeyDown = (e: Event) => {
+        unlock();
+        const key = (e as KeyboardEvent).key;
+        if (key === 'Enter' || key === ' ') {
+          if (findClickable(e.target as Element)) playSound('click');
+        }
+      };
 
-    const onPointerOut = (e: Event) => {
-      const related = (e as PointerEvent).relatedTarget as Element | null;
-      const el = findClickable(e.target as Element);
-      if (el === lastHovered && findClickable(related) !== el) {
-        lastHovered = null;
-      }
-    };
+      const onPointerOver = (e: Event) => {
+        if (!isUnlocked()) return;
+        if ('dragging' in document.documentElement.dataset) return;
+        const el = findClickable(e.target as Element);
+        if (el && el !== lastHovered) {
+          lastHovered = el;
+          playSound('hover');
+        }
+      };
 
-    document.addEventListener('pointerdown', onPointerDown, true);
-    document.addEventListener('keydown', onKeyDown, true);
-    document.addEventListener('pointerover', onPointerOver, true);
-    document.addEventListener('pointerout', onPointerOut, true);
+      const onPointerOut = (e: Event) => {
+        const related = (e as PointerEvent).relatedTarget as Element | null;
+        const el = findClickable(e.target as Element);
+        if (el === lastHovered && findClickable(related) !== el) {
+          lastHovered = null;
+        }
+      };
+
+      document.addEventListener('pointerdown', onPointerDown, true);
+      document.addEventListener('keydown', onKeyDown, true);
+      document.addEventListener('pointerover', onPointerOver, true);
+      document.addEventListener('pointerout', onPointerOut, true);
+
+      cleanupRef.current = () => {
+        document.removeEventListener('pointerdown', onPointerDown, true);
+        document.removeEventListener('keydown', onKeyDown, true);
+        document.removeEventListener('pointerover', onPointerOver, true);
+        document.removeEventListener('pointerout', onPointerOut, true);
+      };
+    });
+
     return () => {
-      document.removeEventListener('pointerdown', onPointerDown, true);
-      document.removeEventListener('keydown', onKeyDown, true);
-      document.removeEventListener('pointerover', onPointerOver, true);
-      document.removeEventListener('pointerout', onPointerOut, true);
+      cancelled = true;
+      cleanupRef.current?.();
     };
   }, []);
 

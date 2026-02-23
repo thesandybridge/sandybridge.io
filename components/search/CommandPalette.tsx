@@ -7,16 +7,13 @@ import type { SearchItem } from '@/lib/search-index';
 import { PaletteTitlebar } from './PaletteTitlebar';
 import { useTheme, type ParticleDensity } from '../theme/ThemeProvider';
 import { useIsMobile } from '@/lib/use-mobile';
+import { escapeHtml } from '@/lib/escape-html';
 import s from './CommandPalette.module.css';
 
 const COMMANDS = ['help', 'cd', 'ls', 'clear', 'github', 'x', 'whoami', 'echo', 'contact', 'cat', 'pwd', 'grep', 'man', 'tree', 'history', 'ascii', 'neofetch', 'matrix', 'theme'];
 const CD_TARGETS = ['home', 'blog', 'portfolio', 'uses'];
 const HISTORY_KEY = 'terminal-history';
 const MAX_HISTORY = 100;
-
-function escapeHtmlClient(str: string): string {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
 
 function stopPropagation(e: MouseEvent) {
   e.stopPropagation();
@@ -493,13 +490,13 @@ export function CommandPalette() {
               localStorage.setItem('theme', data.theme);
             }
             if (data.message) {
-              setMessages((prev) => [...prev, { id: ++msgId, html: `<pre class='ignore'>&gt; ${escapeHtmlClient(cmd)}\n${data.message}</pre>` }]);
+              setMessages((prev) => [...prev, { id: ++msgId, html: `<pre class='ignore'>&gt; ${escapeHtml(cmd)}\n${data.message}</pre>` }]);
             }
             break;
           case 'history': {
             const historyHtml = cmdHistory.length === 0
               ? '<span class="term-info">No history</span>'
-              : cmdHistory.map((c, i) => `  ${i + 1}  ${escapeHtmlClient(c)}`).join('\n');
+              : cmdHistory.map((c, i) => `  ${i + 1}  ${escapeHtml(c)}`).join('\n');
             setMessages((prev) => [
               ...prev,
               { id: ++msgId, html: `<pre class='ignore'>&gt; history\n${historyHtml}</pre>` },

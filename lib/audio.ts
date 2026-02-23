@@ -1,8 +1,9 @@
-import { Howl, Howler } from 'howler';
+import type { Howl as HowlType, HowlerGlobal } from 'howler';
 
 let _volume = 0.5;
 let _preMuteVolume = 0.5;
-let _sounds: Record<string, Howl> | null = null;
+let _sounds: Record<string, HowlType> | null = null;
+let _Howler: HowlerGlobal | null = null;
 
 const RATE = 44100;
 
@@ -84,7 +85,13 @@ function genSelect(): string {
   return toWav(out);
 }
 
-export function initAudio(): void {
+async function loadHowler() {
+  if (_Howler) return;
+  const mod = await import('howler');
+  _Howler = mod.Howler;
+}
+
+export async function initAudio(): Promise<void> {
   if (typeof window === 'undefined') return;
   const saved = localStorage.getItem('audioVolume');
   if (saved !== null) {
@@ -92,9 +99,12 @@ export function initAudio(): void {
     if (Number.isNaN(_volume)) _volume = 0.5;
   }
   _preMuteVolume = _volume || 0.5;
-  Howler.volume(_volume);
+
+  await loadHowler();
+  _Howler!.volume(_volume);
 
   if (!_sounds) {
+    const { Howl } = await import('howler');
     _sounds = {
       click: new Howl({ src: [genClick()], volume: 0.55 }),
       hover: new Howl({ src: [genHover()], volume: 0.5 }),
@@ -104,7 +114,7 @@ export function initAudio(): void {
 }
 
 export function unlock(): void {
-  const ctx = Howler.ctx;
+  const ctx = _Howler?.ctx;
   if (ctx?.state === 'suspended') ctx.resume();
 }
 
@@ -118,7 +128,7 @@ export function setVolume(v: number): void {
   _volume = Math.max(0, Math.min(1, v));
   if (_volume > 0) _preMuteVolume = _volume;
   if (typeof window !== 'undefined') localStorage.setItem('audioVolume', String(_volume));
-  Howler.volume(_volume);
+  _Howler?.volume(_volume);
 }
 
 export function isMuted(): boolean { return _volume === 0; }
@@ -134,7 +144,7 @@ export function setMuted(muted: boolean): void {
 
 export function playSound(type: 'click' | 'hover' | 'select'): void {
   if (_volume === 0 || !_sounds) return;
-  const ctx = Howler.ctx;
+  const ctx = _Howler?.ctx;
   if (type === 'hover' && ctx?.state !== 'running') return;
   _sounds[type].play();
 }
