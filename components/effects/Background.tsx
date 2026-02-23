@@ -1,11 +1,14 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { useIsMobile } from '@/lib/use-mobile';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Vector3, Shape, ExtrudeGeometry, Color, MeshBasicMaterial, type Mesh, type PerspectiveCamera } from 'three';
+import { Vector2, Vector3, Shape, ExtrudeGeometry, Color, MeshBasicMaterial, type Mesh, type PerspectiveCamera } from 'three';
 import { useTheme, THEME_COLORS, type Theme } from '../theme/ThemeProvider';
+import { EffectComposer, Bloom, ChromaticAberration } from '@react-three/postprocessing';
+import { BlendFunction } from 'postprocessing';
 import { onSkillEffect } from '@/lib/skill-effects';
+import { SkillEffects } from './SkillEffects';
 
 // Create a bat-shaped geometry
 function createBatGeometry() {
@@ -207,9 +210,64 @@ function Shapes({ accentHex, theme }: { accentHex: number; theme: Theme }) {
   );
 }
 
+function WowPostProcessing({ startTime }: { startTime: number }) {
+  const bloomRef = useRef<any>(null);
+  const caRef = useRef<any>(null);
+
+  useFrame(() => {
+    const elapsed = performance.now() / 1000 - startTime;
+
+    if (bloomRef.current) {
+      if (elapsed < 0.5) {
+        bloomRef.current.intensity = (elapsed / 0.5) * 1.5;
+      } else if (elapsed < 1.5) {
+        bloomRef.current.intensity = 1.5 * (1 - (elapsed - 0.5) / 1.0);
+      } else {
+        bloomRef.current.intensity = 0;
+      }
+    }
+
+    if (caRef.current) {
+      if (elapsed > 0.4 && elapsed < 0.7) {
+        const t = (elapsed - 0.4) / 0.3;
+        const strength = Math.sin(t * Math.PI) * 0.005;
+        caRef.current.offset = new Vector2(strength, strength);
+      } else {
+        caRef.current.offset = new Vector2(0, 0);
+      }
+    }
+  });
+
+  return (
+    <EffectComposer>
+      <Bloom
+        ref={bloomRef}
+        intensity={0}
+        luminanceThreshold={0.2}
+        luminanceSmoothing={0.9}
+        blendFunction={BlendFunction.ADD}
+      />
+      <ChromaticAberration
+        ref={caRef}
+        offset={new Vector2(0, 0)}
+        blendFunction={BlendFunction.NORMAL}
+        radialModulation={false}
+        modulationOffset={0}
+      />
+    </EffectComposer>
+  );
+}
+
 export function Background() {
   const isMobile = useIsMobile();
   const { colors, theme } = useTheme();
+  const [wowActive, setWowActive] = useState(false);
+  const wowStartTime = useRef(0);
+
+  const handleWowStateChange = useCallback((active: boolean) => {
+    setWowActive(active);
+    if (active) wowStartTime.current = performance.now() / 1000;
+  }, []);
 
   if (isMobile) return null;
 
@@ -226,6 +284,8 @@ export function Background() {
     >
       <SceneUpdater backgroundHex={colors.backgroundHex} background={colors.background} />
       <Shapes accentHex={colors.accentHex} theme={theme} />
+      <SkillEffects onWowStateChange={handleWowStateChange} />
+      {wowActive && <WowPostProcessing startTime={wowStartTime.current} />}
     </Canvas>
   );
 }
