@@ -1,0 +1,60 @@
+/* Extracted from globals.css lines 2903-2962 */
+.placeholderImageWrapper {
+    display: block;
+    position: relative;
+    width: 100%;
+    min-height: 200px;
+    margin: 1.5rem 0;
+    border-radius: 5px;
+    overflow: hidden;
+    background: var(--code-bg);
+}
+
+.loaded {
+    min-height: auto;
+}
+
+.placeholderImageSkeleton {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        var(--code-bg) 0%,
+        var(--secondary-bg) 50%,
+        var(--code-bg) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.placeholderImage {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.visible {
+    opacity: 1;
+}
+
+.placeholderImageError {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--error);
+    font-size: 0.85rem;
+}

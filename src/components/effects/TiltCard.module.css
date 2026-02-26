@@ -1,0 +1,15 @@
+/* Extracted from globals.css lines 3456-3470 */
+.tiltContainer {
+    position: relative;
+    perspective: 800px;
+    transform-style: preserve-3d;
+}
+
+.tiltShine {
+    position: absolute;
+    inset: 0;
+    border-radius: 5px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}

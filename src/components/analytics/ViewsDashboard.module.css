@@ -1,0 +1,15 @@
+.dashboardSection {
+    margin-bottom: 3rem;
+}
+
+.loadingText {
+    font-size: 0.85rem;
+    color: var(--primary-fg);
+    opacity: 0.6;
+    animation: loading-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes loading-pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.3; }
+}

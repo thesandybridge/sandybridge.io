@@ -1,0 +1,47 @@
+.navShortcuts {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    list-style: none;
+}
+
+.navShortcut {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: none;
+    border: 1px solid var(--secondary-bg);
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+    color: var(--primary-fg);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.7rem;
+    transition: border-color 0.2s, color 0.2s;
+
+    &:hover {
+        border-color: var(--secondary-fg);
+        color: var(--secondary-fg);
+    }
+
+    svg {
+        flex-shrink: 0;
+        fill: none;
+        stroke: currentColor;
+    }
+
+    kbd {
+        background: none;
+        border: none;
+        padding: 0;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .navShortcuts kbd {
+        display: none;
+    }
+}

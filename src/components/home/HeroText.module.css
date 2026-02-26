@@ -1,0 +1,25 @@
+/* Extracted from globals.css lines 3113-3130 */
+.heroText {
+    font-size: 2rem;
+    margin: 0 0 1rem 0;
+}
+
+.heroChar {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .heroChar {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}

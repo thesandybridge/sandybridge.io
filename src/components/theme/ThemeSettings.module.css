@@ -1,0 +1,183 @@
+/* Extracted from globals.css lines 3892-3995 */
+.themeSettings {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 1.5rem;
+}
+
+.themeSettingsSection {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+}
+
+.themeSettingsSection h2 {
+    font-size: 1rem;
+    color: var(--secondary-fg);
+    margin: 0 0 0.25rem;
+}
+
+.themeSettingsSection p {
+    font-size: 0.85rem;
+    color: var(--primary-fg);
+    margin: 0 0 1rem;
+    opacity: 0.8;
+}
+
+.themeSettingsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.5rem;
+}
+
+.themeSettingsOption {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--primary-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--primary-fg);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.themeSettingsOption:hover {
+    border-color: var(--secondary-fg);
+}
+
+.active.themeSettingsOption {
+    border-color: var(--secondary-fg);
+    background: var(--secondary-bg);
+    color: var(--secondary-fg);
+}
+
+.themeSettingsOptionName {
+    flex: 1;
+    text-align: left;
+}
+
+.themeSettingsRow {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.themeSettingsToggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: var(--primary-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--primary-fg);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.themeSettingsToggle:hover {
+    border-color: var(--secondary-fg);
+}
+
+.active.themeSettingsToggle {
+    border-color: var(--secondary-fg);
+    background: var(--secondary-bg);
+    color: var(--secondary-fg);
+}
+
+.volumeControl {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.volumeIcon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem;
+    background: var(--primary-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--primary-fg);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+
+    svg {
+        fill: none;
+        stroke: currentColor;
+    }
+
+    &:hover {
+        border-color: var(--secondary-fg);
+        color: var(--secondary-fg);
+    }
+}
+
+.volumeSlider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 3px;
+    background: var(--secondary-bg);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+
+    &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--secondary-fg);
+        border: none;
+        cursor: pointer;
+        transition: transform 0.1s;
+    }
+
+    &::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--secondary-fg);
+        border: none;
+        cursor: pointer;
+        transition: transform 0.1s;
+    }
+
+    &::-webkit-slider-thumb:hover {
+        transform: scale(1.3);
+    }
+
+    &::-moz-range-thumb:hover {
+        transform: scale(1.3);
+    }
+}
+
+.volumeValue {
+    font-size: 0.8rem;
+    color: var(--primary-fg);
+    opacity: 0.7;
+    min-width: 2.5rem;
+    text-align: right;
+}
+
+@media (max-width: 768px) {
+    .themeSettingsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .themeSettingsToggle {
+        flex: 1;
+        justify-content: center;
+    }
+}

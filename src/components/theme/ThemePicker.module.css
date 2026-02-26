@@ -1,0 +1,103 @@
+/* Extracted from globals.css lines 1237-1329 */
+.themeTrigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem;
+    background: none;
+    border: none;
+    color: var(--primary-fg);
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+        color: var(--secondary-fg);
+    }
+
+    svg {
+        fill: none;
+        stroke: currentColor;
+    }
+}
+
+.themeMenu {
+    min-width: 160px;
+    background: var(--primary-bg);
+    border: 1px solid var(--secondary-bg);
+    border-radius: 6px;
+    padding: 0.35rem;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    animation: dropdown-in 0.15s ease;
+    overflow: hidden;
+}
+
+@keyframes dropdown-in {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.themeItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem 0.6rem;
+    background: none;
+    border: none;
+    border-radius: 4px;
+    color: var(--primary-fg);
+    font-family: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+
+    &:hover, &[data-highlighted] {
+        background: var(--secondary-bg);
+        color: var(--secondary-fg);
+        outline: none;
+    }
+
+    svg {
+        flex-shrink: 0;
+        color: var(--secondary-fg);
+    }
+}
+
+.themeSeparator {
+    height: 1px;
+    background: var(--border);
+    margin: 0.35rem 0;
+}
+
+.modeToggle {
+    gap: 0.5rem;
+    justify-content: flex-start;
+}
+
+:global(html[data-mode="light"]) .themeMenu {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: var(--border);
+    background: var(--primary-bg);
+}
+
+:global(html[data-mode="light"]) .themeMenu .themeItem {
+    color: #1a1a1a !important;
+}
+
+:global(html[data-mode="light"]) .themeMenu .themeItem:hover,
+:global(html[data-mode="light"]) .themeMenu .themeItem[data-highlighted] {
+    background: var(--secondary-bg);
+    color: var(--secondary-fg) !important;
+}
+
+:global(html[data-mode="light"]) .themeMenu .themeItem svg {
+    color: var(--secondary-fg);
+}

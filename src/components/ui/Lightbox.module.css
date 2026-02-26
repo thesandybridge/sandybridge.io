@@ -1,0 +1,20 @@
+/* Extracted from globals.css lines 2883-2901 */
+.lightboxOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 997;
+    cursor: zoom-out;
+    padding: 2rem;
+}
+
+.lightboxImage {
+    max-width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 5px;
+    cursor: default;
+}
