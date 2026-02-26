@@ -27,7 +27,7 @@ function BlogIndex() {
         <ul>
           {posts.map((post, i) => (
             <CoronaReveal as="li" key={post.slug} delay={Math.min(i * 60, 600)}>
-              <Link to={`/blog/${post.slug}`}>
+              <Link to="/blog/$slug" params={{ slug: post.slug }}>
                 <h3 style={{ viewTransitionName: `post-${post.slug}` }}>{post.title}</h3>
                 {post.date && <time dateTime={post.date}>{post.date}</time>}
               </Link>

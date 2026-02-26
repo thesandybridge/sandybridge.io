@@ -67,7 +67,8 @@ function PortfolioCard({
   return (
     <TiltCard>
       <Link
-        to={`/portfolio/${item.slug}`}
+        to="/portfolio/$slug"
+        params={{ slug: item.slug }}
         className={s.portfolioCard}
         style={{ '--cat-color': catColor } as React.CSSProperties}
       >
@@ -162,7 +163,8 @@ export function PortfolioGrid({ items, statsMap }: PortfolioGridProps) {
                 {featured.filter((_, i) => i % 2 === col).map((item) => (
                   <TiltCard key={item.slug}>
                     <Link
-                      to={`/portfolio/${item.slug}`}
+                      to="/portfolio/$slug"
+                      params={{ slug: item.slug }}
                       className={`${s.portfolioCard} ${s.portfolioFeaturedCard}`}
                       style={{ '--cat-color': getCatColor(item) } as React.CSSProperties}
                     >

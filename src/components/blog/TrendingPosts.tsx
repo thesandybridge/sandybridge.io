@@ -57,7 +57,7 @@ export function TrendingPosts({ posts }: { posts: PostInfo[] }) {
         {trending.map((item, i) => (
           <li key={item.slug} className={s.trendingItem}>
             <span className={s.trendingRank}>{i + 1}</span>
-            <Link to={`/blog/${item.slug}`} className={s.trendingTitle}>{item.title}</Link>
+            <Link to="/blog/$slug" params={{ slug: item.slug }} className={s.trendingTitle}>{item.title}</Link>
             <span className={s.trendingViews}>{item.views.toLocaleString()} views</span>
           </li>
         ))}

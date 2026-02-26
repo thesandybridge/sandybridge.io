@@ -72,7 +72,7 @@ function BlogPost() {
         {post.tags.length > 0 && (
           <div className={tagStyles.postTags}>
             {post.tags.map((tag) => (
-              <Link key={tag} to={`/blog/tag/${tag}`} className={tagStyles.tag}>{tag}</Link>
+              <Link key={tag} to="/blog/tag/$tag" params={{ tag }} className={tagStyles.tag}>{tag}</Link>
             ))}
           </div>
         )}
@@ -86,13 +86,13 @@ function BlogPost() {
       {(prev || next) && (
         <nav className={nav.postNav} aria-label="Post navigation" data-nav>
           {prev ? (
-            <Link to={`/blog/${prev.slug}`} className={nav.postNavLink}>
+            <Link to="/blog/$slug" params={{ slug: prev.slug }} className={nav.postNavLink}>
               <span className={nav.postNavLabel}>&larr; Previous</span>
               <span className={nav.postNavTitle}>{prev.title}</span>
             </Link>
           ) : <span />}
           {next ? (
-            <Link to={`/blog/${next.slug}`} className={cx(nav.postNavLink, nav.postNavNext)}>
+            <Link to="/blog/$slug" params={{ slug: next.slug }} className={cx(nav.postNavLink, nav.postNavNext)}>
               <span className={nav.postNavLabel}>Next &rarr;</span>
               <span className={nav.postNavTitle}>{next.title}</span>
             </Link>
@@ -106,7 +106,7 @@ function BlogPost() {
           <ul>
             {related.map((rp) => (
               <li key={rp.slug}>
-                <Link to={`/blog/${rp.slug}`}>
+                <Link to="/blog/$slug" params={{ slug: rp.slug }}>
                   <span className={bp.relatedTitle}>{rp.title}</span>
                   <time>{rp.date}</time>
                 </Link>

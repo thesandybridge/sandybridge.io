@@ -56,7 +56,7 @@ function PortfolioItem() {
         {post.tags.length > 0 && (
           <div className={tagStyles.postTags}>
             {post.tags.map((tag) => (
-              <Link key={tag} to={`/blog/tag/${tag}`} className={tagStyles.tag}>{tag}</Link>
+              <Link key={tag} to="/blog/tag/$tag" params={{ tag }} className={tagStyles.tag}>{tag}</Link>
             ))}
           </div>
         )}

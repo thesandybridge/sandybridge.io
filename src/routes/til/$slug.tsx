@@ -54,13 +54,13 @@ function TILPost() {
       {(prev || next) && (
         <nav className={nav.postNav} aria-label="Post navigation" data-nav>
           {prev ? (
-            <Link to={`/til/${prev.slug}`} className={nav.postNavLink}>
+            <Link to="/til/$slug" params={{ slug: prev.slug }} className={nav.postNavLink}>
               <span className={nav.postNavLabel}>&larr; Previous</span>
               <span className={nav.postNavTitle}>{prev.title}</span>
             </Link>
           ) : <span />}
           {next ? (
-            <Link to={`/til/${next.slug}`} className={cx(nav.postNavLink, nav.postNavNext)}>
+            <Link to="/til/$slug" params={{ slug: next.slug }} className={cx(nav.postNavLink, nav.postNavNext)}>
               <span className={nav.postNavLabel}>Next &rarr;</span>
               <span className={nav.postNavTitle}>{next.title}</span>
             </Link>

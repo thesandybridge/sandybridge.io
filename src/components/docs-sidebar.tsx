@@ -57,7 +57,8 @@ export function DocsSidebar({ docs }: { docs: DocLink[] }) {
         {docs.map((doc) => (
           <div key={doc.slug}>
             <Link
-              to={`/docs/${doc.slug}`}
+              to="/docs/$slug"
+              params={{ slug: doc.slug }}
               className={`${s.link}${activeSlug === doc.slug ? ` ${s.linkActive}` : ''}`}
             >
               {doc.title}

@@ -22,7 +22,7 @@ function TagPage() {
         <ul>
           {posts.map((post) => (
             <li key={post.slug}>
-              <Link to={`/blog/${post.slug}`}>
+              <Link to="/blog/$slug" params={{ slug: post.slug }}>
                 <h3>{post.title}</h3>
                 {post.date && <time dateTime={post.date}>{post.date}</time>}
               </Link>

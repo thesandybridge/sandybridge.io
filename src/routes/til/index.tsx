@@ -26,7 +26,7 @@ function TILIndex() {
         <ul className={s.list}>
           {posts.map((post, i) => (
             <CoronaReveal as="li" key={post.slug} delay={Math.min(i * 40, 400)}>
-              <Link to={`/til/${post.slug}`}>
+              <Link to="/til/$slug" params={{ slug: post.slug }}>
                 <h3>{post.title}</h3>
                 <div className={s.meta}>
                   {post.date && <time dateTime={post.date}>{post.date}</time>}

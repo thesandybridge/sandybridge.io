@@ -25,7 +25,7 @@ export function SeriesNav({ currentSlug, seriesPosts, seriesName }: SeriesNavPro
             {post.slug === currentSlug ? (
               <span>{post.title}</span>
             ) : (
-              <Link to={`/blog/${post.slug}`}>{post.title}</Link>
+              <Link to="/blog/$slug" params={{ slug: post.slug }}>{post.title}</Link>
             )}
           </li>
         ))}

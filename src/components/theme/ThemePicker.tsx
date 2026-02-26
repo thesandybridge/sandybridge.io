@@ -1,7 +1,6 @@
 import { useCallback, useRef } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Palette, Check, Sun, Moon, Settings } from 'lucide-react';
-import { Link } from '@tanstack/react-router';
 import { useTheme, type Theme } from './ThemeProvider';
 import { cx } from '~/lib/cx';
 import s from './ThemePicker.module.css';
@@ -62,10 +61,10 @@ export function ThemePicker() {
           ))}
           <DropdownMenu.Separator className={s.themeSeparator} />
           <DropdownMenu.Item className={s.themeItem} asChild>
-            <Link to="/uses/theme">
+            <a href="/uses/theme">
               <Settings size={14} />
               More Settings
-            </Link>
+            </a>
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>

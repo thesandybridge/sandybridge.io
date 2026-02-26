@@ -30,7 +30,7 @@ function DocsIndex() {
       ) : (
         <div className={s.grid}>
           {docs.map((doc) => (
-            <Link key={doc.slug} to={`/docs/${doc.slug}`} className={s.card}>
+            <Link key={doc.slug} to="/docs/$slug" params={{ slug: doc.slug }} className={s.card}>
               <h2>{doc.title}</h2>
               {doc.description && <p>{doc.description}</p>}
             </Link>

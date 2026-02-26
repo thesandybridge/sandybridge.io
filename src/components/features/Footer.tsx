@@ -24,9 +24,9 @@ export function Footer({ year }: FooterProps) {
           <Briefcase size={16} />
           <span>Work</span>
         </Link>
-        <Link to="/uses">
+        <a href="/uses">
           <span>Uses</span>
-        </Link>
+        </a>
         <a href="/feed.xml">
           <Rss size={16} />
           <span>RSS</span>

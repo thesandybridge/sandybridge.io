@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Link } from '@tanstack/react-router';
 import { SlidersHorizontal, Check, Sun, Moon, Volume2, Volume1, VolumeX, Settings, X } from 'lucide-react';
 import { useTheme, THEMES, type Theme } from '../theme/ThemeProvider';
 import { getVolume, setVolume, setMuted, isMuted, playSound } from '~/lib/audio';
@@ -155,14 +154,14 @@ export function DesktopSpeedDial() {
 
           <div className={s.separator} />
 
-          <Link
-            to="/uses/theme"
+          <a
+            href="/uses/theme"
             className={s.more}
             onClick={() => setOpen(false)}
           >
             <Settings size={12} />
             More settings
-          </Link>
+          </a>
         </div>
       )}
 
