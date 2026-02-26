@@ -26,7 +26,7 @@ import {
   Footer,
 } from '~/components/features'
 import { DynamicFavicon, ThemeProvider } from '~/components/theme'
-import { generateThemeScript } from '@/lib/themes'
+import { generateThemeScript } from '~/lib/themes'
 import globalsCss from '~/styles/globals.css?url'
 import notFoundStyles from '~/styles/not-found.module.css'
 
