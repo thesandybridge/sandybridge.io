@@ -7,6 +7,9 @@ export default defineConfig({
     tsconfigPaths(),
     tanstackStart(),
   ],
+  resolve: {
+    dedupe: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
+  },
   css: {
     modules: {
       localsConvention: 'camelCase',
