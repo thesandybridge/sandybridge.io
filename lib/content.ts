@@ -52,10 +52,8 @@ function getHighlighter() {
     highlighterPromise = createHighlighter({
       themes: [cssVariablesTheme],
       langs: [
-        'javascript', 'typescript', 'bash', 'json', 'html', 'css',
-        'go', 'rust', 'python', 'yaml', 'toml', 'markdown', 'sql',
-        'tsx', 'jsx', 'diff', 'lua', 'c', 'cpp', 'java', 'php',
-        'xml', 'shell', 'dockerfile', 'makefile',
+        'javascript', 'typescript', 'tsx', 'bash', 'json',
+        'html', 'css', 'rust', 'toml',
       ],
     });
   }
@@ -121,10 +119,12 @@ function parseFrontmatter(filePath: string): PostMeta | null {
   };
 }
 
-const postsCache = new Map<string, PostMeta[]>();
+const postsCache = new Map<string, { posts: PostMeta[]; timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 export function getAllPosts(dir: ContentDir, limit?: number): PostMeta[] {
-  let posts = postsCache.get(dir);
+  const cached = postsCache.get(dir);
+  let posts = cached && (Date.now() - cached.timestamp < CACHE_TTL) ? cached.posts : undefined;
   if (!posts) {
     const dirPath = getDir(dir);
     if (!fs.existsSync(dirPath)) return [];
@@ -138,7 +138,7 @@ export function getAllPosts(dir: ContentDir, limit?: number): PostMeta[] {
     }
 
     posts.sort((a, b) => (b.date > a.date ? 1 : b.date < a.date ? -1 : 0));
-    postsCache.set(dir, posts);
+    postsCache.set(dir, { posts, timestamp: Date.now() });
   }
 
   if (limit) return posts.slice(0, limit);

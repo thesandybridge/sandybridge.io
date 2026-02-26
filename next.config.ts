@@ -32,6 +32,7 @@ const withPWA = withPWAInit({
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   turbopack: {},
+  serverExternalPackages: ['three', '@react-three/fiber', '@react-three/postprocessing', 'postprocessing'],
   experimental: {
     viewTransition: true,
   },
