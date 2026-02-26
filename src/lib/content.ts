@@ -145,7 +145,7 @@ export function getAllPosts(dir: ContentDir, limit?: number): PostMeta[] {
   return posts;
 }
 
-async function renderMarkdown(raw: string): Promise<string> {
+export async function renderMarkdown(raw: string): Promise<string> {
   const shiki = await getHighlighter();
 
   const result = await unified()

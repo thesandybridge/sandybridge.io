@@ -24,10 +24,10 @@ export function Footer({ year }: FooterProps) {
           <Briefcase size={16} />
           <span>Work</span>
         </Link>
-        <a href="/uses">
+        <Link to="/uses">
           <span>Uses</span>
-        </a>
-        <a href="/feed.xml">
+        </Link>
+        <a href="/api/feed">
           <Rss size={16} />
           <span>RSS</span>
         </a>

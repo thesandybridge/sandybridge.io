@@ -33,7 +33,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [turnstileToken, setTurnstileToken] = useState('');
   const turnstileRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
 
   const form = useForm({
     defaultValues: { name: '', email: '', category: 'General' as string, message: '' },
