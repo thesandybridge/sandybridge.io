@@ -40,7 +40,7 @@ async function getCommitCount(owner: string, repo: string): Promise<number> {
   try {
     const res = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/commits?per_page=1`,
-      { headers: getGitHubHeaders(), next: { revalidate: 3600 } },
+      { headers: getGitHubHeaders() },
     );
     if (!res.ok) return 0;
     const link = res.headers.get('Link');
@@ -57,7 +57,6 @@ export async function getRepoStats(owner: string, repo: string): Promise<RepoSta
     const [res, commits] = await Promise.all([
       fetch(`https://api.github.com/repos/${owner}/${repo}`, {
         headers: getGitHubHeaders(),
-        next: { revalidate: 3600 },
       }),
       getCommitCount(owner, repo),
     ]);
@@ -80,10 +79,7 @@ export async function getWorkflowRuns(owner: string, repo: string): Promise<Work
   try {
     const res = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/actions/runs?per_page=5`,
-      {
-        headers: getGitHubHeaders(),
-        next: { revalidate: 300 },
-      }
+      { headers: getGitHubHeaders() }
     );
 
     if (!res.ok) return [];
@@ -140,7 +136,6 @@ export async function getContributions(username: string): Promise<ContributionDa
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ query, variables: { username } }),
-      next: { revalidate: 3600 },
     });
 
     if (!res.ok) return [];
