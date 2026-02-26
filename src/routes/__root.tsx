@@ -67,7 +67,7 @@ export const Route = createRootRoute({
         rel: 'alternate',
         type: 'application/rss+xml',
         title: 'sandybridge.io',
-        href: '/feed.xml',
+        href: '/api/feed',
       },
     ],
     scripts: [
