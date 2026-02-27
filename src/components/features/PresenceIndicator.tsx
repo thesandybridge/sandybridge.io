@@ -13,7 +13,7 @@ export function PresenceIndicator() {
 
   const sendHeartbeat = useCallback(async () => {
     try {
-      await fetch('/api/presence/heartbeat', {
+      await fetch('/api/presence', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ path: pathname }),

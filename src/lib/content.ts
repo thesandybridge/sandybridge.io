@@ -11,6 +11,26 @@ import rehypeSlug from 'rehype-slug';
 import rehypeStringify from 'rehype-stringify';
 import { createHighlighter, createCssVariablesTheme, type Highlighter } from 'shiki';
 
+// Replace JSX component tags with data-island divs before markdown processing
+// Self-closing JSX like <Sha3Demo /> isn't valid HTML5 and breaks rehypeRaw
+const ISLAND_COMPONENTS: Record<string, string> = {
+  Sha3Demo: 'sha3-demo',
+  RaftDemo: 'raft-demo',
+  DragTreeDemo: 'drag-tree-demo',
+};
+
+const islandPattern = new RegExp(
+  `<(${Object.keys(ISLAND_COMPONENTS).join('|')})\\s*/>`,
+  'g',
+);
+
+function replaceIslandTags(markdown: string): string {
+  return markdown.replace(islandPattern, (_, name) => {
+    const id = ISLAND_COMPONENTS[name];
+    return `<div data-island="${id}"></div>`;
+  });
+}
+
 const cssVariablesTheme = createCssVariablesTheme({
   name: 'css-variables',
   variablePrefix: '--shiki-',
@@ -147,6 +167,7 @@ export function getAllPosts(dir: ContentDir, limit?: number): PostMeta[] {
 
 export async function renderMarkdown(raw: string): Promise<string> {
   const shiki = await getHighlighter();
+  const processed = replaceIslandTags(raw);
 
   const result = await unified()
     .use(remarkParse)
@@ -155,7 +176,7 @@ export async function renderMarkdown(raw: string): Promise<string> {
     .use(rehypeRaw)
     .use(rehypeSlug)
     .use(rehypeStringify)
-    .process(raw);
+    .process(processed);
 
   let html = String(result);
 

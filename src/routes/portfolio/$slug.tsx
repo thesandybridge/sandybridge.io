@@ -1,5 +1,7 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
+import { createServerFn } from '@tanstack/react-start'
 import { fetchPost } from '~/lib/server/content-fns'
+import { getWorkflowRuns, parseGitHubUrl, type WorkflowRun } from '~/lib/github'
 import { IslandHydrator } from '~/components/mdx/IslandHydrator'
 import { CopyButton, Lightbox } from '~/components/ui'
 import { HeadingAnchors, Share } from '~/components/blog'
@@ -9,10 +11,21 @@ import pm from '~/components/blog/post-meta.module.css'
 import tagStyles from '~/components/blog/tags.module.css'
 import p from '~/components/features/PortfolioGrid.module.css'
 
+const fetchWorkflows = createServerFn({ method: 'GET' })
+  .inputValidator((data: { github?: string }) => data)
+  .handler(async ({ data }) => {
+    if (!data.github) return [] as WorkflowRun[]
+    const parsed = parseGitHubUrl(data.github)
+    if (!parsed) return [] as WorkflowRun[]
+    return getWorkflowRuns(parsed.owner, parsed.repo)
+  })
+
 export const Route = createFileRoute('/portfolio/$slug')({
   loader: async ({ params }) => {
     try {
-      return await fetchPost({ data: { dir: 'portfolio', slug: params.slug } })
+      const postData = await fetchPost({ data: { dir: 'portfolio', slug: params.slug } })
+      const workflowRuns = await fetchWorkflows({ data: { github: postData.post.github } })
+      return { ...postData, workflowRuns }
     } catch {
       throw notFound()
     }
@@ -34,14 +47,14 @@ export const Route = createFileRoute('/portfolio/$slug')({
 })
 
 function PortfolioItem() {
-  const { post } = Route.useLoaderData()
+  const { post, workflowRuns } = Route.useLoaderData()
 
   return (
     <>
       <Link to="/portfolio" className={pm.backLink}>&larr; Back to Portfolio</Link>
       <article>
         <ProjectLinks github={post.github} url={post.url} blog={post.blog} npm={post.npm} />
-        <StatusBadges github={post.github} />
+        <StatusBadges runs={workflowRuns} />
         {post.image && (
           <img
             src={`/assets/portfolio/${post.image}`}

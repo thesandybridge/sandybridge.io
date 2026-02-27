@@ -1,3 +1,3 @@
-// 10x6 dark pixel base64 PNG for universal blur placeholder
-export const BLUR_DATA_URL =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAAD68A/GAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAFklEQVQYV2Nk+M/wn4EIwMTAQBwAADoIAQGe2i4eAAAAAElFTkSuQmCC';
+// Solid dark background placeholder for images while loading
+// Using a CSS-compatible value avoids Firefox "corrupt image" warnings with tiny data URLs
+export const BLUR_DATA_URL = 'linear-gradient(var(--bg-secondary, #1d2021), var(--bg-secondary, #1d2021))';

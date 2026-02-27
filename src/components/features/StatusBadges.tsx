@@ -1,10 +1,9 @@
-import { getWorkflowRuns, parseGitHubUrl, type WorkflowRun } from '~/lib/github';
+import { type WorkflowRun } from '~/lib/github';
 import { CheckCircle, XCircle, Clock, Loader } from 'lucide-react';
 import s from './StatusBadges.module.css';
 
 interface StatusBadgesProps {
-  github?: string;
-  url?: string;
+  runs: WorkflowRun[];
 }
 
 const statusIcons: Record<WorkflowRun['status'], typeof CheckCircle> = {
@@ -28,16 +27,9 @@ const statusClasses: Record<WorkflowRun['status'], string> = {
   in_progress: s.statusInProgress,
 };
 
-export async function StatusBadges({ github }: StatusBadgesProps) {
-  if (!github) return null;
-
-  const parsed = parseGitHubUrl(github);
-  if (!parsed) return null;
-
-  const runs = await getWorkflowRuns(parsed.owner, parsed.repo);
+export function StatusBadges({ runs }: StatusBadgesProps) {
   if (runs.length === 0) return null;
 
-  // Get the most recent run
   const latestRun = runs[0];
   const Icon = statusIcons[latestRun.status];
 
