@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "start": "bun dist/server/server.js"
+    "start": "bun server-entry.ts"
   },
   "dependencies": {
     "@dnd-block-tree/react": "^2.0.0",
