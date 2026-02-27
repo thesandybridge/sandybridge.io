@@ -53,3 +53,4 @@ public/swe-worker-*.js
 
 # Claude Code project docs (local only)
 CLAUDE.md
+/docs/
