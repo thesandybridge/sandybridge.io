@@ -1,74 +1,89 @@
 # sandybridge.io
 
-[![Build](https://img.shields.io/github/actions/workflow/status/thesandybridge/sandybridge.io/ci.yml?branch=main&label=build)](https://github.com/thesandybridge/sandybridge.io/actions)
 [![Deploy on Railway](https://img.shields.io/badge/deploy-Railway-blueviolet?logo=railway)](https://railway.com)
 [![License: MIT](https://img.shields.io/badge/code-MIT-green.svg)](LICENSE)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/content-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
-My personal site and blog, built with Next.js App Router and deployed on Railway.
+My personal site and blog, built with TanStack Start and deployed on Railway.
 
 > This is a full rewrite of the [original Go + HTMX version](https://github.com/thesandybridge/sandybridge.io-go).
 
 ## Stack
 
-- **Framework** — [Next.js 16](https://nextjs.org) (App Router, static generation)
+- **Framework** — [TanStack Start](https://tanstack.com/start) + [React 19](https://react.dev)
+- **Runtime** — [Bun](https://bun.sh)
 - **Language** — TypeScript
-- **Markdown** — [unified](https://unifiedjs.com) / remark / rehype with [shiki](https://shiki.style) syntax highlighting (gruvbox theme)
+- **Styling** — Hand-written CSS modules (no Tailwind)
+- **Markdown** — [unified](https://unifiedjs.com) / remark / rehype with [Shiki](https://shiki.style) syntax highlighting (CSS variables theme)
 - **3D Background** — [Three.js](https://threejs.org) via [@react-three/fiber](https://docs.pmnd.rs/react-three-fiber)
-- **Font** — [Kode Mono](https://fonts.google.com/specimen/Kode+Mono) (self-hosted)
+- **Themes** — [@thesandybridge/themes](https://www.npmjs.com/package/@thesandybridge/themes) — 9 switchable themes via CSS custom properties
+- **Cache** — [ioredis](https://github.com/redis/ioredis) (Railway Redis)
+- **Search** — [Fuse.js](https://www.fusejs.io) client-side fuzzy search
 - **Hosting** — [Railway](https://railway.com)
 
 ## Features
 
-- Gruvbox dark theme with animated corona glow borders (CSS `@property` + SVG filter)
-- Three.js wireframe shapes in side gutters with mouse lookAt and scroll parallax
-- Interactive terminal (Ctrl+K) with command history, tab completion, and easter eggs
-- Blog with tag filtering, read time, share buttons, and code copy buttons
-- Portfolio grid with project links
+- 9 color themes with animated corona glow borders (CSS `@property` + SVG filter)
+- Three.js wireframe shapes with mouse lookAt and scroll parallax
+- Interactive command palette (Ctrl+K) with search, navigation, and easter eggs
+- Blog with tag filtering, series navigation, read time, share buttons, and code copy
+- React island architecture — interactive components embedded in server-rendered markdown
+- Portfolio grid with GitHub workflow status badges
+- Redis-backed view tracking with analytics dashboard (heatmap, flamegraph, sparklines)
 - RSS feed, sitemap, and robots.txt
-- Fully static — all pages prerendered at build time
 
 ## Getting Started
 
 ```sh
-npm install
-npm run dev
+bun install
+bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:5173](http://localhost:5173).
 
 ## Build
 
 ```sh
-npm run build
-npm start
+bun run build
+bun run start
 ```
 
 ## Project Structure
 
 ```
-app/
-  layout.tsx          # Root layout: font, meta, corona SVG, nav, footer
-  page.tsx            # Homepage: ASCII art, recent posts, portfolio cards
-  blog/               # Blog list, [slug], tag/[tag]
-  portfolio/          # Portfolio list, [slug]
-  api/commands/       # Terminal command handler
-  feed.xml/           # RSS 2.0
-  sitemap.ts          # Auto-generated sitemap
-  robots.ts           # Robots.txt
-components/
-  Background.tsx      # Three.js R3F background scene
-  Terminal.tsx         # Interactive terminal overlay
-  TermTriangle.tsx    # Spinning wireframe tetrahedron
-  Nav.tsx             # Navigation bar
-  NavLinks.tsx        # Client-side active link highlighting
-  CopyButton.tsx      # Code block copy buttons
-  ShareButtons.tsx    # Social share links
-lib/
-  content.ts          # Markdown pipeline (gray-matter + unified + shiki)
+src/
+  routes/
+    __root.tsx          # Root layout: meta, nav, footer, effects
+    index.tsx           # Homepage: boot sequence, hero, projects
+    blog/               # Blog list, $slug, tag/$tag
+    portfolio/          # Portfolio list, $slug
+    til/                # Today I learned
+    docs/               # Documentation
+    api/                # Server routes (views, contact, search, feed, etc.)
+  components/
+    effects/            # Visual effects (3D background, cursor glow, grain)
+    features/           # Site features (contact modal, portfolio grid, speed dial)
+    home/               # Homepage (boot sequence, hero, typewriter, tech stack)
+    blog/               # Blog components (TOC, series nav, share, view counter)
+    mdx/                # MDX islands (Sha3Demo, RaftDemo, DragTreeDemo)
+    theme/              # Theme provider, picker, settings
+    search/             # Command palette, mobile search
+    nav/                # Navigation bar, mobile nav
+    ui/                 # Shared UI (copy button, lightbox, skeleton)
+    analytics/          # Stats dashboard (heatmap, flamegraph, charts)
+  lib/
+    content.ts          # Markdown pipeline (gray-matter + unified + shiki)
+    themes.ts           # Theme definitions from @thesandybridge/themes
+    views.ts            # Redis-backed view tracking
+    redis.ts            # Redis client (optional, degrades gracefully)
+    github.ts           # GitHub API (contributions, workflow runs)
+  styles/
+    globals.css         # Theme variables, Shiki tokens, base styles
 content/
-  *.md                # Blog posts (YAML frontmatter)
-  portfolio/*.md      # Portfolio items
+  *.md                  # Blog posts (YAML frontmatter)
+  portfolio/*.md        # Portfolio items
+  til/*.md              # TIL entries
+server-entry.ts         # Bun HTTP server wrapping TanStack Start fetch handler
 ```
 
 ## License
