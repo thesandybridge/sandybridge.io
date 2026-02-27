@@ -85,6 +85,7 @@ function getLastModified(filePath: string): string | undefined {
     const result = execSync(`git log -1 --format=%cI -- "${filePath}"`, {
       encoding: 'utf-8',
       cwd: process.cwd(),
+      stdio: ['pipe', 'pipe', 'ignore'],
     }).trim();
     if (!result) return undefined;
     return result.split('T')[0];
