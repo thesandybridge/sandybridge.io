@@ -1,0 +1,34 @@
+.loading,
+.empty {
+    color: var(--secondary-fg);
+    font-style: italic;
+}
+
+.list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.list li {
+    padding: 0;
+}
+
+.list a {
+    display: block;
+    padding: 0.75rem 1rem;
+    background: var(--secondary-bg);
+    border-radius: 4px;
+    text-transform: capitalize;
+    transition: background-color 0.15s ease;
+}
+
+.list a:hover {
+    background: var(--primary-fg);
+    color: var(--primary-bg);
+}

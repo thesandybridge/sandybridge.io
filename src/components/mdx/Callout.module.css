@@ -1,0 +1,29 @@
+/* Extracted from globals.css lines 2058-2087 */
+.callout {
+    border-left: 4px solid var(--secondary-fg);
+    background: var(--secondary-bg);
+    border-radius: 0 6px 6px 0;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+}
+
+.calloutInfo { border-left-color: var(--info); }
+.calloutWarning { border-left-color: var(--warning); }
+.calloutTip { border-left-color: var(--success); }
+.calloutDanger { border-left-color: var(--error); }
+
+.calloutHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-bright);
+}
+
+.calloutIcon {
+    font-size: 1.1rem;
+}
+
+.calloutBody p:last-child {
+    margin-bottom: 0;
+}

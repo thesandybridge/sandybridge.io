@@ -1,0 +1,68 @@
+/* Extracted from globals.css lines 1042-1090, 2826-2836 */
+
+.trendingSection {
+    margin-bottom: 2rem;
+    border: 1px solid var(--secondary-bg);
+    border-radius: 5px;
+    padding: 1rem;
+
+    h2 {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+        color: var(--secondary-fg);
+    }
+}
+
+.trendingList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.trendingItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.35rem 0;
+    font-size: 0.85rem;
+}
+
+.trendingRank {
+    color: var(--secondary-fg);
+    font-weight: 700;
+    min-width: 1.5rem;
+}
+
+.trendingTitle {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.trendingViews {
+    color: var(--primary-fg);
+    opacity: 0.6;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    margin-left: auto;
+}
+
+.trendingSkeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.trendingSkeletonItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+@media print {
+    .trendingSection {
+        display: none !important;
+    }
+}

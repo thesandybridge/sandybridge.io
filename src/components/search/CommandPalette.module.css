@@ -1,0 +1,261 @@
+/* Command Palette */
+.overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 15vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.modal {
+    width: 100%;
+    max-width: 680px;
+    background: var(--primary-bg);
+    border: 1px solid var(--secondary-bg);
+    border-radius: 8px;
+    position: relative;
+    color: var(--secondary-fg);
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 8px 3px rgba(var(--secondary-fg-rgb), 0.15);
+    transition: max-width 0.3s ease, max-height 0.3s ease;
+}
+
+.minimized {
+    max-width: 300px;
+}
+
+.minimized .header {
+    cursor: pointer;
+}
+
+.maximized {
+    max-width: 95vw;
+    width: 95vw;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.maximized .messages {
+    flex: 1;
+    max-height: none;
+}
+
+/* Terminal header */
+.header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--secondary-bg);
+    border-bottom: 1px solid var(--border);
+}
+
+.dots {
+    display: flex;
+    gap: 6px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--border);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.15s, filter 0.15s;
+
+    &:hover {
+        transform: scale(1.15);
+        filter: brightness(1.2);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+.red { background: var(--error); }
+.yellow { background: var(--warning); }
+.green { background: var(--success); }
+
+.title {
+    flex: 1;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--primary-fg);
+    opacity: 0.7;
+}
+
+.messages {
+    min-height: 200px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 1rem;
+    background: var(--code-bg);
+}
+
+.msg {
+    font-family: inherit;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+/* Styles used in dangerouslySetInnerHTML from API - must remain global */
+.messages :global(pre.ignore) {
+    margin: 0 0 0.75rem 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.cmdWrapper {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--code-bg);
+    border-top: 1px solid var(--border);
+}
+
+.cmdWrapper label {
+    color: var(--alt);
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.cmdWrapper input {
+    background: none;
+    border: none;
+    color: var(--secondary-fg);
+    flex: 1;
+    font-family: inherit;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-left: 0.5rem;
+
+    &:focus-visible {
+        outline: none;
+    }
+
+    &::placeholder {
+        color: var(--primary-fg);
+        opacity: 0.4;
+    }
+}
+
+/* Terminal semantic classes used via dangerouslySetInnerHTML - must be global */
+.messages :global(.term-error) { color: var(--error); }
+.messages :global(.term-info) { color: var(--primary-fg); }
+.messages :global(.term-success) { color: var(--alt); }
+.messages :global(.term-highlight) { color: var(--secondary-fg); }
+.messages :global(.term-cursor) {
+    animation: blink 0.7s step-end infinite;
+}
+
+/* Help command styling (injected via API HTML) */
+.messages :global(.term-help-grid) {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.25rem 1.5rem;
+    margin: 0.5rem 0;
+}
+
+.messages :global(.term-help-cmd) {
+    color: var(--secondary-fg);
+}
+
+.messages :global(.term-help-desc) {
+    color: var(--primary-fg);
+}
+
+.searchInput {
+    width: 100%;
+    padding: 1rem;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--secondary-bg);
+    color: var(--secondary-fg);
+    font-family: inherit;
+    font-size: 16px;
+
+    &:focus-visible {
+        outline: none;
+    }
+}
+
+.hint {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.7rem;
+    color: var(--primary-fg);
+    border-top: 1px solid var(--secondary-bg);
+    opacity: 0.6;
+
+    kbd {
+        background: var(--secondary-bg);
+        border-radius: 3px;
+        padding: 1px 5px;
+    }
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+/* Search results (inside palette) */
+
+.searchResults {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.searchResult {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--primary-fg);
+
+    &:hover {
+        background: var(--secondary-bg);
+    }
+}
+
+.selected {
+    background: var(--secondary-bg);
+}
+
+.searchResultType {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--secondary-fg);
+}
+
+.searchResultTitle {
+    font-size: 0.9rem;
+    color: inherit;
+}
+
+.searchResultDesc {
+    font-size: 0.75rem;
+    color: var(--primary-fg);
+    opacity: 0.7;
+}
+
+.searchEmpty {
+    padding: 1rem;
+    text-align: center;
+    color: var(--primary-fg);
+    font-size: 0.85rem;
+}

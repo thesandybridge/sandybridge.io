@@ -1,0 +1,69 @@
+/* Extracted from globals.css lines 3245-3313 */
+.resumeReading {
+    position: fixed;
+    bottom: 5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--secondary-bg);
+    border: 1px solid var(--primary-fg);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    z-index: 100;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    animation: slide-up 0.3s ease;
+}
+
+@keyframes slide-up {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(1rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.resumeBtn {
+    background: var(--primary-fg);
+    color: var(--primary-bg);
+    border: none;
+    padding: 0.4rem 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: inherit;
+    transition: opacity 0.15s ease;
+}
+
+.resumeBtn:hover {
+    opacity: 0.9;
+}
+
+.resumeDismiss {
+    background: transparent;
+    border: none;
+    color: var(--secondary-fg);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.15s ease;
+}
+
+.resumeDismiss:hover {
+    color: var(--primary-fg);
+}
+
+@media screen and (max-width: 600px) {
+    .resumeReading {
+        left: 1rem;
+        right: 1rem;
+        transform: none;
+        bottom: 4rem;
+    }
+}

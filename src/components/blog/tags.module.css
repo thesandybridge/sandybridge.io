@@ -1,0 +1,26 @@
+/* Extracted from globals.css lines 1155-1178 */
+
+.postTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.tag {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--secondary-bg);
+    border-radius: 3px;
+    color: var(--primary-fg);
+    white-space: nowrap;
+}
+
+a.tag {
+    display: inline-flex;
+
+    &:hover {
+        border-color: var(--secondary-fg);
+        color: var(--secondary-fg);
+    }
+}

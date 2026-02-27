@@ -1,0 +1,52 @@
+/* Extracted from globals.css lines 1569-1598 */
+
+.postNav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--secondary-bg);
+}
+
+.postNavLink {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    max-width: 45%;
+}
+
+.postNavNext {
+    text-align: right;
+    margin-left: auto;
+}
+
+.postNavLabel {
+    font-size: 0.75rem;
+    color: var(--primary-fg);
+}
+
+.postNavTitle {
+    font-size: 0.85rem;
+    color: var(--secondary-fg);
+}
+
+@media screen and (max-width: 600px) {
+    .postNav {
+        flex-direction: column;
+    }
+
+    .postNavLink {
+        max-width: 100%;
+    }
+
+    .postNavNext {
+        text-align: left;
+    }
+}
+
+@media print {
+    .postNav {
+        display: none !important;
+    }
+}

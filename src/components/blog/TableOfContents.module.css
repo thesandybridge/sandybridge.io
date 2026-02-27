@@ -1,0 +1,45 @@
+/* Extracted from globals.css lines 1535-1567 */
+
+.toc {
+    margin-bottom: 2rem;
+    font-size: 0.85rem;
+    border: 1px solid var(--secondary-bg);
+    border-radius: 5px;
+    padding: 1rem;
+
+    summary {
+        cursor: pointer;
+        color: var(--secondary-fg);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    li {
+        margin: 0.25rem 0;
+    }
+
+    a {
+        color: var(--primary-fg);
+        transition: color 0.2s ease;
+
+        &:hover, &.tocActive {
+            color: var(--secondary-fg);
+        }
+    }
+}
+
+.tocActive {
+    color: var(--secondary-fg);
+}
+
+@media print {
+    .toc {
+        display: none !important;
+    }
+}
