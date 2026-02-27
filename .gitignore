@@ -37,3 +37,6 @@ yarn-error.log*
 
 # TanStack Router generated
 src/routeTree.gen.ts
+
+# Claude Code project docs (local only)
+CLAUDE.md
