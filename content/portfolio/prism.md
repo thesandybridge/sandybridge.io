@@ -1,28 +1,38 @@
 ---
 title: "Prism"
-date: 2025-09-24
-description: "A cross-platform note-taking app built with Svelte and Tauri, with graph-based note linking."
-tags: ["svelte", "tauri", "rust", "desktop"]
+date: 2026-03-08
+description: "A keyboard-driven markdown vault reader built with Tauri 2, React, and Rust, with vim keybindings, fuzzy search, and a Lua plugin system."
+tags: ["tauri", "rust", "react", "desktop"]
 github: "https://github.com/thesandybridge/prism"
 category: "web"
 ---
 
 # Prism
 
-A modern note-taking application built with Svelte and Tauri, designed for organizing and linking your thoughts. Notes live in vaults and can be connected through tags and direct links, with a visual graph view for exploring relationships.
+A fast, minimal desktop app for reading and navigating markdown vaults. Prism runs as an always-on-top sidebar with vim-style keybindings, fuzzy search, wiki-style linking, and a Lua plugin system. It reads existing Obsidian, Logseq, or plain-markdown vaults without modifying them unless explicitly asked.
 
 ## Features
 
-- Create and organize notes in vaults
-- Rich text editing with markdown support
-- Tag-based organization system
-- Visual graph view of note relationships
-- Cross-platform desktop application
-- Fast, native performance with Rust backend
+- Fuzzy search across file names, paths, and content
+- Wiki links with autocomplete — `[[note]]`, `[[note|display]]`, `[[note#heading]]`
+- Tag filtering from frontmatter and inline `#tags`
+- Quick capture — append timestamped bullets to an inbox file
+- Full-text vault search with line-number context
+- Interactive text-based link graph explorer
+- Daily notes and templates with variable expansion
+- Keyboard-driven file browser with vim navigation
+- Transclusion — hover wiki links to preview target notes inline
+- Editor handoff — press `n` to open in `$EDITOR`, auto-reload on return
+- Lua plugin system with React UI extensions and `@prism/plugin-sdk`
+- 14 built-in themes with live preview picker and custom TOML themes
+- Global hotkey to toggle the window from any app
+- Command palette for everything
+- Cross-platform — Linux, macOS, Windows
 
 ## Tech Stack
 
-- **Svelte** — frontend UI with TypeScript
-- **Tauri** — native desktop runtime
-- **Rust** — backend logic and file handling
-- **SQLite** — local database with migrations
+- **Tauri 2** — native desktop runtime
+- **React** — frontend UI with TypeScript
+- **Rust** — backend logic, file watching, IPC, plugin manager
+- **Lua** — scripting and plugin system
+- **TOML** — configuration format
