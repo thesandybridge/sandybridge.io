@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
+import metadata from '../generated/git-metadata.json';
 import matter from 'gray-matter';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
@@ -81,22 +81,13 @@ function getHighlighter() {
 }
 
 function getLastModified(filePath: string): string | undefined {
-  try {
-    const result = execSync(`git log -1 --format=%cI -- "${filePath}"`, {
-      encoding: 'utf-8',
-      cwd: process.cwd(),
-      stdio: ['pipe', 'pipe', 'ignore'],
-    }).trim();
-    if (!result) return undefined;
-    return result.split('T')[0];
-  } catch {
-    return undefined;
-  }
+  return (metadata.lastModified as Record<string, string>)[path.relative(process.cwd(), filePath)];
 }
 
 export type ContentDir = 'blog' | 'portfolio' | 'til';
 
 function getDir(dir: ContentDir): string {
+  if (!['blog', 'portfolio', 'til'].includes(dir)) throw new Error('Invalid content directory');
   if (dir === 'blog') return contentDir;
   return path.join(contentDir, dir);
 }
@@ -206,6 +197,7 @@ export async function renderMarkdown(raw: string): Promise<string> {
 }
 
 function resolveFile(dir: string, slug: string): string | null {
+  if (typeof slug !== 'string' || !/^[a-zA-Z0-9_'\-]{1,160}$/.test(slug)) return null;
   for (const ext of ['.mdx', '.md']) {
     const filePath = path.join(dir, `${slug}${ext}`);
     if (fs.existsSync(filePath)) return filePath;

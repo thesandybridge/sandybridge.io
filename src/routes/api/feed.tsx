@@ -36,7 +36,7 @@ export const Route = createFileRoute('/api/feed')({
 </rss>`
 
         return new Response(xml, {
-          headers: { 'Content-Type': 'application/rss+xml; charset=utf-8' },
+          headers: { 'Cache-Control': 'public, max-age=300', 'Content-Type': 'application/rss+xml; charset=utf-8' },
         })
       },
     },

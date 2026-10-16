@@ -32,6 +32,7 @@ export function ViewCounter({ slug }: { slug: string }) {
 
   // Scroll depth tracking
   useEffect(() => {
+    depthSent.current = false;
     const depthKey = `depth:${slug}`;
     if (sessionStorage.getItem(depthKey)) return;
 

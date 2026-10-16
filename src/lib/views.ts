@@ -1,13 +1,13 @@
 import crypto from 'crypto';
+import { isIP } from 'node:net';
 import redis from '~/lib/redis';
 
 const BOT_RE = /bot|crawl|spider|slurp|Googlebot|bingbot|Bytespider|GPTBot|facebookexternalhit|Twitterbot|LinkedInBot|Applebot|DuckDuckBot|Baiduspider|YandexBot|Sogou|ia_archiver|AhrefsBot|SemrushBot|DotBot|MJ12bot|PetalBot/i;
 
 export function getClientIP(req: Request): string {
-  const forwarded = req.headers.get('x-forwarded-for');
-  if (forwarded) return forwarded.split(',')[0].trim();
-  const real = req.headers.get('x-real-ip');
-  if (real) return real.trim();
+  // Railway's edge supplies X-Real-IP; do not trust a client-supplied forwarding chain.
+  const real = req.headers.get('x-real-ip')?.trim();
+  if (real && isIP(real)) return real;
   return '127.0.0.1';
 }
 
@@ -29,7 +29,7 @@ const DAILY_TTL = 90 * 24 * 60 * 60; // 90 days in seconds
 const DEDUP_TTL = 24 * 60 * 60;      // 24 hours in seconds
 
 export async function recordView(slug: string, req: Request): Promise<number | null> {
-  if (!redis) return null;
+  if (redis?.status !== 'ready') return null;
 
   const ua = req.headers.get('user-agent');
   if (isBot(ua)) return null;
@@ -45,7 +45,7 @@ export async function recordView(slug: string, req: Request): Promise<number | n
   }
 
   // Mark as seen for 24h
-  await redis.set(dk, '', 'EX', DEDUP_TTL);
+  if (!await redis.set(dk, '', 'EX', DEDUP_TTL, 'NX')) return current ? parseInt(current, 10) : 0;
 
   // Increment lifetime total
   const views = await redis.incr(`views:${slug}`);

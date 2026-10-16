@@ -6,7 +6,7 @@ export const Route = createFileRoute('/api/search')({
     handlers: {
       GET: async () => {
         const index = generateSearchIndex()
-        return Response.json(index)
+        return Response.json(index, { headers: { 'Cache-Control': 'public, max-age=300' } })
       },
     },
   },

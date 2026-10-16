@@ -41,7 +41,7 @@ ${all.map((u) => `  <url>
 </urlset>`
 
         return new Response(xml, {
-          headers: { 'Content-Type': 'application/xml; charset=utf-8' },
+          headers: { 'Cache-Control': 'public, max-age=300', 'Content-Type': 'application/xml; charset=utf-8' },
         })
       },
     },

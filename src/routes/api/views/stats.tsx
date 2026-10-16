@@ -1,41 +1,37 @@
 import { createFileRoute } from '@tanstack/react-router'
 import redis from '~/lib/redis'
+import { rateLimit } from '~/lib/rate-limit'
+import { getClientIP } from '~/lib/views'
 
-async function scanKeys(pattern: string): Promise<string[]> {
-  if (!redis) return []
-  const keys = new Set<string>()
-  let cursor = '0'
-  do {
-    const [next, batch] = await redis.scan(cursor, 'MATCH', pattern, 'COUNT', 100)
-    cursor = next
-    for (const k of batch) keys.add(k)
-  } while (cursor !== '0')
-  return Array.from(keys)
-}
+import { publicViewKeys } from '~/lib/public-content'
+
 
 export const Route = createFileRoute('/api/views/stats')({
   server: {
     handlers: {
-      GET: async () => {
-    if (!redis) {
+      GET: async ({ request }) => {
+        if (!await rateLimit(`analytics-read:${getClientIP(request)}`, 60, 60)) return new Response('Too many requests', { status: 429 })
+    if (redis?.status !== 'ready') {
       return Response.json({ totals: {}, daily: {}, summary: { totalViews: 0, viewsThisWeek: 0, topPost: '' } })
     }
 
     try {
-      const viewKeys = await scanKeys('views:*')
+      const viewKeys = publicViewKeys('views')
       const totals: Record<string, number> = {}
       if (viewKeys.length > 0) {
         const values = await redis.mget(...viewKeys)
         viewKeys.forEach((key, i) => {
+          if (values[i] === null) return
           totals[key.replace('views:', '')] = parseInt(values[i] ?? '0', 10)
         })
       }
 
-      const dailyKeys = await scanKeys('daily:*')
+      const dailyKeys = publicViewKeys('daily')
       const daily: Record<string, Record<string, number>> = {}
       if (dailyKeys.length > 0) {
         const values = await redis.mget(...dailyKeys)
         dailyKeys.forEach((key, i) => {
+          if (values[i] === null) return
           const parts = key.split(':')
           const date = parts.pop()!
           const slug = parts.slice(1).join(':')
@@ -69,7 +65,7 @@ export const Route = createFileRoute('/api/views/stats')({
 
       return Response.json(
         { totals, daily, summary: { totalViews, viewsThisWeek, topPost } },
-        { headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate' } },
+        { headers: { 'Cache-Control': 'public, max-age=60, s-maxage=300, stale-while-revalidate=60' } },
       )
     } catch {
       return Response.json({ totals: {}, daily: {}, summary: { totalViews: 0, viewsThisWeek: 0, topPost: '' } })

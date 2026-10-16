@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import metadata from '../generated/git-metadata.json';
 
 export interface ChangelogEntry {
   hash: string;
@@ -8,28 +8,7 @@ export interface ChangelogEntry {
 }
 
 export function getChangelog(limit = 50): ChangelogEntry[] {
-  try {
-    const log = execSync(
-      `git log --pretty=format:"%H|%cs|%s|%b<<<END>>>" -n ${limit}`,
-      { encoding: 'utf-8', cwd: process.cwd() }
-    );
-
-    return log
-      .split('<<<END>>>')
-      .filter((entry) => entry.trim())
-      .map((entry) => {
-        const [hash, date, message, ...bodyParts] = entry.trim().split('|');
-        const body = bodyParts.join('|').trim();
-        return {
-          hash: hash.slice(0, 7),
-          date,
-          message,
-          body: body || undefined,
-        };
-      });
-  } catch {
-    return [];
-  }
+  return metadata.changelog.slice(0, Math.max(0, Math.min(limit, 100)));
 }
 
 export function groupChangelogByDate(entries: ChangelogEntry[]): Record<string, ChangelogEntry[]> {

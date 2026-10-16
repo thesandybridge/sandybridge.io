@@ -1,5 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { codeToHtml } from 'shiki'
+import { rateLimit } from '~/lib/rate-limit'
+import { getClientIP } from '~/lib/views'
 import { shikiConfig } from '~/lib/shiki-config'
 
 const GITHUB_OWNER = 'thesandybridge'
@@ -28,16 +30,19 @@ function getCached<T>(key: string): T | null {
   if (entry && Date.now() - entry.timestamp < CACHE_TTL) {
     return entry.data as T
   }
+  cache.delete(key)
   return null
 }
 
 function setCache(key: string, data: unknown): void {
+  if (cache.size >= 128) cache.delete(cache.keys().next().value!)
   cache.set(key, { data, timestamp: Date.now() })
 }
 
 async function fetchGitHubContents(dirPath: string = ''): Promise<GitHubContent[]> {
   const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${dirPath}?ref=${GITHUB_BRANCH}`
   const res = await fetch(url, {
+    signal: AbortSignal.timeout(5000),
     headers: {
       Accept: 'application/vnd.github.v3+json',
       'User-Agent': 'sandybridge.io',
@@ -85,11 +90,27 @@ async function buildFileTree(dirPath: string = ''): Promise<FileNode[]> {
 
 async function fetchFileContent(filePath: string): Promise<string> {
   const url = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${filePath}`
-  const res = await fetch(url)
+  const res = await fetch(url, { signal: AbortSignal.timeout(5000) })
   if (!res.ok) {
     throw new Error(`Failed to fetch file: ${res.status}`)
   }
-  return res.text()
+  const content = await res.text()
+  if (content.length > 200000) throw new Error('File too large')
+  return content
+}
+
+let treePromise: Promise<FileNode[]> | undefined
+async function getTree(): Promise<FileNode[]> {
+  const cached = getCached<FileNode[]>('tree')
+  if (cached) return cached
+  if (!treePromise) treePromise = buildFileTree().then(tree => {
+    setCache('tree', tree)
+    return tree
+  }).finally(() => { treePromise = undefined })
+  return treePromise
+}
+function containsFile(nodes: FileNode[], path: string): boolean {
+  return nodes.some(node => node.type === 'file' ? node.path === path : containsFile(node.children || [], path))
 }
 
 export const Route = createFileRoute('/api/nvim-config')({
@@ -99,9 +120,13 @@ export const Route = createFileRoute('/api/nvim-config')({
     const url = new URL(request.url)
     const filePath = url.searchParams.get('file')
 
+    if (!await rateLimit(`nvim:${getClientIP(request)}`, 60, 60)) return new Response('Too many requests', { status: 429 })
     try {
       if (filePath) {
-        const sanitizedPath = filePath.replace(/\.\./g, '').replace(/^\//, '')
+        if (filePath.length > 300 || !/^[a-zA-Z0-9_./-]+$/.test(filePath) || filePath.split('/').some(part => part === '..' || part === '.')) return new Response('Invalid path', { status: 400 })
+        const sanitizedPath = filePath
+        const tree = await getTree()
+        if (!containsFile(tree, sanitizedPath)) return new Response('Not found', { status: 404 })
 
         const cacheKey = `file:${sanitizedPath}`
         const cached = getCached<{ path: string; content: string; highlighted: string; language: string }>(cacheKey)
@@ -147,7 +172,7 @@ export const Route = createFileRoute('/api/nvim-config')({
         return Response.json({ tree: cachedTree })
       }
 
-      const tree = await buildFileTree()
+      const tree = await getTree()
       setCache(treeCacheKey, tree)
       return Response.json({ tree })
     } catch (error) {

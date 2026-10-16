@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Resend } from 'resend'
 import { getClientIP } from '~/lib/views'
+import { escapeHtml } from '~/lib/escape-html'
 import { rateLimit } from '~/lib/rate-limit'
 
 const VALID_CATEGORIES = ['General', 'Work inquiry', 'Bug report', 'Feedback']
@@ -14,6 +15,7 @@ interface ContactBody {
 }
 
 function validate(body: ContactBody): string | null {
+  if (!body || typeof body !== 'object') return 'Invalid body'
   if (!body.name || typeof body.name !== 'string' || !body.name.trim()) {
     return 'Name is required'
   }
@@ -23,6 +25,8 @@ function validate(body: ContactBody): string | null {
   if (!body.message || typeof body.message !== 'string' || !body.message.trim()) {
     return 'Message is required'
   }
+  if (body.name.length > 100 || body.email.length > 254) return 'Name or email too long'
+  if (body.turnstileToken !== undefined && typeof body.turnstileToken !== 'string') return 'Invalid verification token'
   if (body.message.length > 2000) {
     return 'Message must be under 2000 characters'
   }
@@ -50,12 +54,22 @@ export const Route = createFileRoute('/api/contact')({
 
     const ip = getClientIP(request)
 
+    const allowed = await rateLimit(`contact:${ip}`, 3, 3600)
+    if (!allowed) {
+      return Response.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 },
+      )
+    }
+
     const turnstileSecret = process.env.TURNSTILE_SECRET_KEY
     if (turnstileSecret) {
+      try {
       const tokenRes = await fetch(
         'https://challenges.cloudflare.com/turnstile/v0/siteverify',
         {
           method: 'POST',
+          signal: AbortSignal.timeout(5000),
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: new URLSearchParams({
             secret: turnstileSecret,
@@ -71,14 +85,9 @@ export const Route = createFileRoute('/api/contact')({
           { status: 403 },
         )
       }
-    }
-
-    const allowed = await rateLimit(`contact:${ip}`, 3, 3600)
-    if (!allowed) {
-      return Response.json(
-        { error: 'Too many requests. Please try again later.' },
-        { status: 429 },
-      )
+      } catch {
+        return Response.json({ error: 'Verification temporarily unavailable' }, { status: 503 })
+      }
     }
 
     const apiKey = process.env.RESEND_API_KEY
@@ -114,10 +123,10 @@ export const Route = createFileRoute('/api/contact')({
 <div style="font-family: -apple-system, system-ui, sans-serif; max-width: 600px; margin: 0 auto;">
   <div style="border-bottom: 2px solid #d79921; padding-bottom: 12px; margin-bottom: 16px;">
     <span style="font-size: 12px; letter-spacing: 1px; color: #928374; text-transform: uppercase;">${category}</span>
-    <h2 style="margin: 4px 0 0; font-size: 18px; color: #ebdbb2;">Message from ${name}</h2>
+    <h2 style="margin: 4px 0 0; font-size: 18px; color: #ebdbb2;">Message from ${escapeHtml(name)}</h2>
   </div>
   <table style="font-size: 14px; color: #a89984; margin-bottom: 16px;">
-    <tr><td style="padding: 2px 12px 2px 0; color: #928374;">From</td><td>${name} &lt;${email}&gt;</td></tr>
+    <tr><td style="padding: 2px 12px 2px 0; color: #928374;">From</td><td>${escapeHtml(name)} &lt;${escapeHtml(email)}&gt;</td></tr>
     <tr><td style="padding: 2px 12px 2px 0; color: #928374;">Date</td><td>${timestamp}</td></tr>
   </table>
   <div style="background: #1d2021; border-left: 3px solid #d79921; padding: 16px; border-radius: 0 4px 4px 0; white-space: pre-wrap; font-size: 14px; line-height: 1.6; color: #ebdbb2;">${message.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>

@@ -12,6 +12,7 @@ export function PresenceIndicator() {
   const { pathname } = useLocation();
 
   const sendHeartbeat = useCallback(async () => {
+    if (document.visibilityState !== 'visible') return;
     try {
       await fetch('/api/presence', {
         method: 'POST',
@@ -24,6 +25,7 @@ export function PresenceIndicator() {
   }, [pathname]);
 
   const fetchPresence = useCallback(async () => {
+    if (document.visibilityState !== 'visible') return;
     try {
       const res = await fetch('/api/presence');
       const data = await res.json();

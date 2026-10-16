@@ -42,3 +42,6 @@ src/routeTree.gen.ts
 CLAUDE.md
 /docs/
 .claude/
+
+# Build-time Git history
+/src/generated/git-metadata.json

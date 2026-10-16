@@ -1,17 +1,31 @@
 import { createFileRoute } from '@tanstack/react-router'
-import satori from 'satori'
-import { Resvg } from '@resvg/resvg-js'
-import { readFileSync } from 'fs'
-import { join } from 'path'
-import { getPost, type ContentDir } from '~/lib/content'
+import { getAllPosts, type ContentDir } from '~/lib/content'
+import { rateLimit } from '~/lib/rate-limit'
+import { getClientIP } from '~/lib/views'
+import fontBase64 from '~/assets/fonts/KodeMono-Regular.woff?inline'
 
-const fontData = readFileSync(join(process.cwd(), 'public/fonts/KodeMono-Regular.woff2'))
+// Embed a supported font into the server bundle, independent of the runtime filesystem.
+const fontData = Buffer.from(fontBase64.split(',')[1], 'base64')
+const images = new Map<string, Uint8Array>()
+let rendering = false
 
 export const Route = createFileRoute('/api/og/$type/$slug')({
   server: {
     handlers: {
-      GET: async ({ params }) => {
-    const post = await getPost(params.type as ContentDir, params.slug)
+      GET: async ({ params, request }) => {
+    if (!['blog', 'portfolio', 'til'].includes(params.type)) return new Response('Not found', { status: 404 })
+    const post = getAllPosts(params.type as ContentDir).find(post => post.slug === params.slug)
+    if (!post) return new Response('Not found', { status: 404 })
+    const key = `${params.type}/${params.slug}`
+    const headers = { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=86400' }
+    const cached = images.get(key)
+    if (cached) return new Response(new Uint8Array(cached), { headers })
+    if (!await rateLimit(`og:${getClientIP(request)}`, 30, 60) || rendering) {
+      return new Response('Try again later', { status: 429, headers: { 'Retry-After': '5' } })
+    }
+    rendering = true
+    try {
+    const [{ default: satori }, { Resvg }] = await Promise.all([import('satori'), import('@resvg/resvg-js')])
     const title = post?.title || params.slug
     const date = post?.date || ''
     const tags = post?.tags || []
@@ -71,12 +85,12 @@ export const Route = createFileRoute('/api/og/$type/$slug')({
     const resvg = new Resvg(svg, { fitTo: { mode: 'width' as const, value: 1200 } })
     const pngData = resvg.render().asPng()
 
-    return new Response(new Uint8Array(pngData), {
-      headers: {
-        'Content-Type': 'image/png',
-        'Cache-Control': 'public, max-age=86400, s-maxage=86400',
-      },
-    })
+    if (images.size >= 32) images.delete(images.keys().next().value!)
+    images.set(key, new Uint8Array(pngData))
+    return new Response(new Uint8Array(pngData), { headers })
+    } finally {
+      rendering = false
+    }
       },
     },
   },

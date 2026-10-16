@@ -19,7 +19,7 @@ function hashVisitor(ip: string, userAgent: string): string {
 }
 
 export async function recordPresence(ip: string, userAgent: string, path: string): Promise<void> {
-  if (!redis) return;
+  if (redis?.status !== 'ready') return;
 
   try {
     const visitorId = hashVisitor(ip, userAgent);
@@ -42,7 +42,7 @@ export async function recordPresence(ip: string, userAgent: string, path: string
 }
 
 export async function getPresence(): Promise<PresenceData> {
-  if (!redis) return { total: 0, recentPages: [] };
+  if (redis?.status !== 'ready') return { total: 0, recentPages: [] };
 
   try {
     const now = Date.now();

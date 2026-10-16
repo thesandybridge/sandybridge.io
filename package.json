@@ -4,9 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "start": "bun server-entry.ts"
+    "dev": "bun scripts/git-metadata.ts && vite",
+    "build": "bun scripts/git-metadata.ts && vite build",
+    "start": "bun server-entry.ts",
+    "typecheck": "bun scripts/git-metadata.ts && tsc --noEmit",
+    "test": "bun scripts/git-metadata.ts && REDIS_URL= bun test tests"
   },
   "dependencies": {
     "@dnd-block-tree/react": "^2.0.0",

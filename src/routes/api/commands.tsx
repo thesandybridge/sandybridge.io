@@ -5,6 +5,8 @@ import sanitizeHtml from 'sanitize-html'
 import { getAllPosts } from '~/lib/content'
 import { THEMES, THEME_LOOKUP } from '~/lib/themes'
 import { escapeHtml } from '~/lib/escape-html'
+import { rateLimit } from '~/lib/rate-limit'
+import { getClientIP } from '~/lib/views'
 import { generateAsciiArt } from '~/lib/ascii-fonts'
 
 interface CommandResponse {
@@ -104,7 +106,7 @@ function executeCommand(args: string[], referer: string): { response: CommandRes
 
     case 'echo':
       if (args.length > 1) {
-        message = args.slice(1).join(' ')
+        message = escapeHtml(args.slice(1).join(' '))
       } else {
         message = '<span class="term-error">echo: no message provided</span>'
       }
@@ -162,7 +164,7 @@ function executeCommand(args: string[], referer: string): { response: CommandRes
     }
 
     case 'pwd':
-      message = referer || '/'
+      message = escapeHtml(referer || '/')
       break
 
     case 'cat': {
@@ -170,6 +172,10 @@ function executeCommand(args: string[], referer: string): { response: CommandRes
         message = '<span class="term-error">cat: filename required</span>'
       } else {
         const slug = args[1]
+        if (!getPostIndex().some(post => post.slug === slug)) {
+          message = '<span class="term-error">cat: No such file</span>'
+          break
+        }
         let filePath = path.join(process.cwd(), 'content', slug + '.md')
         let data: Buffer | null = null
 
@@ -415,9 +421,12 @@ export const Route = createFileRoute('/api/commands')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-    const formData = await request.formData()
-    const rawCmd = formData.get('cmd') as string || ''
-    const referer = formData.get('referer') as string || '/'
+    if (!await rateLimit(`commands:${getClientIP(request)}`, 60, 60)) return new Response('Too many requests', { status: 429 })
+    let formData: FormData
+    try { formData = await request.formData() } catch { return new Response('Invalid form', { status: 400 }) }
+    const rawCmd = formData.get('cmd') || ''
+    const referer = formData.get('referer') || '/'
+    if (typeof rawCmd !== 'string' || typeof referer !== 'string' || rawCmd.length > 2000 || referer.length > 500) return new Response('Invalid command', { status: 400 })
     const command = sanitizeHtml(rawCmd, { allowedTags: [], allowedAttributes: {} })
 
     const pipeSegments = command.split('|').map(s => s.trim()).filter(Boolean)

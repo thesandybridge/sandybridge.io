@@ -57,6 +57,7 @@ export async function getAllDocs(): Promise<Doc[]> {
 }
 
 export async function getDocBySlug(slug: string): Promise<Doc | null> {
+  if (typeof slug !== 'string' || !/^[a-zA-Z0-9_'\-]{1,160}$/.test(slug)) return null;
   try {
     const filePath = path.join(DOCS_DIR, `${slug}.mdx`);
     const fileContent = await fs.readFile(filePath, 'utf-8');

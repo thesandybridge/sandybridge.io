@@ -1,4 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { getClientIP, isBot } from '~/lib/views'
+import { rateLimit } from '~/lib/rate-limit'
 import { getPresence, recordPresence } from '~/lib/presence'
 
 export const Route = createFileRoute('/api/presence')({
@@ -13,14 +15,17 @@ export const Route = createFileRoute('/api/presence')({
         })
       },
       POST: async ({ request }) => {
-        const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '127.0.0.1'
+        const ip = getClientIP(request)
+        if (isBot(request.headers.get('user-agent'))) return Response.json({ ok: true })
+        if (!await rateLimit(`presence:${ip}`, 30, 60)) return new Response('Too many requests', { status: 429 })
         const userAgent = request.headers.get('user-agent') || ''
         let path = '/'
         try {
           const body = await request.json()
-          path = body.path || '/'
+          if (!body || typeof body.path !== 'string' || body.path.length > 300 || !/^\/[a-zA-Z0-9_/'\-]*$/.test(body.path)) return new Response('Invalid path', { status: 400 })
+          path = body.path
         } catch {
-          // ignore parse errors
+          return new Response('Invalid JSON', { status: 400 })
         }
         await recordPresence(ip, userAgent, path)
         return Response.json({ ok: true })

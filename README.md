@@ -48,6 +48,54 @@ bun run build
 bun run start
 ```
 
+## Production operation
+
+The active app is `src/` (TanStack Start). Root-level `app/`, `components/`, and
+`lib/` are legacy code, not production routes. Start with `bun run start`, not
+Vite's development server or the old SvelteKit/Next.js start commands.
+
+- Install using `bun install --frozen-lockfile`. The theme package requires an
+  authorized GitHub Packages read token in `NPM_TOKEN` (see `.npmrc`).
+- Build using `bun run build`. If Vite runs under Node, use Node 20.19+ or 22.12+;
+  `bun --bun run build` runs the tooling under Bun instead.
+- The build snapshots Git history into the server bundle. Make Git history
+  available **during the build** for changelog entries and last-modified dates.
+  If unavailable, the build warns and those fields degrade gracefully. Git and
+  `.git` are not needed at runtime.
+- Keep `content/` alongside the deployed app: markdown is read at runtime.
+  Keep `dist/client`, `dist/server`, `server-entry.ts`, and `scripts/static-files.ts`.
+- Use `NODE_ENV=production`; the Bun server binds Railway's `PORT` on `0.0.0.0`.
+- Redis is optional, but supports persistent views, presence, and shared rate
+  limits. Set `REDIS_URL` to the Redis service's private URL in the same Railway
+  environment. Verify host, port, credentials, TLS scheme, and private DNS from
+  the running service. IPv4/IPv6 lookup is enabled. A timeout alone does not
+  identify which network setting is wrong.
+- Without Redis, analytics return empty data and rate limits use bounded local
+  counters. Those limits are per process and reset on restart; Redis is needed
+  for shared limits across replicas.
+- Client settings use `VITE_*`, not the legacy `NEXT_PUBLIC_*` names. Set these
+  before building. In particular, pair `VITE_TURNSTILE_SITE_KEY` with the runtime
+  `TURNSTILE_SECRET_KEY`, or contact submissions may fail verification.
+- IP-based limits rely on Railway's edge-provided `X-Real-IP`. If adding another
+  proxy or exposing the process directly, review the trusted proxy boundary.
+- Static responses support ETags and HEAD; hashed assets have immutable caching.
+  Cache headers alone do not establish that a shared CDN cache is configured.
+
+Run `bun run test` for production regression checks and `bun run typecheck`
+for TypeScript. A build or dev run generates TanStack's route types.
+
+To investigate traffic, inspect Railway **HTTP logs**, independently of runtime
+logs. Group by path, status, method, source IP, user agent, and transmitted bytes.
+Useful filters include `@httpStatus:400..499`, `@txBytes:>1000000`, and
+`@path:/api/presence`. Compare requests with browser analytics and normal asset
+loading/navigation sequences. Presence generates up to ten requests per minute
+per visible tab; bot labels based on user agents alone are unreliable.
+
+Measure process RSS and heap after cold start, ordinary page loads, OG rendering,
+and the Neovim explorer before changing memory limits. Lazy image-renderer imports
+and bounded caches remove specific retention/work risks; they do not establish
+how much of an observed 410 MB baseline they account for.
+
 ## Project Structure
 
 ```

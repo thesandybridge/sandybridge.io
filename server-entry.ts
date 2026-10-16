@@ -1,3 +1,4 @@
+import { serveStatic } from './scripts/static-files'
 import { join } from 'path'
 import server from './dist/server/server.js'
 
@@ -6,16 +7,11 @@ const clientDir = join(import.meta.dirname, 'dist', 'client')
 
 Bun.serve({
   port,
+  maxRequestBodySize: 16 * 1024,
   hostname: '0.0.0.0',
   async fetch(request) {
-    const url = new URL(request.url)
-
-    // Serve static files from dist/client
-    const filePath = join(clientDir, url.pathname)
-    const file = Bun.file(filePath)
-    if (await file.exists()) {
-      return new Response(file)
-    }
+    const staticResponse = await serveStatic(request, clientDir)
+    if (staticResponse) return staticResponse
 
     // Fall through to TanStack Start handler
     return server.fetch(request)

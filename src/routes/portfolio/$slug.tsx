@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { fetchPost } from '~/lib/server/content-fns'
+import { getAllPosts } from '~/lib/content'
 import { getWorkflowRuns, parseGitHubUrl, type WorkflowRun } from '~/lib/github'
 import { IslandHydrator } from '~/components/mdx/IslandHydrator'
 import { CopyButton, Lightbox } from '~/components/ui'
@@ -14,7 +15,7 @@ import p from '~/components/features/PortfolioGrid.module.css'
 const fetchWorkflows = createServerFn({ method: 'GET' })
   .inputValidator((data: { github?: string }) => data)
   .handler(async ({ data }) => {
-    if (!data.github) return [] as WorkflowRun[]
+    if (!data?.github || !getAllPosts('portfolio').some(post => post.github === data.github)) return [] as WorkflowRun[]
     const parsed = parseGitHubUrl(data.github)
     if (!parsed) return [] as WorkflowRun[]
     return getWorkflowRuns(parsed.owner, parsed.repo)
