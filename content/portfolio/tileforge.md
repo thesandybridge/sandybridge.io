@@ -1,4 +1,5 @@
 ---
+featured: true
 title: "Tileforge"
 date: 2026-02-16
 description: "A full-stack XYZ tile slicer with browser-based WASM processing, server-side Pro tier, PMTiles output, and a public tileset gallery."

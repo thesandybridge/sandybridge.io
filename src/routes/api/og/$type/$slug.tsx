@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { getAllPosts, type ContentDir } from '~/lib/content'
-import { rateLimit } from '~/lib/rate-limit'
-import { getClientIP } from '~/lib/views'
+import { getAllPosts, type ContentDir } from '~/lib/server/content'
+import { rateLimit } from '~/lib/server/rate-limit'
+import { getClientIP } from '~/lib/server/views'
 import fontBase64 from '~/assets/fonts/KodeMono-Regular.woff?inline'
 
 // Embed a supported font into the server bundle, independent of the runtime filesystem.

@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
-import redis from '~/lib/redis'
-import { rateLimit } from '~/lib/rate-limit'
-import { getClientIP } from '~/lib/views'
+import redis from '~/lib/server/redis'
+import { rateLimit } from '~/lib/server/rate-limit'
+import { getClientIP } from '~/lib/server/views'
 
-import { publicViewKeys } from '~/lib/public-content'
+import { publicViewKeys } from '~/lib/server/public-content'
 
 
 export const Route = createFileRoute('/api/views/')({

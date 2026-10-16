@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useIsMobile } from '~/lib/use-mobile';
-import type { Heading } from '~/lib/content';
+import type { Heading } from '~/lib/types/content';
 import s from './TableOfContents.module.css';
 
 interface Props {

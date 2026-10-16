@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-import redis from '~/lib/redis'
-import { recordView } from '~/lib/views'
+import redis from '~/lib/server/redis'
+import { recordView } from '~/lib/server/views'
 
-import { isPublicSlug } from '~/lib/public-content'
+import { isPublicSlug } from '~/lib/server/public-content'
 
 export const Route = createFileRoute('/api/views/$slug')({
   server: {

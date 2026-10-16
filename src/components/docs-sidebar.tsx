@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation } from '@tanstack/react-router';
-import type { Heading } from '~/lib/docs';
+import type { Heading } from '~/lib/types/docs';
 import s from './docs-sidebar.module.css';
 
 interface DocLink {

@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { getAllPosts } from '~/lib/content'
-import { parseGitHubUrl, getRepoStats, type RepoStats } from '~/lib/github'
+import { getAllPosts } from '~/lib/server/content'
+import { parseGitHubUrl, getRepoStats, type RepoStats } from '~/lib/server/github'
 import { PortfolioGrid } from '~/components/features'
 import { TextScramble } from '~/components/home'
 

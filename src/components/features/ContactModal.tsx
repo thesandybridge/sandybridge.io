@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { X } from 'lucide-react';
 import s from './ContactModal.module.css';
@@ -81,22 +81,21 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
     },
   });
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    },
-    [onClose],
-  );
-
+  const dialogRef = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     if (!isOpen) return;
-    document.addEventListener('keydown', handleKeyDown);
+    const previousFocus = document.activeElement;
+    const previousOverflow = document.body.style.overflow;
+    const dialog = dialogRef.current;
+    dialog?.showModal();
+    document.getElementById('contact-name')?.focus();
     document.body.style.overflow = 'hidden';
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
+      dialog?.close();
+      document.body.style.overflow = previousOverflow;
+      if (previousFocus instanceof HTMLElement) previousFocus.focus();
     };
-  }, [isOpen, handleKeyDown]);
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -142,17 +141,17 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className={s.overlay} onClick={onClose}>
+    <dialog ref={dialogRef} className={s.overlay} aria-labelledby="contact-title" onCancel={onClose} onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}>
       <div className={s.modal} onClick={(e) => e.stopPropagation()}>
         <div className={s.header}>
-          <h2>Get in touch</h2>
+          <h2 id="contact-title">Get in touch</h2>
           <button className={s.closeBtn} onClick={onClose} aria-label="Close">
             <X size={18} />
           </button>
         </div>
 
         {status === 'sent' ? (
-          <div className={s.success}>
+          <div className={s.success} role="status">
             <p>Message sent</p>
             <p>I&apos;ll get back to you soon.</p>
           </div>
@@ -241,7 +240,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
             {siteKey && <div ref={turnstileRef} className={s.turnstile} />}
 
-            {apiError && <div className={s.apiError}>{apiError}</div>}
+            {apiError && <div className={s.apiError} role="alert">{apiError}</div>}
 
             <button
               type="submit"
@@ -253,6 +252,6 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
           </form>
         )}
       </div>
-    </div>
+    </dialog>
   );
 }

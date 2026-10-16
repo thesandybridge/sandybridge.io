@@ -1,4 +1,5 @@
 ---
+featured: true
 title: "@dnd-block-tree"
 date: 2025-04-24
 description: "A modular toolkit for hierarchical drag-and-drop interfaces. Split into a framework-agnostic core and a React adapter, published under the @dnd-block-tree org on npm."

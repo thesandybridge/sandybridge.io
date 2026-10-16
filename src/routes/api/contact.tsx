@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Resend } from 'resend'
-import { getClientIP } from '~/lib/views'
+import { getClientIP } from '~/lib/server/views'
 import { escapeHtml } from '~/lib/escape-html'
-import { rateLimit } from '~/lib/rate-limit'
+import { rateLimit } from '~/lib/server/rate-limit'
 
 const VALID_CATEGORIES = ['General', 'Work inquiry', 'Bug report', 'Feedback']
 

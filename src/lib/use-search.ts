@@ -1,9 +1,11 @@
+import { loadSearch } from './search-client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type Fuse from 'fuse.js';
-import type { SearchItem } from '~/lib/search-index';
+import type { SearchItem } from '~/lib/types/search';
 
 export function useSearch() {
   const [searchIndex, setSearchIndex] = useState<SearchItem[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -14,16 +16,13 @@ export function useSearch() {
     if (searchIndex || isLoading) return;
     setIsLoading(true);
     try {
-      const [data, FuseClass] = await Promise.all([
-        fetch('/api/search').then((r) => r.json()),
-        import('fuse.js').then((m) => m.default),
-      ]) as [SearchItem[], typeof Fuse];
+      setError(null);
+      const { data, fuse } = await loadSearch();
       setSearchIndex(data);
-      fuseRef.current = new FuseClass(data, {
-        keys: ['title', 'description', 'tags'],
-        threshold: 0.3,
-      });
+      fuseRef.current = fuse;
       setResults(data);
+    } catch {
+      setError('Search is temporarily unavailable. Close and reopen to retry.');
     } finally {
       setIsLoading(false);
     }
@@ -43,6 +42,7 @@ export function useSearch() {
   }, [query, searchIndex]);
 
   return {
+    error,
     query,
     setQuery,
     results,

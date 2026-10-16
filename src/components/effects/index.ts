@@ -1,4 +1,3 @@
-export { Background } from './Background';
 export { BackgroundLazy } from './BackgroundLazy';
 export { CursorGlow } from './CursorGlow';
 export { CursorTrail } from './CursorTrail';
@@ -9,5 +8,4 @@ export { SoundEffects } from './SoundEffects';
 export { TriangleBurst } from './TriangleBurst';
 export { TiltCard } from './TiltCard';
 export { GrainOverlay } from './GrainOverlay';
-export { SkillEffectsOverlay } from './SkillEffects';
 export { SkillEffectsLazy } from './SkillEffectsLazy';

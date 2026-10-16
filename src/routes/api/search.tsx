@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { generateSearchIndex } from '~/lib/search-index'
+import { generateSearchIndex } from '~/lib/server/search-index'
 
 export const Route = createFileRoute('/api/search')({
   server: {

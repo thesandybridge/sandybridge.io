@@ -31,3 +31,6 @@
         padding: 0.5rem;
     }
 }
+
+.projectLinks { flex-wrap: wrap; }
+.projectLinks a { gap: .5rem; min-height: 44px; padding: .5rem .75rem; font-size: .85rem; }

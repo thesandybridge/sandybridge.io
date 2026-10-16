@@ -3,7 +3,7 @@ import { createServerFn } from '@tanstack/react-start'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
-import { renderMarkdown } from '~/lib/content'
+import { renderMarkdown } from '~/lib/server/content'
 
 const fetchNowContent = createServerFn({ method: 'GET' }).handler(async () => {
   const filePath = path.join(process.cwd(), 'content/pages/now.md')

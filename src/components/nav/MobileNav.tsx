@@ -1,7 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Link, useLocation } from '@tanstack/react-router';
 import { Menu, X, Home, Briefcase, BookOpen, Wrench, Palette, Check, Sun, Moon, Search, Lightbulb } from 'lucide-react';
 import { useTheme, THEMES } from '../theme/ThemeProvider';
+import { openContact } from '~/lib/contact';
 import { haptic } from '~/lib/haptics';
 import s from './MobileNav.module.css';
 
@@ -55,13 +56,20 @@ export function MobileNav() {
     window.dispatchEvent(new CustomEvent('open-mobile-search'));
   }, []);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const close = (event: KeyboardEvent) => { if (event.key === 'Escape') setIsOpen(false); };
+    window.addEventListener('keydown', close);
+    return () => window.removeEventListener('keydown', close);
+  }, [isOpen]);
+
   return (
     <div className={s.mobileNav}>
       {/* Backdrop */}
       {isOpen && <div className={s.backdrop} onClick={toggleMenu} />}
 
       {/* Speed dial items */}
-      <div className={`${s.items}${isOpen ? ` ${s.itemsOpen}` : ''}`}>
+      <div id="mobile-navigation" inert={!isOpen} className={`${s.items}${isOpen ? ` ${s.itemsOpen}` : ''}`}>
         {showThemes ? (
           // Theme selection
           <>
@@ -104,6 +112,7 @@ export function MobileNav() {
                 </Link>
               );
             })}
+            <button className={s.pill} onClick={() => { handleNavClick(); document.getElementById('mobile-menu-toggle')?.focus(); openContact(); }}>Contact</button>
             <button
               className={s.pill}
               style={{ transitionDelay: `${navItems.length * 30}ms` }}
@@ -137,6 +146,8 @@ export function MobileNav() {
         className={`${s.fab}${isOpen ? ` ${s.fabOpen}` : ''}`}
         onClick={toggleMenu}
         aria-label={isOpen ? 'Close menu' : 'Open menu'}
+        id="mobile-menu-toggle"
+        aria-controls="mobile-navigation"
         aria-expanded={isOpen}
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}

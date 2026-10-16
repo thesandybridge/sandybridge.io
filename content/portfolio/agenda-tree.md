@@ -1,4 +1,5 @@
 ---
+featured: true
 title: "Agenda Tree"
 date: 2025-06-15
 description: "A real-time collaborative agenda editor with drag-and-drop reordering, built for Leadr's meeting platform."

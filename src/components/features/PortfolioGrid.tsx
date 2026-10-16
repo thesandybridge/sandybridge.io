@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { CoronaReveal, TiltCard } from '~/components/effects';
 import { BLUR_DATA_URL } from '~/lib/blur-placeholder';
-import type { PostMeta } from '~/lib/content';
-import type { RepoStats } from '~/lib/github';
+import type { PostMeta } from '~/lib/types/content';
+import type { RepoStats } from '~/lib/types/github';
 import s from './PortfolioGrid.module.css';
 
 const CATEGORIES = [
@@ -123,13 +123,13 @@ export function PortfolioGrid({ items, statsMap }: PortfolioGridProps) {
     });
   }
 
-  // Dynamic featured: top 4 most recently pushed, manual pin override takes priority
+  // Explicit selections stay stable; activity is a fallback when none are selected.
   const featured = (() => {
     const pinned = itemsWithCategory.filter((item) => item.featured);
     const rest = sortByActivity(
       itemsWithCategory.filter((item) => !item.featured && statsMap[item.slug]),
     );
-    return [...pinned, ...rest].slice(0, 4);
+    return pinned.length ? pinned : rest.slice(0, 4);
   })();
 
   const featuredSlugs = new Set(featured.map((item) => item.slug));
@@ -137,16 +137,16 @@ export function PortfolioGrid({ items, statsMap }: PortfolioGridProps) {
     itemsWithCategory.filter((item) => !featuredSlugs.has(item.slug)),
   );
 
-  // Category counts for filter pills (based on non-featured items)
+  // Category filters include selected projects as well as the rest of the collection.
   const categoryCounts: Record<string, number> = {};
-  for (const item of nonFeatured) {
+  for (const item of itemsWithCategory) {
     const cat = item.category || 'other';
     categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
   }
 
   const filtered = activeCategory === 'all'
     ? nonFeatured
-    : nonFeatured.filter((item) => item.category === activeCategory);
+    : itemsWithCategory.filter((item) => item.category === activeCategory);
 
   function getCatColor(item: PostMeta & { category?: string }): string {
     return CATEGORY_COLORS[item.category || 'other'] || CATEGORY_COLORS.other;
@@ -154,9 +154,29 @@ export function PortfolioGrid({ items, statsMap }: PortfolioGridProps) {
 
   return (
     <>
-      {featured.length > 0 && (
+      <div className={s.portfolioFilters}>
+        {CATEGORIES.map((cat) => {
+          const count = cat.id === 'all'
+            ? itemsWithCategory.length
+            : (categoryCounts[cat.id] || 0);
+          if (count === 0 && cat.id !== 'all') return null;
+          return (
+            <button
+              key={cat.id}
+              className={`${s.portfolioFilterPill}${activeCategory === cat.id ? ` ${s.active}` : ''}`}
+              aria-pressed={activeCategory === cat.id}
+              onClick={() => setActiveCategory(cat.id)}
+            >
+              {cat.label}
+              <span className={s.portfolioFilterCount}>{count}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {activeCategory === 'all' && featured.length > 0 && (
         <section className={s.portfolioFeatured}>
-          <h2>Recently Active</h2>
+          <h2>Selected work</h2>
           <div className={s.portfolioFeaturedGrid}>
             {[0, 1].map((col) => (
               <div key={col} className={s.portfolioColumn}>
@@ -204,25 +224,6 @@ export function PortfolioGrid({ items, statsMap }: PortfolioGridProps) {
           </div>
         </section>
       )}
-
-      <div className={s.portfolioFilters}>
-        {CATEGORIES.map((cat) => {
-          const count = cat.id === 'all'
-            ? nonFeatured.length
-            : (categoryCounts[cat.id] || 0);
-          if (count === 0 && cat.id !== 'all') return null;
-          return (
-            <button
-              key={cat.id}
-              className={`${s.portfolioFilterPill}${activeCategory === cat.id ? ` ${s.active}` : ''}`}
-              onClick={() => setActiveCategory(cat.id)}
-            >
-              {cat.label}
-              <span className={s.portfolioFilterCount}>{count}</span>
-            </button>
-          );
-        })}
-      </div>
 
       <CoronaReveal className={s.portfolioMasonry}>
         {[0, 1].map((col) => (

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from '@tanstack/react-router';
 import { Github, Linkedin, Twitter, Rss, Mail, FileText, Briefcase } from 'lucide-react';
 import { PresenceIndicator } from './PresenceIndicator';
@@ -11,6 +11,13 @@ interface FooterProps {
 
 export function Footer({ year }: FooterProps) {
   const [contactOpen, setContactOpen] = useState(false);
+
+  const closeContact = useCallback(() => setContactOpen(false), []);
+  useEffect(() => {
+    const open = () => setContactOpen(true);
+    window.addEventListener('open-contact', open);
+    return () => window.removeEventListener('open-contact', open);
+  }, []);
 
   return (
     <footer>
@@ -70,7 +77,7 @@ export function Footer({ year }: FooterProps) {
         </span>
       </div>
 
-      <ContactModal isOpen={contactOpen} onClose={() => setContactOpen(false)} />
+      <ContactModal isOpen={contactOpen} onClose={closeContact} />
     </footer>
   );
 }

@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import type { PostMeta } from '~/lib/content';
+import type { PostMeta } from '~/lib/types/content';
 import s from './SeriesNav.module.css';
 
 interface SeriesNavProps {

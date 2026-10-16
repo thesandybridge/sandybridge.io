@@ -206,3 +206,10 @@
         animation: none;
     }
 }
+
+.overlay { width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 1rem; border: 0; color: var(--primary-fg); }
+.overlay:not([open]) { display: none; }
+.overlay::backdrop { background: rgba(0, 0, 0, .5); }
+.modal { box-sizing: border-box; max-height: calc(100dvh - 2rem); overflow-y: auto; }
+.closeBtn { min-width: 44px; min-height: 44px; }
+@media (max-width: 600px) { .modal { margin: 0; padding: 1.25rem; } }

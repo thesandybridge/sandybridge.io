@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { codeToHtml } from 'shiki'
-import { rateLimit } from '~/lib/rate-limit'
-import { getClientIP } from '~/lib/views'
+import { rateLimit } from '~/lib/server/rate-limit'
+import { getClientIP } from '~/lib/server/views'
 import { shikiConfig } from '~/lib/shiki-config'
 
 const GITHUB_OWNER = 'thesandybridge'

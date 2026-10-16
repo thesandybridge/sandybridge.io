@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { getAllDocs } from '~/lib/docs'
+import { getAllDocs } from '~/lib/server/docs'
 import s from '~/styles/docs.module.css'
 
 const fetchDocs = createServerFn({ method: 'GET' }).handler(async () => {

@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { getDocBySlug } from '~/lib/docs'
+import { getDocBySlug } from '~/lib/server/docs'
 import { IslandHydrator } from '~/components/mdx/IslandHydrator'
 import { CopyButton } from '~/components/ui'
 import s from '~/styles/docs.module.css'

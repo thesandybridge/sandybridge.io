@@ -1,8 +1,9 @@
-import { getContributions, type ContributionDay } from '~/lib/github';
+import type { ContributionDay } from '~/lib/types/github';
 import s from './GitHubContributions.module.css';
 
 interface GitHubContributionsProps {
   username: string;
+  contributions: ContributionDay[];
 }
 
 const levelColors = [
@@ -19,7 +20,7 @@ function groupByWeek(days: ContributionDay[]): ContributionDay[][] {
 
   for (const day of days) {
     const date = new Date(day.date);
-    if (date.getDay() === 0 && currentWeek.length > 0) {
+    if (date.getUTCDay() === 0 && currentWeek.length > 0) {
       weeks.push(currentWeek);
       currentWeek = [];
     }
@@ -33,8 +34,7 @@ function groupByWeek(days: ContributionDay[]): ContributionDay[][] {
   return weeks;
 }
 
-export async function GitHubContributions({ username }: GitHubContributionsProps) {
-  const contributions = await getContributions(username);
+export function GitHubContributions({ username, contributions }: GitHubContributionsProps) {
 
   if (contributions.length === 0) {
     return null;

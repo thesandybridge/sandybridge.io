@@ -1,4 +1,4 @@
-import { type WorkflowRun } from '~/lib/github';
+import { type WorkflowRun } from '~/lib/types/github';
 import { CheckCircle, XCircle, Clock, Loader } from 'lucide-react';
 import s from './StatusBadges.module.css';
 

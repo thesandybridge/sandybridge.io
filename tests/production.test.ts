@@ -3,11 +3,11 @@ import { mkdtempSync, rmSync, writeFileSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { serveStatic } from '../scripts/static-files';
-import { getAllPosts, getPost } from '../src/lib/content';
-import { getDocBySlug } from '../src/lib/docs';
-import { getChangelog } from '../src/lib/changelog';
-import { createRedisClient } from '../src/lib/redis';
-import { rateLimit } from '../src/lib/rate-limit';
+import { getAllPosts, getPost } from '../src/lib/server/content';
+import { getDocBySlug } from '../src/lib/server/docs';
+import { getChangelog } from '../src/lib/server/changelog';
+import { createRedisClient } from '../src/lib/server/redis';
+import { rateLimit } from '../src/lib/server/rate-limit';
 
 const root = mkdtempSync(join(tmpdir(), 'portfolio-static-'));
 writeFileSync(join(root, 'test.txt'), 'hello');
@@ -91,7 +91,7 @@ test('arbitrary slugs cannot create analytics keys', async () => {
 });
 
 test('Railway client address takes precedence over spoofed forwarding chains', async () => {
-  const { getClientIP } = await import('../src/lib/views');
+  const { getClientIP } = await import('../src/lib/server/views');
   const request = new Request('http://localhost', { headers: { 'X-Real-IP': '192.0.2.1', 'X-Forwarded-For': 'spoofed' } });
   expect(getClientIP(request)).toBe('192.0.2.1');
   expect(getClientIP(new Request('http://localhost', { headers: { 'X-Forwarded-For': '192.0.2.2' } }))).toBe('127.0.0.1');

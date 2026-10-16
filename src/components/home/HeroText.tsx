@@ -37,9 +37,9 @@ export function HeroText() {
   }, []);
 
   return (
-    <h1 ref={ref} className={s.heroText}>
+    <h1 ref={ref} className={s.heroText} aria-label={TEXT}>
       {TEXT.split('').map((char, i) => (
-        <span key={i} className={s.heroChar}>
+        <span key={i} className={s.heroChar} aria-hidden="true">
           {char === ' ' ? '\u00A0' : char}
         </span>
       ))}

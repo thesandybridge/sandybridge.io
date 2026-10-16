@@ -1,8 +1,8 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { fetchPost } from '~/lib/server/content-fns'
-import { getAllPosts } from '~/lib/content'
-import { getWorkflowRuns, parseGitHubUrl, type WorkflowRun } from '~/lib/github'
+import { getAllPosts } from '~/lib/server/content'
+import { getWorkflowRuns, parseGitHubUrl, type WorkflowRun } from '~/lib/server/github'
 import { IslandHydrator } from '~/components/mdx/IslandHydrator'
 import { CopyButton, Lightbox } from '~/components/ui'
 import { HeadingAnchors, Share } from '~/components/blog'
@@ -54,6 +54,8 @@ function PortfolioItem() {
     <>
       <Link to="/portfolio" className={pm.backLink}>&larr; Back to Portfolio</Link>
       <article>
+        <h1>{post.title}</h1>
+        <p>{post.description}</p>
         <ProjectLinks github={post.github} url={post.url} blog={post.blog} npm={post.npm} />
         <StatusBadges runs={workflowRuns} />
         {post.image && (
@@ -75,7 +77,7 @@ function PortfolioItem() {
           </div>
         )}
         <Share title={post.title} />
-        <IslandHydrator html={post.content} />
+        <IslandHydrator html={post.content.replace(/^\s*<h1\b[^>]*>[\s\S]*?<\/h1>\s*/i, '')} />
       </article>
       <CopyButton />
       <HeadingAnchors />

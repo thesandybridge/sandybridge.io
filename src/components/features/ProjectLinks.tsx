@@ -16,22 +16,22 @@ export function ProjectLinks({ github, url, blog, npm }: ProjectLinksProps) {
     <div className={s.projectLinks}>
       {github && (
         <a href={github} target="_blank" rel="noopener noreferrer" aria-label="GitHub repository">
-          <Github size={20} className={s.projectIcon} />
+          <Github size={20} className={s.projectIcon} /><span>Source</span>
         </a>
       )}
       {url && (
         <a href={url} target="_blank" rel="noopener noreferrer" aria-label="Live site">
-          <ExternalLink size={20} className={s.projectIcon} />
+          <ExternalLink size={20} className={s.projectIcon} /><span>View live</span>
         </a>
       )}
       {npm && (
         <a href={npm} target="_blank" rel="noopener noreferrer" aria-label="npm package">
-          <Package size={20} className={s.projectIcon} />
+          <Package size={20} className={s.projectIcon} /><span>Package</span>
         </a>
       )}
       {blog && (
         <Link to={blog} aria-label="Blog post">
-          <FileText size={20} className={s.projectIcon} />
+          <FileText size={20} className={s.projectIcon} /><span>Read the story</span>
         </Link>
       )}
     </div>

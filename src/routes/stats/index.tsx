@@ -1,57 +1,20 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import fs from 'fs'
-import path from 'path'
-import { getAllPosts, getAllTags } from '~/lib/content'
+import metadata from '~/generated/build-metadata.json'
+import { getContributions } from '~/lib/server/github'
+import { getAllPosts, getAllTags } from '~/lib/server/content'
 import { CoronaReveal } from '~/components/effects'
 import { GitHubContributions } from '~/components/features'
 import { TextScramble } from '~/components/home'
 import tagStyles from '~/components/blog/tags.module.css'
 import sc from '~/components/analytics/SummaryCards.module.css'
 
-function countLines(dir: string, extensions: string[]): number {
-  let total = 0
-  function walk(d: string) {
-    if (!fs.existsSync(d)) return
-    for (const entry of fs.readdirSync(d, { withFileTypes: true })) {
-      const full = path.join(d, entry.name)
-      if (entry.isDirectory()) {
-        if (['node_modules', '.next', '.git', '.output'].includes(entry.name)) continue
-        walk(full)
-      } else if (extensions.some(ext => entry.name.endsWith(ext))) {
-        const content = fs.readFileSync(full, 'utf-8')
-        total += content.split('\n').length
-      }
-    }
-  }
-  walk(dir)
-  return total
-}
-
-function countWords(dir: string): number {
-  let total = 0
-  function walk(d: string) {
-    if (!fs.existsSync(d)) return
-    for (const entry of fs.readdirSync(d, { withFileTypes: true })) {
-      const full = path.join(d, entry.name)
-      if (entry.isDirectory()) {
-        walk(full)
-      } else if (entry.name.endsWith('.md')) {
-        const content = fs.readFileSync(full, 'utf-8')
-        total += content.split(/\s+/).filter(Boolean).length
-      }
-    }
-  }
-  walk(dir)
-  return total
-}
-
 const fetchStats = createServerFn({ method: 'GET' }).handler(async () => {
   const blogPosts = getAllPosts('blog')
   const portfolioItems = getAllPosts('portfolio')
   const tags = getAllTags()
-  const totalWords = countWords(path.join(process.cwd(), 'content'))
-  const codeLines = countLines(process.cwd(), ['.ts', '.tsx', '.css'])
+  const { totalWords, codeLines, buildDate } = metadata.site
+  const contributions = await getContributions('thesandybridge')
 
   const tagCounts: Record<string, number> = {}
   for (const post of blogPosts) {
@@ -76,7 +39,8 @@ const fetchStats = createServerFn({ method: 'GET' }).handler(async () => {
     sortedTags,
     newest: newest ? { date: newest.date } : null,
     oldest: oldest ? { date: oldest.date } : null,
-    buildDate: new Date().toISOString().split('T')[0],
+    buildDate,
+    contributions,
   }
 })
 
@@ -92,7 +56,7 @@ export const Route = createFileRoute('/stats/')({
 })
 
 function StatsPage() {
-  const { statCards, sortedTags, newest, oldest, buildDate } = Route.useLoaderData()
+  const { statCards, sortedTags, newest, oldest, buildDate, contributions } = Route.useLoaderData()
 
   return (
     <>
@@ -118,7 +82,7 @@ function StatsPage() {
       </div>
 
       <h2>GitHub Activity</h2>
-      <GitHubContributions username="thesandybridge" />
+      <GitHubContributions username="thesandybridge" contributions={contributions} />
 
       {newest && oldest && (
         <>

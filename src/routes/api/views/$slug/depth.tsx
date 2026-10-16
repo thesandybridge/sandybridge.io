@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-import redis from '~/lib/redis'
-import { getClientIP, isBot } from '~/lib/views'
-import { isPublicSlug } from '~/lib/public-content'
-import { rateLimit } from '~/lib/rate-limit'
+import redis from '~/lib/server/redis'
+import { getClientIP, isBot } from '~/lib/server/views'
+import { isPublicSlug } from '~/lib/server/public-content'
+import { rateLimit } from '~/lib/server/rate-limit'
 
 export const Route = createFileRoute('/api/views/$slug/depth')({
   server: { handlers: { POST: async ({ request, params }) => {

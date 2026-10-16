@@ -1,7 +1,7 @@
 ---
 title: "sandybridge.io"
 date: 2026-02-17
-description: "A personal site and blog built with Next.js App Router, React Three Fiber, and shiki, deployed on Railway."
+description: "A personal site and blog built with TanStack Start, React Three Fiber, and shiki, deployed on Railway."
 tags: ["nextjs", "typescript", "react", "threejs"]
 image: "sandybridge-io.png"
 github: "https://github.com/thesandybridge/sandybridge.io"

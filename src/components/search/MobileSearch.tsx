@@ -8,7 +8,7 @@ import s from './MobileSearch.module.css';
 
 export function MobileSearch() {
   const [isOpen, setIsOpen] = useState(false);
-  const { query, setQuery, results, loadIndex, isLoading } = useSearch();
+  const { query, setQuery, results, loadIndex, isLoading, error } = useSearch();
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -79,7 +79,7 @@ export function MobileSearch() {
       </div>
 
       <div className={s.results}>
-        {isLoading ? (
+        {error ? (<div className={s.empty} role="status">{error}</div>) : isLoading ? (
           <div className={s.loading}>Loading...</div>
         ) : results.length === 0 && query.trim() ? (
           <div className={s.empty}>No results found</div>

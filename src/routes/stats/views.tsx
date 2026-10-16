@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { getAllPosts } from '~/lib/content'
+import { getAllPosts } from '~/lib/server/content'
 import { ViewsDashboard } from '~/components/analytics/ViewsDashboard'
 
 const fetchPostsForViews = createServerFn({ method: 'GET' }).handler(async () => {

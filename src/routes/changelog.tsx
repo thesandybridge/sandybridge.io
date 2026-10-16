@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { getChangelog, groupChangelogByDate } from '~/lib/changelog'
+import { getChangelog, groupChangelogByDate } from '~/lib/server/changelog'
 import s from '~/styles/changelog.module.css'
 
 const fetchChangelog = createServerFn({ method: 'GET' }).handler(async () => {

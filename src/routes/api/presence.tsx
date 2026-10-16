@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { getClientIP, isBot } from '~/lib/views'
-import { rateLimit } from '~/lib/rate-limit'
-import { getPresence, recordPresence } from '~/lib/presence'
+import { getClientIP, isBot } from '~/lib/server/views'
+import { rateLimit } from '~/lib/server/rate-limit'
+import { getPresence, recordPresence } from '~/lib/server/presence'
 
 export const Route = createFileRoute('/api/presence')({
   server: {

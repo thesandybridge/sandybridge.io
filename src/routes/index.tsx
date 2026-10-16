@@ -1,10 +1,12 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { getAllPosts } from '~/lib/content'
+import { getAllPosts } from '~/lib/server/content'
 import { CoronaReveal, TiltCard } from '~/components/effects'
 import { BLUR_DATA_URL } from '~/lib/blur-placeholder'
-import { BootSequence, HeroText, InteractiveAscii, Typewriter, TechStack, AsciiInfo } from '~/components/home'
+import { BootSequence, HeroText, InteractiveAscii, TechStack, AsciiInfo } from '~/components/home'
 import { StatusIndicator } from '~/components/ui'
+import s from '~/styles/home.module.css'
+import { openContact } from '~/lib/contact'
 import p from '~/components/features/PortfolioGrid.module.css'
 
 const fetchHomepage = createServerFn({ method: 'GET' }).handler(async () => {
@@ -14,7 +16,7 @@ const fetchHomepage = createServerFn({ method: 'GET' }).handler(async () => {
     postCount: posts.length,
     projectCount: portfolioItems.length,
     recentPosts: posts.slice(0, 3),
-    recentPortfolio: portfolioItems.slice(0, 3),
+    recentPortfolio: [...portfolioItems.filter(item => item.featured), ...portfolioItems.filter(item => !item.featured)].slice(0, 3),
   }
 })
 
@@ -33,37 +35,15 @@ function Home() {
       <AsciiInfo />
       <StatusIndicator />
       <HeroText />
-      <Typewriter lines={[
-        "I'm a software engineer focused on frontend development and expanding into systems work. I started building WordPress sites, then moved into modern web applications with React and TypeScript. These days I'm learning Rust and working on CLI tools, debugging infrastructure, and understanding the systems that power the web. I deliver working software that solves actual problems.",
-        "Currently working for a SaaS startup, where I've become the goto for frontend architecture and increasingly for backend and infrastructure work. I've optimized CI/CD pipelines, debugged production microservices, and built tooling that actually saves time and money. I am self taught with no degree, just consistent focus on understanding how things work and making them work better.",
-      ]} />
-
-      <CoronaReveal>
-        <TechStack />
-      </CoronaReveal>
-
-      {recentPosts.length > 0 && (
-        <CoronaReveal>
-          <h2>Recent Posts</h2>
-          <nav>
-            <ul>
-              {recentPosts.map((post, i) => (
-                <CoronaReveal as="li" key={post.slug} delay={i * 100}>
-                  <Link to="/blog/$slug" params={{ slug: post.slug }}>
-                    <h3>{post.title}</h3>
-                    {post.date && <time dateTime={post.date}>{post.date}</time>}
-                  </Link>
-                </CoronaReveal>
-              ))}
-            </ul>
-          </nav>
-          <p style={{ marginTop: '1rem' }}><Link to="/blog">View all posts</Link></p>
-        </CoronaReveal>
-      )}
+      <p className={s.intro}>I'm a software engineer building web applications, developer tools, and a deeper understanding of the systems behind them.</p>
+      <div className={s.actions}>
+        <Link to="/portfolio" className={s.primary}>View my work <span aria-hidden="true">→</span></Link>
+        <button onClick={openContact}>Get in touch</button>
+      </div>
 
       {recentPortfolio.length > 0 && (
         <CoronaReveal>
-          <h2>Projects</h2>
+          <h2>Selected work</h2>
           <div className={p.portfolioGrid}>
             {recentPortfolio.map((item) => (
               <TiltCard key={item.slug}>
@@ -88,6 +68,31 @@ function Home() {
           <p style={{ marginTop: '1rem' }}><Link to="/portfolio">View all projects</Link></p>
         </CoronaReveal>
       )}
+      <section className={s.about}>
+        <h2>A little about me</h2>
+        <p>I'm self-taught, starting with WordPress and moving into React and TypeScript. At a SaaS startup, I work on frontend architecture, backend services, and infrastructure. Outside of work, I'm learning Rust and building CLI tools.</p>
+        <TechStack />
+      </section>
+
+      {recentPosts.length > 0 && (
+        <CoronaReveal>
+          <h2>Recent Posts</h2>
+          <nav>
+            <ul>
+              {recentPosts.map((post, i) => (
+                <CoronaReveal as="li" key={post.slug} delay={i * 100}>
+                  <Link to="/blog/$slug" params={{ slug: post.slug }}>
+                    <h3>{post.title}</h3>
+                    {post.date && <time dateTime={post.date}>{post.date}</time>}
+                  </Link>
+                </CoronaReveal>
+              ))}
+            </ul>
+          </nav>
+          <p style={{ marginTop: '1rem' }}><Link to="/blog">View all posts</Link></p>
+        </CoronaReveal>
+      )}
+
     </>
   )
 }

@@ -44,4 +44,4 @@ CLAUDE.md
 .claude/
 
 # Build-time Git history
-/src/generated/git-metadata.json
+/src/generated/build-metadata.json

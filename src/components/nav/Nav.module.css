@@ -45,3 +45,5 @@
         display: none;
     }
 }
+
+.contact { background: none; border: 1px solid var(--secondary-fg); color: var(--secondary-fg); font: inherit; cursor: pointer; border-radius: 4px; padding: .4rem .75rem; min-height: 44px; }

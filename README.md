@@ -50,15 +50,14 @@ bun run start
 
 ## Production operation
 
-The active app is `src/` (TanStack Start). Root-level `app/`, `components/`, and
-`lib/` are legacy code, not production routes. Start with `bun run start`, not
-Vite's development server or the old SvelteKit/Next.js start commands.
+The app lives in `src/` (TanStack Start). The old Next.js application has been
+removed. Start production with `bun run start`, not Vite's development server.
 
 - Install using `bun install --frozen-lockfile`. The theme package requires an
   authorized GitHub Packages read token in `NPM_TOKEN` (see `.npmrc`).
 - Build using `bun run build`. If Vite runs under Node, use Node 20.19+ or 22.12+;
   `bun --bun run build` runs the tooling under Bun instead.
-- The build snapshots Git history into the server bundle. Make Git history
+- The build snapshots Git history and site statistics into the server bundle. Make Git history
   available **during the build** for changelog entries and last-modified dates.
   If unavailable, the build warns and those fields degrade gracefully. Git and
   `.git` are not needed at runtime.
@@ -120,19 +119,52 @@ src/
     ui/                 # Shared UI (copy button, lightbox, skeleton)
     analytics/          # Stats dashboard (heatmap, flamegraph, charts)
   lib/
-    content.ts          # Markdown pipeline (gray-matter + unified + shiki)
+    server/             # Filesystem, Redis, GitHub, content rendering, server functions
+    types/              # Browser-safe data contracts; no runtime service imports
+    search-client.ts    # Shared on-demand search index and Fuse instance
     themes.ts           # Theme definitions from @thesandybridge/themes
-    views.ts            # Redis-backed view tracking
-    redis.ts            # Redis client (optional, degrades gracefully)
-    github.ts           # GitHub API (contributions, workflow runs)
+    use-desktop-effects.ts # Gate WebGL loading by device and motion preference
+  generated/            # Build metadata, generated before dev/build/test/typecheck
   styles/
     globals.css         # Theme variables, Shiki tokens, base styles
 content/
   *.md                  # Blog posts (YAML frontmatter)
   portfolio/*.md        # Portfolio items
   til/*.md              # TIL entries
+scripts/build-metadata.ts # Build-time Git history and source/content statistics
 server-entry.ts         # Bun HTTP server wrapping TanStack Start fetch handler
 ```
+
+## Architecture and performance
+
+Routes own loaders and HTTP handlers. Server implementations live in
+`src/lib/server`; components receive serializable data rather than calling
+filesystem, credentialed API, or Redis modules. Shared types live in
+`src/lib/types`. Regression tests guard against server imports in components.
+
+Rendered posts are cached by file revision (mtime, ctime, and size), with a
+64-entry limit and five-minute expiry. Concurrent reads share the same render.
+Page loaders omit raw markdown after deriving headings, avoiding duplicate
+content in the serialized page response. GitHub data uses bounded five-minute
+caches and five-second request timeouts. An upstream failure currently returns
+empty data for that cache interval; it does not block the page indefinitely.
+
+Site word/line counts and the build date are generated once at build time.
+The stats route does not recursively scan the deployed filesystem. Contributions
+are loaded by its server function and rendered by a synchronous React component.
+
+WebGL effects remain lazy chunks and are not rendered during SSR. Their wrappers
+load them only on desktop with a fine pointer and no reduced-motion preference.
+This reduced the measured uncompressed main entry from 1,405,688 to 452,027 bytes
+in the cleanup build. Desktop still downloads the separate 3D chunks; this is an
+initial-bundle improvement, not a claim that all transferred bytes disappeared.
+Desktop and mobile search share one index request and Fuse instance per page.
+
+Further work should be driven by production/browser measurements: desktop GPU
+cost (two full-screen canvases), cold portfolio GitHub latency, cache hit rates,
+and static-transfer compression. Consider build-time markdown rendering if cold
+rendering remains significant; avoid adding infrastructure without that evidence.
+Runtime logs alone still cannot explain traffic or egress totals.
 
 ## License
 

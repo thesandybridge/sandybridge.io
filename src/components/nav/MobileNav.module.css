@@ -139,3 +139,6 @@
 :global([data-mode="light"]) .fab {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
+
+.items { max-height: calc(100dvh - 120px); overflow-y: auto; padding: 4px; }
+.pill { min-height: 44px; flex-shrink: 0; }

@@ -1,0 +1,7 @@
+.intro { max-width: 65ch; font-size: 1.1rem; line-height: 1.7; }
+.actions { display: flex; flex-wrap: wrap; gap: .75rem; margin: 1.5rem 0 3rem; }
+.actions a, .actions button { display: inline-flex; align-items: center; justify-content: center; gap: 1rem; min-height: 44px; padding: .65rem 1rem; border: 1px solid var(--secondary-fg); border-radius: 4px; font: inherit; color: var(--secondary-fg); background: var(--primary-bg); cursor: pointer; text-decoration: none; }
+.actions .primary { background: var(--secondary-fg); color: var(--primary-bg); }
+.actions a:hover, .actions button:hover { outline: 1px solid var(--secondary-fg); outline-offset: 3px; }
+.about { margin: 3rem 0; }
+@media (max-width: 600px) { .intro { font-size: 1rem; } .actions { margin-bottom: 2rem; } }

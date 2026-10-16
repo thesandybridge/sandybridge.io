@@ -9,7 +9,7 @@ import {
   getAllTags,
   extractHeadings,
   type ContentDir,
-} from '~/lib/content'
+} from '~/lib/server/content'
 
 export const fetchAllPosts = createServerFn({ method: 'GET' })
   .inputValidator((data: { dir: ContentDir; limit?: number }) => {
@@ -32,7 +32,8 @@ export const fetchPost = createServerFn({ method: 'GET' })
     const headings = extractHeadings(post.rawContent)
     const related = data.dir === 'blog' ? getRelatedPosts(data.slug, post.tags) : []
     const series = post.series ? getSeriesPosts(post.series) : []
-    return { post, adjacent, headings, related, series }
+    const { rawContent: _rawContent, ...publicPost } = post
+    return { post: publicPost, adjacent, headings, related, series }
   })
 
 export const fetchPostsByTag = createServerFn({ method: 'GET' })

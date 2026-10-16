@@ -1,7 +1,8 @@
+import { loadSearch } from '~/lib/search-client';
 import { useEffect, useRef, useState, useCallback, type FormEvent, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent } from 'react';
 import { useLocation, useRouter } from '@tanstack/react-router';
 import type Fuse from 'fuse.js';
-import type { SearchItem } from '~/lib/search-index';
+import type { SearchItem } from '~/lib/types/search';
 import { PaletteTitlebar } from './PaletteTitlebar';
 import { useTheme, type ParticleDensity } from '../theme/ThemeProvider';
 import { useIsMobile } from '~/lib/use-mobile';
@@ -37,6 +38,7 @@ export function CommandPalette() {
   const [isMaximized, setIsMaximized] = useState(false);
 
   // Search state
+  const [searchError, setSearchError] = useState<string | null>(null);
   const [searchIndex, setSearchIndex] = useState<SearchItem[] | null>(null);
   const [searchResults, setSearchResults] = useState<SearchItem[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -58,16 +60,16 @@ export function CommandPalette() {
   // Load search index + Fuse.js on first open
   useEffect(() => {
     if (!isVisible || searchIndex) return;
-    Promise.all([
-      fetch('/api/search').then((r) => r.json()),
-      import('fuse.js').then((m) => m.default),
-    ]).then(([data, FuseClass]: [SearchItem[], typeof Fuse]) => {
+    let cancelled = false;
+    setSearchError(null);
+    loadSearch().then(({ data, fuse }) => {
+      if (cancelled) return;
       setSearchIndex(data);
-      fuseRef.current = new FuseClass(data, {
-        keys: ['title', 'description', 'tags'],
-        threshold: 0.3,
-      });
+      fuseRef.current = fuse;
+    }).catch(() => {
+      if (!cancelled) setSearchError('Search is temporarily unavailable. Close and reopen to retry.');
     });
+    return () => { cancelled = true; };
   }, [isVisible, searchIndex]);
 
   // Load terminal history from localStorage on mount
@@ -721,6 +723,7 @@ export function CommandPalette() {
                   />
                 </form>
                 <div className={s.searchResults}>
+                  {searchError && <div className={s.searchEmpty} role="status">{searchError}</div>}
                   {searchResults.slice(0, 10).map((item, i) => (
                     <button
                       key={`${item.type}-${item.slug}`}

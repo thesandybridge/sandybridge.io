@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { getAllPosts, getAllTags } from '~/lib/content'
+import { getAllPosts, getAllTags } from '~/lib/server/content'
 
 export const Route = createFileRoute('/api/sitemap')({
   server: {
